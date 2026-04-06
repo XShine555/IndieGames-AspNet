@@ -6,7 +6,7 @@ using Mediator;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserByIdentityId(IDatabase database)
+    public class GetUserByIdentityIdQueryHandler(IDatabase database)
         : IQueryHandler<GetUserByIdentityIdQuery, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(GetUserByIdentityIdQuery query, CancellationToken cancellationToken)

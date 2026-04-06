@@ -15,7 +15,6 @@ namespace Application.Users.Handlers
         public async ValueTask<Result<ApplicationUser>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
             var anyUser = await database.Users.AnyAsync(u => u.IdentityId == command.IdentityId, cancellationToken);
-
             if (anyUser)
             {
                 logger.LogWarning("User with identity id {IdentityId} already exists", command.IdentityId);

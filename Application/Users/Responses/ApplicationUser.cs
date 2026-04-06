@@ -3,7 +3,7 @@
 namespace Application.Users.Responses
 {
     public record ApplicationUser(
-        long Id,
+        Guid Id,
         string IdentityId)
     {
         public static ApplicationUser FromEntity(User user)

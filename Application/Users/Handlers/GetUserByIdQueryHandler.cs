@@ -12,7 +12,6 @@ namespace Application.Users.Handlers
         public async ValueTask<Result<ApplicationUser>> Handle(GetUserByIdQuery command, CancellationToken cancellationToken)
         {
             var user = await database.Users.FindAsync(command.Id);
-
             if (user is null)
                 return Result.NotFound();
 

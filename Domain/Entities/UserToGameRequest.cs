@@ -9,9 +9,9 @@ namespace Domain.Entities
     [PrimaryKey(nameof(UserId), nameof(GameId)) ]
     public class UserToGameRequest
     {
-        public long UserId { get; set; }
+        public Guid UserId { get; set; }
 
-        public long GameId { get; set; }
+        public Guid GameId { get; set; }
 
         [ForeignKey(nameof(UserId)) ]
         public User User { get; set; }

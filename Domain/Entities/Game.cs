@@ -8,10 +8,13 @@ namespace Domain.Entities
     public class Game
     {
         [Key]
-        public long Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public required string Title { get; set; }
+
+        [Required]
+        public required string NormalizedTitle { get; set; }
 
         [Required]
         public required string Description { get; set; }

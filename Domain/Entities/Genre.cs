@@ -7,10 +7,13 @@ namespace Domain.Entities
     public class Genre
     {
         [Key]
-        public long Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public required string Name { get; set; }
+
+        [Required]
+        public required string NormalizedName { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
