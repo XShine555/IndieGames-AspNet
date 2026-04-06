@@ -24,7 +24,11 @@ namespace Application.Games.Handlers
             var titleResult = await UpdateTitle(command.Title, game, cancellationToken);
             if (!titleResult.IsSuccess)
                 return titleResult;
+
             UpdateDescription(command.Description, game);
+            var genresResult = await UpdateGenres(command.Genres, game, cancellationToken);
+            if (!genresResult.IsSuccess)
+                return genresResult;
 
             database.Games.Update(game);
             await database.SaveChangesAsync(cancellationToken);
@@ -42,7 +46,7 @@ namespace Application.Games.Handlers
             if (existingGame is not null)
             {
                 logger.LogWarning("Game with title {GameTitle} already exists with id {ExistingGameId}", newTitle, existingGame.Id);
-                return Result.Conflict();
+                return Result.Conflict("Another Game with the same title already exists");
             }
 
             game.Title = newTitle;
@@ -59,6 +63,26 @@ namespace Application.Games.Handlers
 
             logger.LogInformation("Updating game description for game with id {GameId}", game.Id);
             game.Description = newDescription;
+        }
+
+        async Task<Result> UpdateGenres(ICollection<Guid>? genres, Game game, CancellationToken cancellationToken)
+        {
+            if (genres is null)
+                return Result.Success();
+
+            var repeatedGuids = game.Genres.Where(g => genres.Contains(g.Id)).ToArray();
+            if (repeatedGuids.Length > 0)
+                return Result.Conflict($"The following genres are already associated with the game: {string.Join(", ", repeatedGuids.Select(g => g.Name)) }");
+
+            var existingGenres = await database.Genres.AsNoTracking()
+                .Where(g => genres.Contains(g.Id))
+                .ToArrayAsync(cancellationToken);
+            var notExistings = genres.Except(existingGenres.Select(g => g.Id)).ToArray();
+            if (notExistings.Length > 0)
+                return Result.NotFound($"The following genres were not found: {string.Join(", ", notExistings) }");
+
+            game.Genres = game.Genres.Union(existingGenres).ToArray();
+            return Result.Success();
         }
     }
 }

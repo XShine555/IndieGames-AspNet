@@ -7,6 +7,9 @@ namespace Application.Games.Commands
     public record UpdateGameCommand(
         long Id,
         string? Title,
-        string? Description)
+        string? Description,
+        ICollection<Guid>? Genres,
+        ICollection<Guid> Users,
+        ICollection<Guid> RequestedUsers)
         : ICommand<Result<ApplicationGame>>;
 }
