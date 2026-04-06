@@ -3,6 +3,6 @@ using Mediator;
 
 namespace Application.Games.Commands
 {
-    public record RemoveGameCommand(long Id)
+    public record RemoveGameCommand(Guid Id)
         : ICommand<Result>;
 }

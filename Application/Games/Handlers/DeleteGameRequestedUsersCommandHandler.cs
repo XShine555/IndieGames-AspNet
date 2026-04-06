@@ -1,0 +1,87 @@
+using Application.Contracts.Infrastructure;
+using Application.Games.Commands;
+using Application.Games.Responses;
+using Ardalis.Result;
+using Domain.Entities;
+using Mediator;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace Application.Games.Handlers
+{
+    public class DeleteGameRequestedUsersCommandHandler(
+        IDatabase database,
+        ILogger<DeleteGameRequestedUsersCommandHandler> logger)
+        : ICommandHandler<DeleteGameRequestedUsersCommand, Result<ApplicationGame>>
+    {
+        public async ValueTask<Result<ApplicationGame>> Handle(DeleteGameRequestedUsersCommand command, CancellationToken cancellationToken)
+        {
+            var game = await database.Games.FindAsync(command.GameId, cancellationToken);
+            if (game is null)
+            {
+                logger.LogWarning("Game with id {GameId} not found for requested users deletion", command.GameId);
+                return Result.NotFound();
+            }
+
+            var requestedUserIds = command.RequestedUsers.ToArray();
+            if (requestedUserIds.Length != requestedUserIds.Distinct().Count())
+            {
+                logger.LogWarning("Duplicate requested user ids were provided for game with id {GameId}", command.GameId);
+                return Result.Conflict("Duplicate requested user ids are not allowed");
+            }
+
+            var existingUserIds = await database.Users
+                .AsNoTracking()
+                .Where(u => requestedUserIds.Contains(u.Id))
+                .Select(u => u.Id)
+                .ToArrayAsync(cancellationToken);
+
+            var missingUserIds = requestedUserIds.Except(existingUserIds).ToArray();
+            if (missingUserIds.Length > 0)
+            {
+                logger.LogWarning(
+                    "Some requested users were not found when deleting from game with id {GameId}. Missing users: {MissingUserIds}",
+                    command.GameId,
+                    string.Join(", ", missingUserIds));
+                return Result.NotFound($"The following users were not found: {string.Join(", ", missingUserIds)}");
+            }
+
+            var currentRequestedUserIds = await database.UsersToGameRequests
+                .AsNoTracking()
+                .Where(utgr => utgr.GameId == game.Id)
+                .Select(utgr => utgr.UserId)
+                .ToArrayAsync(cancellationToken);
+
+            var notAssociatedUserIds = requestedUserIds.Except(currentRequestedUserIds).ToArray();
+            if (notAssociatedUserIds.Length > 0)
+            {
+                logger.LogWarning(
+                    "Some requested users are not associated with game id {GameId}: {UserIds}",
+                    command.GameId,
+                    string.Join(", ", notAssociatedUserIds));
+                return Result.NotFound($"The following users are not associated with the game request list: {string.Join(", ", notAssociatedUserIds)}");
+            }
+
+            var requestedUsersToRemove = await database.UsersToGameRequests
+                .Where(utgr => utgr.GameId == game.Id && requestedUserIds.Contains(utgr.UserId))
+                .ToArrayAsync(cancellationToken);
+            database.UsersToGameRequests.RemoveRange(requestedUsersToRemove);
+
+            await database.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Deleted requested users from game with id {GameId}", command.GameId);
+            return Result.Success(await LoadGameAsync(game.Id, cancellationToken));
+        }
+
+        async Task<ApplicationGame> LoadGameAsync(Guid gameId, CancellationToken cancellationToken)
+        {
+            var updatedGame = await database.Games
+                .Where(g => g.Id == gameId)
+                .Include(g => g.Genres)
+                .Include(g => g.UsersToGames).ThenInclude(utg => utg.User)
+                .Include(g => g.UsersToGameRequests).ThenInclude(utgr => utgr.User)
+                .SingleAsync(cancellationToken);
+
+            return ApplicationGame.FromEntity(updatedGame);
+        }
+    }
+}
