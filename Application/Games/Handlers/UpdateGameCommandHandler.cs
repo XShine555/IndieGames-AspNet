@@ -21,7 +21,9 @@ namespace Application.Games.Handlers
                 return Result.NotFound();
             }
 
-            await UpdateTitle(command.Title, game, cancellationToken);
+            var titleResult = await UpdateTitle(command.Title, game, cancellationToken);
+            if (!titleResult.IsSuccess)
+                return titleResult;
             UpdateDescription(command.Description, game);
 
             database.Games.Update(game);
@@ -50,14 +52,13 @@ namespace Application.Games.Handlers
             return Result.Success();
         }
 
-        Result UpdateDescription(string? newDescription, Game game)
+        void UpdateDescription(string? newDescription, Game game)
         {
             if (string.IsNullOrWhiteSpace(newDescription))
-                return Result.Success();
+                return;
 
             logger.LogInformation("Updating game description for game with id {GameId}", game.Id);
             game.Description = newDescription;
-            return Result.Success();
         }
     }
 }

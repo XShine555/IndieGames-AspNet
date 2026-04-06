@@ -4,6 +4,6 @@ using Mediator;
 
 namespace Application.Users.Queries
 {
-    public record GetUserByIdQuery(long Id)
+    public record GetUserByIdQuery(Guid Id)
         : IQuery<Result<ApplicationUser>>;
 }
