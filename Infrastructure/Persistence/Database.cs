@@ -20,7 +20,7 @@ namespace Infrastructure.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString);
+            optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
         }
     }
 }
