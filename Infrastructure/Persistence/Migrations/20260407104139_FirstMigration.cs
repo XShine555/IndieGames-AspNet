@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -16,28 +15,10 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CreatedGames",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(type: "longtext", nullable: false),
-                    Description = table.Column<string>(type: "longtext", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Games", x => x.Id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
                     IdentityId = table.Column<string>(type: "longtext", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -49,21 +30,45 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "CreatedGames",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Title = table.Column<string>(type: "longtext", nullable: false),
+                    NormalizedTitle = table.Column<string>(type: "longtext", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreatedGames", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CreatedGames_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Genres",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: false),
+                    NormalizedName = table.Column<string>(type: "longtext", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    GameId = table.Column<long>(type: "bigint", nullable: true)
+                    GameId = table.Column<Guid>(type: "char(36)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Genres", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Genres_Games_GameId",
+                        name: "FK_Genres_CreatedGames_GameId",
                         column: x => x.GameId,
                         principalTable: "CreatedGames",
                         principalColumn: "Id");
@@ -71,23 +76,24 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Users_To_Games",
+                name: "Users_owned_games",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    GameId = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    GameId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    purchasedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users_To_Games", x => new { x.UserId, x.GameId });
+                    table.PrimaryKey("PK_Users_owned_games", x => new { x.UserId, x.GameId });
                     table.ForeignKey(
-                        name: "FK_Users_To_Games_Games_GameId",
+                        name: "FK_Users_owned_games_CreatedGames_GameId",
                         column: x => x.GameId,
                         principalTable: "CreatedGames",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Users_To_Games_Users_UserId",
+                        name: "FK_Users_owned_games_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -95,31 +101,10 @@ namespace Infrastructure.Persistence.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
-            migrationBuilder.CreateTable(
-                name: "Users_To_Games_Requests",
-                columns: table => new
-                {
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    GameId = table.Column<long>(type: "bigint", nullable: false),
-                    RequestedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users_To_Games_Requests", x => new { x.UserId, x.GameId });
-                    table.ForeignKey(
-                        name: "FK_Users_To_Games_Requests_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "CreatedGames",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Users_To_Games_Requests_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
+            migrationBuilder.CreateIndex(
+                name: "IX_CreatedGames_OwnerId",
+                table: "CreatedGames",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Genres_GameId",
@@ -127,13 +112,8 @@ namespace Infrastructure.Persistence.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_To_Games_GameId",
-                table: "Users_To_Games",
-                column: "GameId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_To_Games_Requests_GameId",
-                table: "Users_To_Games_Requests",
+                name: "IX_Users_owned_games_GameId",
+                table: "Users_owned_games",
                 column: "GameId");
         }
 
@@ -144,10 +124,7 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Genres");
 
             migrationBuilder.DropTable(
-                name: "Users_To_Games");
-
-            migrationBuilder.DropTable(
-                name: "Users_To_Games_Requests");
+                name: "Users_owned_games");
 
             migrationBuilder.DropTable(
                 name: "CreatedGames");

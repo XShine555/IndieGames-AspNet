@@ -21,9 +21,9 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -31,6 +31,13 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("NormalizedTitle")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -41,22 +48,28 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId");
+
                     b.ToTable("CreatedGames");
                 });
 
             modelBuilder.Entity("Domain.Entities.Genre", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<long?>("GameId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("GameId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NormalizedName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -72,9 +85,9 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -91,37 +104,33 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToGame", b =>
+            modelBuilder.Entity("Domain.Entities.UserOwnedGame", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<long>("GameId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("char(36)");
 
-                    b.HasKey("UserId", "GameId");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Users_To_Games");
-                });
-
-            modelBuilder.Entity("Domain.Entities.UserToGameRequest", b =>
-                {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("GameId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("RequestedAt")
+                    b.Property<DateTime>("purchasedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("UserId", "GameId");
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Users_To_Games_Requests");
+                    b.ToTable("Users_owned_games");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Game", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "Owner")
+                        .WithMany("CreatedGames")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Domain.Entities.Genre", b =>
@@ -131,35 +140,16 @@ namespace Infrastructure.Persistence.Migrations
                         .HasForeignKey("GameId");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserToGame", b =>
+            modelBuilder.Entity("Domain.Entities.UserOwnedGame", b =>
                 {
                     b.HasOne("Domain.Entities.Game", "Game")
-                        .WithMany("UsersToGames")
+                        .WithMany("UserOwnedGames")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("UserToGames")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.UserToGameRequest", b =>
-                {
-                    b.HasOne("Domain.Entities.Game", "Game")
-                        .WithMany("UsersToGameRequests")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.User", "User")
-                        .WithMany("UserToGameRequests")
+                        .WithMany("OwnedGames")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -173,16 +163,14 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Genres");
 
-                    b.Navigation("UsersToGameRequests");
-
-                    b.Navigation("UsersToGames");
+                    b.Navigation("UserOwnedGames");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.Navigation("UserToGameRequests");
+                    b.Navigation("CreatedGames");
 
-                    b.Navigation("UserToGames");
+                    b.Navigation("OwnedGames");
                 });
 #pragma warning restore 612, 618
         }
