@@ -1,5 +1,4 @@
 ﻿using Application.Genres.Responses;
-using Application.Users.Responses;
 using Domain.Entities;
 
 namespace Application.Games.Responses
@@ -8,6 +7,7 @@ namespace Application.Games.Responses
         Guid Id,
         string Title,
         string Description,
+        Guid Owner,
         ICollection<ApplicationGenre> Genres)
     {
         public static ApplicationGame FromEntity(Game game)
@@ -16,6 +16,7 @@ namespace Application.Games.Responses
                 game.Id,
                 game.Title,
                 game.Description,
+                game.OwnerId,
                 game.Genres.Select(ApplicationGenre.FromEntity).ToArray());
         }
     }

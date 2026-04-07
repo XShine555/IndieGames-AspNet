@@ -14,7 +14,7 @@ namespace Application.Games.Handlers
     {
         public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
         {
-            var game = await database.Games.FindAsync(command.Id, cancellationToken);
+            var game = await database.Games.SingleOrDefaultAsync(g => g.Id == command.Id, cancellationToken);
             if (game is null)
             {
                 logger.LogWarning("Game with id {GameId} not found for update", command.Id);
@@ -27,8 +27,12 @@ namespace Application.Games.Handlers
 
             UpdateDescription(command.Description, game);
 
+            var genresResult = await UpdateGenres(command.Genres, game, cancellationToken);
+            if (!genresResult.IsSuccess)
+                return genresResult;
+
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            return Result.Success(ApplicationGame.FromEntity(game));
         }
 
         async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)
@@ -60,6 +64,23 @@ namespace Application.Games.Handlers
 
             logger.LogInformation("Updating game description for game with id {GameId}", game.Id);
             game.Description = newDescription;
+        }
+
+        async Task<Result> UpdateGenres(ICollection<Guid> genres, Game game, CancellationToken cancellationToken)
+        {
+            var existingGenres = await database.Genres.AsNoTracking()
+                .Where(g => genres.Contains(g.Id))
+                .ToListAsync(cancellationToken);
+            var notExistingGenres = genres.Except(existingGenres.Select(g => g.Id)).ToList();
+            if (notExistingGenres.Count > 0)
+            {
+                logger.LogWarning("Genres with ids {GenreIds} not found for game with id {GameId}", notExistingGenres, game.Id);
+                return Result.NotFound($"Genres with ids {string.Join(", ", notExistingGenres) } not found");
+            }
+
+            logger.LogInformation("Updating game genres for game with id {GameId}", game.Id);
+            game.Genres = existingGenres;
+            return Result.Success();
         }
     }
 }
