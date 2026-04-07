@@ -27,6 +27,10 @@ namespace Application.Games.Handlers
 
             UpdateDescription(command.Description, game);
 
+            var ownerResult = await UpdateOwnerId(command.OwnerId, game, cancellationToken);
+            if (!ownerResult.IsSuccess)
+                return ownerResult;
+
             var genresResult = await UpdateGenres(command.Genres, game, cancellationToken);
             if (!genresResult.IsSuccess)
                 return genresResult;
@@ -64,6 +68,19 @@ namespace Application.Games.Handlers
 
             logger.LogInformation("Updating game description for game with id {GameId}", game.Id);
             game.Description = newDescription;
+        }
+
+        async Task<Result> UpdateOwnerId(Guid? ownerId, Game game, CancellationToken cancellationToken)
+        {
+            var newOwner = await database.Users.SingleOrDefaultAsync(u => u.Id == ownerId, cancellationToken);
+            if (newOwner is null)
+            {
+                logger.LogWarning("User with id {OwnerId} not found for game with id {GameId}", ownerId, game.Id);
+                return Result.NotFound($"User with id {ownerId} not found");
+            }
+
+            game.OwnerId = newOwner.Id;
+            return Result.Success();
         }
 
         async Task<Result> UpdateGenres(ICollection<Guid> genres, Game game, CancellationToken cancellationToken)

@@ -8,6 +8,7 @@ namespace Application.Games.Commands
         Guid Id,
         string? Title,
         string? Description,
+        Guid? OwnerId,
         ICollection<Guid> Genres)
         : ICommand<Result<ApplicationGame>>;
 }
