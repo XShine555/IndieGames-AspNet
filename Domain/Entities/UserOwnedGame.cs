@@ -7,7 +7,7 @@ namespace Domain.Entities
 #pragma warning disable CS8618
     [Table("Users_owned_games")]
     [PrimaryKey(nameof(UserId), nameof(GameId)) ]
-    public class UserOwnsGame
+    public class UserOwnedGame
     {
         [Required]
         public required Guid UserId { get; set; }

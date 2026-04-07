@@ -14,6 +14,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<Genre> Genres => Set<Genre>();
 
+        public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);

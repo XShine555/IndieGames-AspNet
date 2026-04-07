@@ -19,5 +19,7 @@ namespace Domain.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         
         public ICollection<Game> CreatedGames { get; set; } = new List<Game>();
+
+        public ICollection<UserOwnedGame> OwnedGames { get; set; } = new List<UserOwnedGame>();
     }
 }

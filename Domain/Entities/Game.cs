@@ -24,6 +24,8 @@ namespace Domain.Entities
 
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 
+        public ICollection<UserOwnedGame> UserOwnedGames { get; set; } = new List<UserOwnedGame>();
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
