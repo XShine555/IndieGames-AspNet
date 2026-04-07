@@ -19,11 +19,10 @@ namespace Domain.Entities
         [Required]
         public required string Description { get; set; }
 
+        [Required]
+        public required Guid OwnerId { get; set; }
+
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
-
-        public ICollection<UserToGame> UsersToGames { get; set; } = new List<UserToGame>();
-
-        public ICollection<UserToGameRequest> UsersToGameRequests { get; set; } = new List<UserToGameRequest>();
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -31,10 +30,7 @@ namespace Domain.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [NotMapped]
-        public ICollection<User> Users => UsersToGames.Select(utg => utg.User).ToList();
-
-        [NotMapped]
-        public ICollection<User> RequestedUsers => UsersToGameRequests.Select(utgr => utgr.User).ToList();
+        [ForeignKey(nameof(OwnerId)) ]
+        public User Owner { get; set; }
     }
 }

@@ -8,9 +8,7 @@ namespace Application.Games.Responses
         Guid Id,
         string Title,
         string Description,
-        ICollection<ApplicationGenre> Genres,
-        ICollection<ApplicationUser> Users,
-        ICollection<ApplicationUser> RequestedUsers)
+        ICollection<ApplicationGenre> Genres)
     {
         public static ApplicationGame FromEntity(Game game)
         {
@@ -18,9 +16,7 @@ namespace Application.Games.Responses
                 game.Id,
                 game.Title,
                 game.Description,
-                game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
-                game.Users.Select(ApplicationUser.FromEntity).ToArray(),
-                game.RequestedUsers.Select(ApplicationUser.FromEntity).ToArray());
+                game.Genres.Select(ApplicationGenre.FromEntity).ToArray());
         }
     }
 }

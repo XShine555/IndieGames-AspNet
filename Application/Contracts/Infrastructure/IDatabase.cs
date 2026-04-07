@@ -11,10 +11,6 @@ namespace Application.Contracts.Infrastructure
 
         DbSet<Genre> Genres { get; }
 
-        DbSet<UserToGame> UsersToGames { get; }
-
-        DbSet<UserToGameRequest> UsersToGameRequests { get; }
-
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

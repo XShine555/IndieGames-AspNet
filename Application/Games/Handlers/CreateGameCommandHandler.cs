@@ -13,6 +13,15 @@ namespace Application.Games.Handlers
     {
         public async ValueTask<Result<ApplicationGame>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
         {
+            var existingUser = await database.Users
+                .AsNoTracking()
+                .AnyAsync(u => u.Id == command.UserId, cancellationToken);
+            if (!existingUser)
+            {
+                logger.LogWarning("User with ID '{UserId}' not found.", command.UserId);
+                return Result.NotFound();
+            }
+
             var normalizedTitle = command.Title.Trim().ToUpperInvariant();
             var existingGame = await database.Games
                 .AsNoTracking()
