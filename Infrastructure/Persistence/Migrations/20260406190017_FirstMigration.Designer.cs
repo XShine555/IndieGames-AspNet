@@ -44,7 +44,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games");
+                    b.ToTable("CreatedGames");
                 });
 
             modelBuilder.Entity("Domain.Entities.Genre", b =>

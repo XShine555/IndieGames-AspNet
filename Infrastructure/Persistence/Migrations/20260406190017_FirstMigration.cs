@@ -16,7 +16,7 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Games",
+                name: "CreatedGames",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -65,7 +65,7 @@ namespace Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Genres_Games_GameId",
                         column: x => x.GameId,
-                        principalTable: "Games",
+                        principalTable: "CreatedGames",
                         principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -83,7 +83,7 @@ namespace Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Users_To_Games_Games_GameId",
                         column: x => x.GameId,
-                        principalTable: "Games",
+                        principalTable: "CreatedGames",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -109,7 +109,7 @@ namespace Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Users_To_Games_Requests_Games_GameId",
                         column: x => x.GameId,
-                        principalTable: "Games",
+                        principalTable: "CreatedGames",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -150,7 +150,7 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Users_To_Games_Requests");
 
             migrationBuilder.DropTable(
-                name: "Games");
+                name: "CreatedGames");
 
             migrationBuilder.DropTable(
                 name: "Users");

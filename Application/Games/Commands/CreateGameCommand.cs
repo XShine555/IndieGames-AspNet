@@ -8,10 +8,11 @@ namespace Application.Games.Commands
     public record CreateGameCommand(
         Guid UserId,
         string Title,
-        string Description)
+        string Description,
+        ICollection<Guid> Genres)
         : ICommand<Result<ApplicationGame>>
     {
-        public static Game ToEntity(CreateGameCommand command)
+        public static Game ToEntity(CreateGameCommand command, ICollection<Genre> Genres)
         {
             return new Game()
             {
@@ -19,6 +20,7 @@ namespace Application.Games.Commands
                 NormalizedTitle = command.Title.Trim().ToUpperInvariant(),
                 Description = command.Description,
                 OwnerId = command.UserId,
+                Genres = Genres
             };
         }
     }

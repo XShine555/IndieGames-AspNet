@@ -31,8 +31,16 @@ namespace Application.Games.Handlers
                 logger.LogWarning("A game with the title '{Title}' already exists.", command.Title);
                 return Result.Conflict();
             }
+            var genres = await database.Genres
+                .Where(g => command.Genres.Contains(g.Id))
+                .ToListAsync(cancellationToken);
+            if (genres.Count != command.Genres.Count)
+            {
+                logger.LogWarning("One or more genres not found for IDs: {GenreIds}.", string.Join(", ", command.Genres));
+                return Result.Invalid(new ValidationError("One or more genres not found."));
+            }
 
-            var newGame = CreateGameCommand.ToEntity(command);
+            var newGame = CreateGameCommand.ToEntity(command, genres);
             await database.Games.AddAsync(newGame, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
 
