@@ -4,6 +4,6 @@ using Mediator;
 
 namespace Application.Genres.Queries
 {
-    public record GetGenreByIdQuery(Guid Id)
+    public record GetGenreByIdQuery(int Id)
         : IQuery<Result<ApplicationGenre>>;
 }

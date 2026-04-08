@@ -4,6 +4,6 @@ using Mediator;
 
 namespace Application.Games.Queries
 {
-    public record GetGameByIdQuery(Guid Id)
+    public record GetGameByIdQuery(int Id)
         : IQuery<Result<ApplicationGame>>;
 }

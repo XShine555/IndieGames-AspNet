@@ -3,6 +3,7 @@ using Application.Games.Queries;
 using Application.Games.Responses;
 using Ardalis.Result;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Games.Handlers
 {
@@ -11,7 +12,8 @@ namespace Application.Games.Handlers
     {
         public async ValueTask<Result<ApplicationGame>> Handle(GetGameByIdQuery query, CancellationToken cancellationToken)
         {
-            var game = await database.Games.FindAsync(query.Id, cancellationToken);
+            var game = await database.Games.AsNoTracking()
+                .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
             if (game is null)
                 return Result.NotFound();
             return Result.Success(ApplicationGame.FromEntity(game));
