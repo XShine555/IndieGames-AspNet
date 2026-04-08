@@ -12,7 +12,7 @@ namespace Infrastructure.Services
 {
     public static class ServiceDependencyInjection
     {
-        public static IServiceCollection AddS3Service(IServiceCollection serviceDescriptors, IConfiguration configuration)
+        public static IServiceCollection AddS3Service(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
             serviceDescriptors
               .AddOptionsWithValidateOnStart<S3Configuration>()
