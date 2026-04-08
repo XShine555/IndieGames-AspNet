@@ -8,8 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class RemovePictureToGameCommandHandler(IDatabase database, IS3Service s3Service, ILogger<RemovePictureToGameCommandHandler> logger,
-        GameConfiguration gameConfiguration)
+    public class RemovePictureToGameCommandHandler(IDatabase database, IS3Service s3Service, ILogger<RemovePictureToGameCommandHandler> logger)
         : ICommandHandler<RemoveStorePictureToGameCommand, Result>
     {
         public async ValueTask<Result> Handle(RemoveStorePictureToGameCommand command, CancellationToken cancellationToken)
@@ -30,8 +29,7 @@ namespace Application.Games.Handlers
 
             try
             {
-                var pictureKey = gameConfiguration.Routes.BuildStorePicturePath(picture.GameId, picture.PictureKey);
-                await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
+                await s3Service.RemoveFileAsync(picture.PictureKey, cancellationToken);
             }
             catch (Exception exception)
             {

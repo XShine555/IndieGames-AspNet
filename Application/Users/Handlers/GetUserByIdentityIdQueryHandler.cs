@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserByIdentityIdQueryHandler(IDatabase database, IGamePicturesHelper gamePicturesHelper)
+    public class GetUserByIdentityIdQueryHandler(IDatabase database)
         : IQueryHandler<GetUserByIdentityIdQuery, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(GetUserByIdentityIdQuery query, CancellationToken cancellationToken)
@@ -30,8 +30,7 @@ namespace Application.Users.Handlers
             if (user is null)
                 return Result.NotFound();
 
-            var applicationUser = await ApplicationUser.FromEntity(user, gamePicturesHelper, cancellationToken);
-            return Result.Success(applicationUser);
+            return Result.Success(ApplicationUser.FromEntity(user));
         }
     }
 }

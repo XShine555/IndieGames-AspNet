@@ -4,14 +4,14 @@ namespace Application.Games.Responses
 {
     public record ApplicationGamePicture(
         int PictureId,
-        string PictureUrl,
+        string PictureKey,
         DateTime AddedAt)
     {
-        public static ApplicationGamePicture FromEntity(GamePicture gamePicture, string pictureUrl)
+        public static ApplicationGamePicture FromEntity(GamePicture gamePicture)
         {
             return new ApplicationGamePicture(
                 gamePicture.Id,
-                pictureUrl,
+                gamePicture.PictureKey,
                 gamePicture.AddedAt);
         }
     }

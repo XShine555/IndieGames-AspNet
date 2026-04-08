@@ -11,7 +11,7 @@ namespace Application.Games.Responses
         IReadOnlyCollection<ApplicationGenre> Genres,
         IReadOnlyCollection<ApplicationGamePicture> Pictures)
     {
-        public static ApplicationGame FromEntity(Game game, IReadOnlyCollection<ApplicationGamePicture> pictures)
+        public static ApplicationGame FromEntity(Game game)
         {
             return new ApplicationGame(
                 game.Id,
@@ -19,7 +19,7 @@ namespace Application.Games.Responses
                 game.Description,
                 game.OwnerId,
                 game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
-                pictures);
+                game.Pictures.Select(ApplicationGamePicture.FromEntity).ToArray());
         }
     }
 }

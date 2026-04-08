@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Infrastructure;
 using Application.Games.Commands;
 using Application.Games.Responses;
 using Ardalis.Result;
@@ -10,8 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class UpdateGameCommandHandler(IDatabase database, ILogger<UpdateGameCommandHandler> logger,
-        IGamePicturesHelper gamePicturesHelper)
+    public class UpdateGameCommandHandler(IDatabase database, ILogger<UpdateGameCommandHandler> logger)
         : ICommandHandler<UpdateGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
@@ -47,8 +45,7 @@ namespace Application.Games.Handlers
                 return genresResult;
 
             await database.SaveChangesAsync(cancellationToken);
-            var pictures = await gamePicturesHelper.GetPictures(game, cancellationToken);
-            return Result.Success(ApplicationGame.FromEntity(game, pictures));
+            return Result.Success(ApplicationGame.FromEntity(game));
         }
 
         async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)

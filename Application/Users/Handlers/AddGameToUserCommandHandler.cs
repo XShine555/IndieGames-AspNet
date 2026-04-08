@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Infrastructure;
 using Application.Users.Commands;
 using Application.Users.Responses;
 using Ardalis.Result;
@@ -10,8 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class AddGameToUserCommandHandler(IDatabase database, ILogger<AddGameToUserCommandHandler> logger,
-        IGamePicturesHelper gamePicturesHelper)
+    public class AddGameToUserCommandHandler(IDatabase database, ILogger<AddGameToUserCommandHandler> logger)
          : ICommandHandler<AddGameToUserCommand, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(AddGameToUserCommand command, CancellationToken cancellationToken)
@@ -69,8 +67,7 @@ namespace Application.Users.Handlers
                         .ThenInclude(g => g.Pictures)
                 .SingleAsync(u => u.IdentityId == command.UserId, cancellationToken);
 
-            var applicationUser = await ApplicationUser.FromEntity(refreshedUser, gamePicturesHelper, cancellationToken);
-            return Result.Success(applicationUser);
+            return Result.Success(ApplicationUser.FromEntity(refreshedUser));
         }
     }
 }

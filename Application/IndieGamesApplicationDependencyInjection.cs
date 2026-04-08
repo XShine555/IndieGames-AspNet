@@ -1,6 +1,4 @@
 ﻿using Application.Configuration;
-using Application.Contracts.Application;
-using Application.Games.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -18,9 +16,7 @@ namespace Application
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<GameConfiguration>>().Value);
 
-            serviceDescriptors.AddScoped<IGamePicturesHelper, GamePicturesHelper>();
             serviceDescriptors.AddMediator();
-
             return serviceDescriptors;
         }
     }

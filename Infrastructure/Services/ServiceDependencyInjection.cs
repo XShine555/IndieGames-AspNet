@@ -1,8 +1,6 @@
 ﻿using Amazon;
 using Amazon.S3;
-using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
-using Application.Games.Helpers;
 using Infrastructure.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +31,6 @@ namespace Infrastructure.Services
                 );
             } );
             serviceDescriptors.AddScoped<IS3Service, S3Service>();
-            serviceDescriptors.AddScoped<IGamePicturesHelper, GamePicturesHelper>();
             return serviceDescriptors;
         }
     }

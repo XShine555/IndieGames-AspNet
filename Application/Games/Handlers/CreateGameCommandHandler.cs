@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Infrastructure;
 using Application.Games.Commands;
 using Application.Games.Responses;
 using Ardalis.Result;
@@ -9,8 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class CreateGameCommandHandler(IDatabase database, ILogger<CreateGameCommandHandler> logger,
-        IGamePicturesHelper gamePicturesHelper)
+    public class CreateGameCommandHandler(IDatabase database, ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
@@ -46,8 +44,7 @@ namespace Application.Games.Handlers
             await database.Games.AddAsync(newGame, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
 
-            var pictures = await gamePicturesHelper.GetPictures(newGame, cancellationToken);
-            return Result.Created(ApplicationGame.FromEntity(newGame, pictures));
+            return Result.Created(ApplicationGame.FromEntity(newGame));
         }
     }
 }

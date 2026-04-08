@@ -1,5 +1,4 @@
 ﻿using Application.Configuration;
-using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
 using Application.Games.Commands;
 using Application.Games.Responses;
@@ -12,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Application.Games.Handlers
 {
     public class AddStorePictureToGameCommandHandler(IDatabase database, IS3Service s3Service, ILogger<AddStorePictureToGameCommandHandler> logger,
-        GameConfiguration gameConfiguration, IGamePicturesHelper gamePicturesHelper)
+        GameConfiguration gameConfiguration)
         : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
@@ -31,11 +30,11 @@ namespace Application.Games.Handlers
                 return Result.Unauthorized();
             }
 
-            string pictureKey = Guid.NewGuid() + command.fileData.FileExtension;
-            string picturePath = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureKey);
+            string pictureName = Guid.NewGuid() + command.fileData.FileExtension;
+            string pictureKey = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureName);
             try
             {
-                await s3Service.UploadFileAsync(command.fileData, picturePath, cancellationToken);
+                await s3Service.UploadFileAsync(command.fileData, pictureKey, cancellationToken);
             }
             catch (Exception exception)
             {
@@ -56,12 +55,11 @@ namespace Application.Games.Handlers
             catch (Exception exception)
             {
                 logger.LogError(exception, "Error saving picture for game with id {GameId}", command.GameId);
-                await s3Service.RemoveFileAsync(picturePath, cancellationToken);
+                await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
                 return Result.Error("Error saving picture");
             }
 
-            var pictures = await gamePicturesHelper.GetPictures(game, cancellationToken);
-            return Result.Success(ApplicationGame.FromEntity(game, pictures));
+            return Result.Success(ApplicationGame.FromEntity(game));
         }
     }
 }

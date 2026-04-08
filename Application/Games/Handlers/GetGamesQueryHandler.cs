@@ -8,7 +8,7 @@ using X.PagedList.EF;
 
 namespace Application.Games.Handlers
 {
-    public class GetGamesQueryHandler(IDatabase database, IGamePicturesHelper gamePicturesHelper)
+    public class GetGamesQueryHandler(IDatabase database)
         : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGame>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGame>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
@@ -25,8 +25,7 @@ namespace Application.Games.Handlers
             var applicationGames = new List<ApplicationGame>(pagedGames.Count);
             foreach (var game in pagedGames)
             {
-                var pictures = await gamePicturesHelper.GetPictures(game, cancellationToken);
-                applicationGames.Add(ApplicationGame.FromEntity(game, pictures));
+                applicationGames.Add(ApplicationGame.FromEntity(game));
             }
 
             return new PaginatedApplicationResponse<ApplicationGame>(

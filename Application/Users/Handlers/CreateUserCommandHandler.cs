@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Infrastructure;
 using Application.Users.Commands;
 using Application.Users.Responses;
 using Ardalis.Result;
@@ -10,8 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class CreateUserCommandHandler(IDatabase database, ILogger<CreateUserCommandHandler> logger,
-        IGamePicturesHelper gamePicturesHelper)
+    public class CreateUserCommandHandler(IDatabase database, ILogger<CreateUserCommandHandler> logger)
         : ICommandHandler<CreateUserCommand, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
@@ -31,8 +29,7 @@ namespace Application.Users.Handlers
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
-            var applicationUser = await ApplicationUser.FromEntity(newUser, gamePicturesHelper, cancellationToken);
-            return Result.Created(applicationUser);
+            return Result.Created(ApplicationUser.FromEntity(newUser));
         }
     }
 }
