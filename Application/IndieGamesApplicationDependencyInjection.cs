@@ -9,7 +9,7 @@ namespace Application
 {
     public static class IndieGamesApplicationDependencyInjection
     {
-        public static IServiceCollection AddApplicationConfiguration(this IServiceCollection serviceDescriptors, IConfiguration configuration)
+        public static IServiceCollection AddApplicationMediator(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
             serviceDescriptors
                 .AddOptionsWithValidateOnStart<GameConfiguration>()
@@ -17,7 +17,9 @@ namespace Application
                 .ValidateDataAnnotations();
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<GameConfiguration>>().Value);
-            serviceDescriptors.AddSingleton<IGamePicturesHelper, GamePicturesHelper>();
+
+            serviceDescriptors.AddScoped<IGamePicturesHelper, GamePicturesHelper>();
+            serviceDescriptors.AddMediator();
 
             return serviceDescriptors;
         }
