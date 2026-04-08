@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -30,7 +30,7 @@ namespace Infrastructure.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CreatedGames",
+                name: "Games",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -44,9 +44,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreatedGames", x => x.Id);
+                    table.PrimaryKey("PK_Games", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreatedGames_Users_OwnerId",
+                        name: "FK_Games_Users_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "IdentityId",
@@ -71,9 +71,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Game_Original_Pictures", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Game_Original_Pictures_CreatedGames_GameId",
+                        name: "FK_Game_Original_Pictures_Games_GameId",
                         column: x => x.GameId,
-                        principalTable: "CreatedGames",
+                        principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -95,15 +95,15 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Genres", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Genres_CreatedGames_GameId",
+                        name: "FK_Genres_Games_GameId",
                         column: x => x.GameId,
-                        principalTable: "CreatedGames",
+                        principalTable: "Games",
                         principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Users_owned_games",
+                name: "User_Owned_Games",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
@@ -112,15 +112,15 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users_owned_games", x => new { x.UserId, x.GameId });
+                    table.PrimaryKey("PK_User_Owned_Games", x => new { x.UserId, x.GameId });
                     table.ForeignKey(
-                        name: "FK_Users_owned_games_CreatedGames_GameId",
+                        name: "FK_User_Owned_Games_Games_GameId",
                         column: x => x.GameId,
-                        principalTable: "CreatedGames",
+                        principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Users_owned_games_Users_UserId",
+                        name: "FK_User_Owned_Games_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "IdentityId",
@@ -129,14 +129,14 @@ namespace Infrastructure.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreatedGames_OwnerId",
-                table: "CreatedGames",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Game_Original_Pictures_GameId",
                 table: "Game_Original_Pictures",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_OwnerId",
+                table: "Games",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Genres_GameId",
@@ -144,15 +144,15 @@ namespace Infrastructure.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_User_Owned_Games_GameId",
+                table: "User_Owned_Games",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_IdentityId",
                 table: "Users",
                 column: "IdentityId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_owned_games_GameId",
-                table: "Users_owned_games",
-                column: "GameId");
         }
 
         /// <inheritdoc />
@@ -165,10 +165,10 @@ namespace Infrastructure.Migrations
                 name: "Genres");
 
             migrationBuilder.DropTable(
-                name: "Users_owned_games");
+                name: "User_Owned_Games");
 
             migrationBuilder.DropTable(
-                name: "CreatedGames");
+                name: "Games");
 
             migrationBuilder.DropTable(
                 name: "Users");

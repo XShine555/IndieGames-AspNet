@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entities
 {
 #pragma warning disable CS8618
-    [Table("Users_owned_games")]
+    [Table("User_Owned_Games")]
     [PrimaryKey(nameof(UserId), nameof(GameId)) ]
     public class UserOwnedGame
     {

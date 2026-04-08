@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entities
 {
 #pragma warning disable CS8618
-    [Table("CreatedGames")]
+    [Table("Games")]
     public class Game : IUpdatableEntity
     {
         [Key]
