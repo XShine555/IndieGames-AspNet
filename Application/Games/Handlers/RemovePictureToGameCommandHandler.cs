@@ -22,6 +22,12 @@ namespace Application.Games.Handlers
                 return Result.NotFound();
             }
 
+            if (picture.Game.OwnerId != command.IdentityId)
+            {
+                logger.LogWarning("User with id {IdentityId} is not the owner of the game with id {GameId}", command.IdentityId, picture.GameId);
+                return Result.Unauthorized();
+            }
+
             try
             {
                 var pictureKey = Path.Combine(

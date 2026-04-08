@@ -25,6 +25,12 @@ namespace Application.Games.Handlers
                 return Result.NotFound("Game not found");
             }
 
+            if (game.OwnerId != command.IdentityId)
+            {
+                logger.LogWarning("User with id {IdentityId} is not the owner of game with id {GameId}", command.IdentityId, command.GameId);
+                return Result.Unauthorized();
+            }
+
             string pictureKey = Guid.NewGuid() + command.fileData.FileExtension;
             string picturePath = Path.Combine(
                 gameConfiguration.Routes.GetStorePictureFolderPath(command.GameId),

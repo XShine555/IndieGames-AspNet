@@ -26,6 +26,12 @@ namespace Application.Games.Handlers
                 return Result.NotFound();
             }
 
+            if (game.OwnerId != command.IdentityId)
+            {
+                logger.LogWarning("User with id {IdentityId} is not the owner of game with id {GameId} and cannot update it", command.IdentityId, command.GameId);
+                return Result.Forbidden();
+            }
+
             var titleResult = await UpdateTitle(command.Title, game, cancellationToken);
             if (!titleResult.IsSuccess)
                 return titleResult;
