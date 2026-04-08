@@ -30,12 +30,7 @@ namespace Application.Users.Handlers
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
             var infrastructureUser = await cognitoService.GetUserByIdentityIdAsync(newUser.IdentityId, cancellationToken);
-            if (infrastructureUser is null)
-            {
-                logger.LogWarning("User with IdentityId {IdentityId} found in database but not in Cognito", newUser.IdentityId);
-                return Result.NotFound();
-            }
-            return Result.Created(ApplicationUser.FromEntity(newUser, infrastructureUser));
+            return infrastructureUser.Map(userResult => Result.Created(ApplicationUser.FromEntity(newUser, userResult)));
         }
     }
 }

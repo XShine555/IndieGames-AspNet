@@ -68,12 +68,7 @@ namespace Application.Users.Handlers
                 .SingleAsync(u => u.IdentityId == command.UserId, cancellationToken);
 
             var infrastructureUser = await cognitoService.GetUserByIdentityIdAsync(user.IdentityId, cancellationToken);
-            if (infrastructureUser is null)
-            {
-                logger.LogWarning("User with IdentityId {IdentityId} found in database but not in Cognito", user.IdentityId);
-                return Result.NotFound();
-            }
-            return Result.Success(ApplicationUser.FromEntity(refreshedUser, infrastructureUser));
+            return infrastructureUser.Map(userResult => Result.Success(ApplicationUser.FromEntity(refreshedUser, userResult)));
         }
     }
 }
