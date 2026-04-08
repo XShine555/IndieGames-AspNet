@@ -1,4 +1,5 @@
 ﻿using Amazon;
+using Amazon.CognitoIdentityProvider;
 using Amazon.S3;
 using Application.Contracts.Infrastructure;
 using Infrastructure.Configurations;
@@ -31,6 +32,29 @@ namespace Infrastructure.Services
                 );
             } );
             serviceDescriptors.AddScoped<IS3Service, S3Service>();
+            return serviceDescriptors;
+        }
+
+        public static IServiceCollection AddCognitoService(this IServiceCollection serviceDescriptors, IConfiguration configuration)
+        {
+            serviceDescriptors
+              .AddOptionsWithValidateOnStart<CognitoConfiguration>()
+              .Bind(configuration.GetRequiredSection(CognitoConfiguration.SectionName))
+              .ValidateDataAnnotations();
+
+            serviceDescriptors.AddSingleton(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<CognitoConfiguration>>().Value);
+
+            serviceDescriptors.AddScoped<IAmazonCognitoIdentityProvider>(serviceProvider =>
+            {
+                var cognitoConfig = serviceProvider.GetRequiredService<CognitoConfiguration>();
+                return new AmazonCognitoIdentityProviderClient(
+                    cognitoConfig.AccessKey,
+                    cognitoConfig.SecretKey,
+                    cognitoConfig.SessionToken,
+                    RegionEndpoint.GetBySystemName(cognitoConfig.Region)
+                );
+            } );
             return serviceDescriptors;
         }
     }
