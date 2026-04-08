@@ -22,6 +22,8 @@ namespace Domain.Entities
         [Required]
         public required string OwnerId { get; set; }
 
+        public ICollection<GamePicture> Pictures { get; set; } = new List<GamePicture>();
+
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 
         public ICollection<UserOwnedGame> UserOwnedGames { get; set; } = new List<UserOwnedGame>();
