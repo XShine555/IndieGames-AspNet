@@ -19,7 +19,7 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    IdentityId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    IdentityId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -35,10 +35,10 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(type: "longtext", nullable: false),
-                    NormalizedTitle = table.Column<string>(type: "longtext", nullable: false),
-                    Description = table.Column<string>(type: "longtext", nullable: false),
-                    OwnerId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Title = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
+                    NormalizedTitle = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
+                    Description = table.Column<string>(type: "varchar(1024)", maxLength: 1024, nullable: false),
+                    OwnerId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -61,7 +61,7 @@ namespace Infrastructure.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     GameId = table.Column<int>(type: "int", nullable: false),
-                    PictureKey = table.Column<string>(type: "longtext", nullable: false),
+                    PictureKey = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
@@ -82,8 +82,8 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false),
-                    NormalizedName = table.Column<string>(type: "longtext", nullable: false),
+                    Name = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    NormalizedName = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: true)
@@ -103,7 +103,7 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Users_owned_games",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "varchar(255)", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
                     GameId = table.Column<int>(type: "int", nullable: false),
                     purchasedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
