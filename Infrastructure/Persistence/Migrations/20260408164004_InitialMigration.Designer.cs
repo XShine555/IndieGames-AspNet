@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260408094717_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20260408164004_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,29 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("CreatedGames");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GamePicture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PictureKey")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("game_pictures");
                 });
 
             modelBuilder.Entity("Domain.Entities.Genre", b =>
@@ -132,6 +155,17 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("Domain.Entities.GamePicture", b =>
+                {
+                    b.HasOne("Domain.Entities.Game", "Game")
+                        .WithMany("Pictures")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("Domain.Entities.Genre", b =>
                 {
                     b.HasOne("Domain.Entities.Game", null)
@@ -161,6 +195,8 @@ namespace Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
                     b.Navigation("Genres");
+
+                    b.Navigation("Pictures");
 
                     b.Navigation("UserOwnedGames");
                 });

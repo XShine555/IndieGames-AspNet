@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,6 +50,28 @@ namespace Infrastructure.Persistence.Migrations
                         column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "IdentityId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "game_pictures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    PictureKey = table.Column<string>(type: "longtext", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_game_pictures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_game_pictures_CreatedGames_GameId",
+                        column: x => x.GameId,
+                        principalTable: "CreatedGames",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -109,6 +131,11 @@ namespace Infrastructure.Persistence.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_game_pictures_GameId",
+                table: "game_pictures",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Genres_GameId",
                 table: "Genres",
                 column: "GameId");
@@ -122,6 +149,9 @@ namespace Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "game_pictures");
+
             migrationBuilder.DropTable(
                 name: "Genres");
 
