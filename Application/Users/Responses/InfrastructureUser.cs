@@ -7,8 +7,11 @@ namespace Application.Users.Responses
     {
         public static InfrastructureUser FromCognitoUser(UserType userType)
         {
+            var username = userType.Attributes.SingleOrDefault(a => a.Name == "name")
+                ?? throw new InvalidOperationException("Cognito user does not have a 'name' attribute.");
+
             return new InfrastructureUser(
-                userType.Attributes.Single(a => a.Name == "name").Value);
+                username.Value);
         }
     }
 }

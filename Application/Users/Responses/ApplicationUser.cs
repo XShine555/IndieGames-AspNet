@@ -5,10 +5,11 @@ namespace Application.Users.Responses
 {
     public record ApplicationUser(
         string IdentityId,
+        string Username,
         ICollection<ApplicationGame> CreatedGames,
         ICollection<ApplicationGame> OwnedGames)
     {
-        public static ApplicationUser FromEntity(User user)
+        public static ApplicationUser FromEntity(User user, InfrastructureUser infrastructureUser)
         {
             var createdGames = new List<ApplicationGame>();
             foreach (var createdGame in user.CreatedGames)
@@ -22,7 +23,7 @@ namespace Application.Users.Responses
                 ownedGames.Add(ApplicationGame.FromEntity(ownedGame.Game));
             }
 
-            return new ApplicationUser(user.IdentityId, createdGames, ownedGames);
+            return new ApplicationUser(user.IdentityId, infrastructureUser.Username, createdGames, ownedGames);
         }
     }
 }

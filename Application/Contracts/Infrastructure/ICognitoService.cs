@@ -4,6 +4,6 @@ namespace Application.Contracts.Infrastructure
 {
     public interface ICognitoService
     {
-        Task<InfrastructureUser?> GetUser(string identityId, CancellationToken cancellationToken);
+        Task<InfrastructureUser?> GetUserByIdentityIdAsync(string identityId, CancellationToken cancellationToken);
     }
 }

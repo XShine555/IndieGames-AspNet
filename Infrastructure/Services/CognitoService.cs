@@ -9,7 +9,7 @@ namespace Infrastructure.Services
     public class CognitoService(IAmazonCognitoIdentityProvider amazonCognitoIdentityProvider, CognitoConfiguration cognitoConfiguration)
         : ICognitoService
     {
-        public async Task<InfrastructureUser?> GetUser(string identityId, CancellationToken cancellationToken)
+        public async Task<InfrastructureUser?> GetUserByIdentityIdAsync(string identityId, CancellationToken cancellationToken)
         {
             var request = new ListUsersRequest
             {

@@ -5,10 +5,11 @@ using Application.Users.Responses;
 using Ardalis.Result;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserByIdentityIdQueryHandler(IDatabase database)
+    public class GetUserByIdentityIdQueryHandler(IDatabase database, ICognitoService cognitoService, ILogger<GetUserByIdentityIdQueryHandler> logger)
         : IQueryHandler<GetUserByIdentityIdQuery, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(GetUserByIdentityIdQuery query, CancellationToken cancellationToken)
@@ -30,7 +31,14 @@ namespace Application.Users.Handlers
             if (user is null)
                 return Result.NotFound();
 
-            return Result.Success(ApplicationUser.FromEntity(user));
+            var infrastructureUser = await cognitoService.GetUserByIdentityIdAsync(user.IdentityId, cancellationToken);
+            if (infrastructureUser is null)
+            {
+                logger.LogWarning("User with IdentityId {IdentityId} found in database but not in Cognito", query.IdentityId);
+                return Result.NotFound();
+            }
+
+            return Result.Success(ApplicationUser.FromEntity(user, infrastructureUser));
         }
     }
 }
