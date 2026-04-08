@@ -14,6 +14,7 @@ namespace Domain.Entities
         public int GameId { get; set; }
 
         [Required]
+        [MaxLength(128)]
         public required string PictureKey { get; set; }
 
         [ForeignKey(nameof(GameId) )]

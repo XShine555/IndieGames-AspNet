@@ -7,6 +7,7 @@ namespace Domain.Entities
     public class User
     {
         [Key]
+        [MaxLength(36)]
         public required string IdentityId { get; set; }
 
         [Required]

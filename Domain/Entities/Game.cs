@@ -11,15 +11,19 @@ namespace Domain.Entities
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public required string Title { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public required string NormalizedTitle { get; set; }
 
         [Required]
+        [MaxLength(1024)]
         public required string Description { get; set; }
 
         [Required]
+        [MaxLength(36)]
         public required string OwnerId { get; set; }
 
         public ICollection<GamePicture> Pictures { get; set; } = new List<GamePicture>();

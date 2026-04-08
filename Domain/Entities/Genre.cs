@@ -10,9 +10,11 @@ namespace Domain.Entities
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(32)]
         public required string Name { get; set; }
 
         [Required]
+        [MaxLength(32)]
         public required string NormalizedName { get; set; }
 
         [Required]

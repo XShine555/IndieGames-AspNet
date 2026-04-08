@@ -10,6 +10,7 @@ namespace Domain.Entities
     public class UserOwnedGame
     {
         [Required]
+        [MaxLength(36)]
         public required string UserId { get; set; }
 
         [Required]
