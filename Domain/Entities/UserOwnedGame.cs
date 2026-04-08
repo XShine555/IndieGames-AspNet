@@ -10,7 +10,7 @@ namespace Domain.Entities
     public class UserOwnedGame
     {
         [Required]
-        public required Guid UserId { get; set; }
+        public required string UserId { get; set; }
 
         [Required]
         public required Guid GameId { get; set; }

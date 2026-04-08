@@ -7,7 +7,7 @@ namespace Application.Games.Responses
         Guid Id,
         string Title,
         string Description,
-        Guid Owner,
+        string OwnerId,
         ICollection<ApplicationGenre> Genres)
     {
         public static ApplicationGame FromEntity(Game game)

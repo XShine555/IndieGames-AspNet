@@ -14,10 +14,10 @@ namespace Application.Games.Handlers
     {
         public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
         {
-            var game = await database.Games.SingleOrDefaultAsync(g => g.Id == command.Id, cancellationToken);
+            var game = await database.Games.SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
-                logger.LogWarning("Game with id {GameId} not found for update", command.Id);
+                logger.LogWarning("Game with id {GameId} not found for update", command.GameId);
                 return Result.NotFound();
             }
 
@@ -70,16 +70,16 @@ namespace Application.Games.Handlers
             game.Description = newDescription;
         }
 
-        async Task<Result> UpdateOwnerId(Guid? ownerId, Game game, CancellationToken cancellationToken)
+        async Task<Result> UpdateOwnerId(string? ownerId, Game game, CancellationToken cancellationToken)
         {
-            var newOwner = await database.Users.SingleOrDefaultAsync(u => u.Id == ownerId, cancellationToken);
+            var newOwner = await database.Users.SingleOrDefaultAsync(u => u.IdentityId == ownerId, cancellationToken);
             if (newOwner is null)
             {
                 logger.LogWarning("User with id {OwnerId} not found for game with id {GameId}", ownerId, game.Id);
                 return Result.NotFound($"User with id {ownerId} not found");
             }
 
-            game.OwnerId = newOwner.Id;
+            game.OwnerId = newOwner.IdentityId;
             return Result.Success();
         }
 

@@ -18,14 +18,13 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    IdentityId = table.Column<string>(type: "longtext", nullable: false),
+                    IdentityId = table.Column<string>(type: "varchar(255)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.IdentityId);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -37,7 +36,7 @@ namespace Infrastructure.Persistence.Migrations
                     Title = table.Column<string>(type: "longtext", nullable: false),
                     NormalizedTitle = table.Column<string>(type: "longtext", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    OwnerId = table.Column<string>(type: "varchar(255)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -48,7 +47,7 @@ namespace Infrastructure.Persistence.Migrations
                         name: "FK_CreatedGames_Users_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -79,7 +78,7 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Users_owned_games",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(255)", nullable: false),
                     GameId = table.Column<Guid>(type: "char(36)", nullable: false),
                     purchasedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -96,7 +95,7 @@ namespace Infrastructure.Persistence.Migrations
                         name: "FK_Users_owned_games_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");

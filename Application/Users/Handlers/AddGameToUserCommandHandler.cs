@@ -17,7 +17,7 @@ namespace Application.Users.Handlers
             var user = await database.Users
                 .Include(u => u.OwnedGames)
                 .ThenInclude(ug => ug.Game)
-                .SingleOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
+                .SingleOrDefaultAsync(u => u.IdentityId == command.UserId, cancellationToken);
             if (user is null)
             {
                 logger.LogWarning("User with id {UserId} not found", command.UserId);
@@ -40,7 +40,7 @@ namespace Application.Users.Handlers
 
             await database.UserOwnedGames.AddAsync(new UserOwnedGame
             {
-                UserId = user.Id,
+                UserId = user.IdentityId,
                 GameId = game.Id
             }, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);

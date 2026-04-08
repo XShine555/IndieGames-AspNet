@@ -27,7 +27,7 @@ namespace Application.Users.Handlers
             };
             await database.Users.AddAsync(newUser, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
-            logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.Id, newUser.IdentityId);
+            logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
             return Result.Created(ApplicationUser.FromEntity(newUser));
         }

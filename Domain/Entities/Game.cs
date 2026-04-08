@@ -20,7 +20,7 @@ namespace Domain.Entities
         public required string Description { get; set; }
 
         [Required]
-        public required Guid OwnerId { get; set; }
+        public required string OwnerId { get; set; }
 
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 

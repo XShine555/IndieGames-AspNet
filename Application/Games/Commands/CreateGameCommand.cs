@@ -6,7 +6,7 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record CreateGameCommand(
-        Guid UserId,
+        string identityId,
         string Title,
         string Description,
         ICollection<Guid> Genres)
@@ -19,7 +19,7 @@ namespace Application.Games.Commands
                 Title = command.Title,
                 NormalizedTitle = command.Title.Trim().ToUpperInvariant(),
                 Description = command.Description,
-                OwnerId = command.UserId,
+                OwnerId = command.identityId,
                 Genres = Genres
             };
         }

@@ -5,7 +5,7 @@ using Mediator;
 namespace Application.Users.Commands
 {
     public record AddGameToUserCommand(
-        Guid UserId,
+        string UserId,
         Guid GameId)
         : ICommand<Result<ApplicationUser>>;
 }

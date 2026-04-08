@@ -15,10 +15,10 @@ namespace Application.Games.Handlers
         {
             var existingUser = await database.Users
                 .AsNoTracking()
-                .AnyAsync(u => u.Id == command.UserId, cancellationToken);
+                .AnyAsync(u => u.IdentityId == command.identityId, cancellationToken);
             if (!existingUser)
             {
-                logger.LogWarning("User with ID '{UserId}' not found.", command.UserId);
+                logger.LogWarning("User with ID '{identityId}' not found.", command.identityId);
                 return Result.NotFound();
             }
 

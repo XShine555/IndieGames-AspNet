@@ -7,9 +7,6 @@ namespace Domain.Entities
     public class User
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
-        [Required]
         public required string IdentityId { get; set; }
 
         [Required]
