@@ -5,10 +5,10 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record UpdateGameCommand(
-        Guid GameId,
+        int GameId,
         string? Title,
         string? Description,
         string? OwnerId,
-        ICollection<Guid> Genres)
+        ICollection<int> Genres)
         : ICommand<Result<ApplicationGame>>;
 }

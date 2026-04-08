@@ -8,7 +8,7 @@ namespace Domain.Entities
     public class Game
     {
         [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
 
         [Required]
         public required string Title { get; set; }

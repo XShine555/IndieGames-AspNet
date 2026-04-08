@@ -6,6 +6,6 @@ namespace Application.Users.Commands
 {
     public record AddGameToUserCommand(
         string UserId,
-        Guid GameId)
+        int GameId)
         : ICommand<Result<ApplicationUser>>;
 }

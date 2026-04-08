@@ -83,7 +83,7 @@ namespace Application.Games.Handlers
             return Result.Success();
         }
 
-        async Task<Result> UpdateGenres(ICollection<Guid> genres, Game game, CancellationToken cancellationToken)
+        async Task<Result> UpdateGenres(ICollection<int> genres, Game game, CancellationToken cancellationToken)
         {
             var existingGenres = await database.Genres.AsNoTracking()
                 .Where(g => genres.Contains(g.Id))

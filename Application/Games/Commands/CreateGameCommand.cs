@@ -9,7 +9,7 @@ namespace Application.Games.Commands
         string identityId,
         string Title,
         string Description,
-        ICollection<Guid> Genres)
+        ICollection<int> Genres)
         : ICommand<Result<ApplicationGame>>
     {
         public static Game ToEntity(CreateGameCommand command, ICollection<Genre> Genres)

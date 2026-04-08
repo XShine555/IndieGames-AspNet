@@ -4,7 +4,7 @@ using Domain.Entities;
 namespace Application.Games.Responses
 {
     public record ApplicationGame(
-        Guid Id,
+        int Id,
         string Title,
         string Description,
         string OwnerId,

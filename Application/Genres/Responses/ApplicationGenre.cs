@@ -3,7 +3,7 @@
 namespace Application.Genres.Responses
 {
     public record ApplicationGenre(
-        Guid Id,
+        int Id,
         string Name)
     {
         public static ApplicationGenre FromEntity(Genre genre)

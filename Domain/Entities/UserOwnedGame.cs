@@ -13,7 +13,7 @@ namespace Domain.Entities
         public required string UserId { get; set; }
 
         [Required]
-        public required Guid GameId { get; set; }
+        public required int GameId { get; set; }
 
         public User User { get; set; }
 
