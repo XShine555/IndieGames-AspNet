@@ -16,7 +16,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
 
-        public DbSet<GamePicture> GamePictures => Set<GamePicture>();
+        public DbSet<GameOriginalPicture> GamePictures => Set<GameOriginalPicture>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

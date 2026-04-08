@@ -13,7 +13,7 @@ namespace Application.Contracts.Infrastructure
 
         DbSet<UserOwnedGame> UserOwnedGames { get; }
 
-        DbSet<GamePicture> GamePictures { get; }
+        DbSet<GameOriginalPicture> GamePictures { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

@@ -3,19 +3,16 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260408165958_InitialMigration")]
-    partial class InitialMigration
+    partial class DatabaseModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,7 +58,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("CreatedGames");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GamePicture", b =>
+            modelBuilder.Entity("Domain.Entities.GameOriginalPicture", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,10 +67,25 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("FileExtension")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PictureKey")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("RelativePath")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
@@ -82,7 +94,7 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("game_pictures");
+                    b.ToTable("Game_Original_Pictures");
                 });
 
             modelBuilder.Entity("Domain.Entities.Genre", b =>
@@ -131,6 +143,9 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.HasKey("IdentityId");
 
+                    b.HasIndex("IdentityId")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
@@ -164,7 +179,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GamePicture", b =>
+            modelBuilder.Entity("Domain.Entities.GameOriginalPicture", b =>
                 {
                     b.HasOne("Domain.Entities.Game", "Game")
                         .WithMany("Pictures")

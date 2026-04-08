@@ -27,7 +27,7 @@ namespace Domain.Entities
         [MaxLength(36)]
         public required string OwnerId { get; set; }
 
-        public ICollection<GamePicture> Pictures { get; set; } = new List<GamePicture>();
+        public ICollection<GameOriginalPicture> Pictures { get; set; } = new List<GameOriginalPicture>();
 
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 

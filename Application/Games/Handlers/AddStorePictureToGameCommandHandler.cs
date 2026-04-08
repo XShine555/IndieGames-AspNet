@@ -42,10 +42,13 @@ namespace Application.Games.Handlers
                 return Result.Error("Error uploading picture");
             }
 
-            var newPicture = new GamePicture
+            var newPicture = new GameOriginalPicture
             {
                 GameId = command.GameId,
-                PictureKey = pictureKey
+                OriginalName = pictureName,
+                FileExtension = command.fileData.FileExtension,
+                Name = pictureName,
+                RelativePath = gameConfiguration.Routes.GetStorePictureFolderPath(game.Id),
             };
             await database.GamePictures.AddAsync(newPicture, cancellationToken);
             try
