@@ -8,7 +8,7 @@ namespace Infrastructure.Persistence
 {
     public static class DatabaseDependencyInjection
     {
-        public static IServiceCollection AddDatabase(IServiceCollection serviceDescriptors, IConfiguration configuration)
+        public static IServiceCollection AddDatabase(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
             serviceDescriptors
                 .AddOptionsWithValidateOnStart<DatabaseConfiguration>()
