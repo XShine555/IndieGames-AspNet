@@ -1,13 +1,13 @@
 ﻿using Application.Contracts.Application;
 using Application.Games.Responses;
-using Ardalis.Result;
 using Mediator;
 
 namespace Application.Games.Queries
 {
-    public record GetGamesByTitleQuery(
+    public record GetGamesQuery(
         string Title,
-        int PageNumber = 1,
-        int PageSize = 10)
+        ICollection<int> Genres,
+        int PageNumber,
+        int PageSize)
         : IQuery<PaginatedApplicationResponse<ApplicationGame>>;
 }

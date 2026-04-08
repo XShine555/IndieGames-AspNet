@@ -1,12 +1,13 @@
-﻿using Application.Contracts.Application;
+﻿
+using Application.Contracts.Application;
 using Application.Genres.Responses;
 using Mediator;
 
 namespace Application.Genres.Queries
 {
-    public record GetGenresByNameQuery(
+    public record GetGenresQuery(
         string Name,
-        int PageNumber = 1,
-        int PageSize = 10)
+        int PageNumber,
+        int PageSize)
         : IQuery<PaginatedApplicationResponse<ApplicationGenre>>;
 }
