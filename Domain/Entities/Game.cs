@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Contracts;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
 #pragma warning disable CS8618
     [Table("CreatedGames")]
-    public class Game
+    public class Game : IUpdatableEntity
     {
         [Key]
         public int Id { get; set; }

@@ -22,5 +22,13 @@ namespace Infrastructure.Persistence
         {
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>(u =>
+            {
+                u.HasIndex(x => x.IdentityId).IsUnique();
+            } );
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Contracts.Infrastructure;
 using Infrastructure.Configurations;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,7 @@ namespace Infrastructure.Persistence
 
             serviceDescriptors.AddDbContext<Database>();
             serviceDescriptors.AddScoped<IDatabase>(serviceProvider => serviceProvider.GetRequiredService<Database>());
+            serviceDescriptors.AddSingleton<SaveChangesInterceptor, UpdateTimeStampInterceptor>();
             return serviceDescriptors;
         }
     }
