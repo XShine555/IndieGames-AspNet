@@ -1,4 +1,5 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Application;
+using Application.Contracts.Infrastructure;
 using Application.Games.Queries;
 using Application.Games.Responses;
 using Ardalis.Result;
@@ -7,16 +8,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Games.Handlers
 {
-    public class GetGameByIdQueryHandler(IDatabase database)
+    public class GetGameByIdQueryHandler(IDatabase database, IGamePicturesHelper gamePicturesHelper)
         : IQueryHandler<GetGameByIdQuery, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(GetGameByIdQuery query, CancellationToken cancellationToken)
         {
             var game = await database.Games.AsNoTracking()
+                .Include(g => g.Genres)
+                .Include(g => g.Pictures)
                 .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
             if (game is null)
                 return Result.NotFound();
-            return Result.Success(ApplicationGame.FromEntity(game));
+
+            var pictures = await gamePicturesHelper.GetPictures(game, cancellationToken);
+            return Result.Success(ApplicationGame.FromEntity(game, pictures));
         }
     }
 }

@@ -8,19 +8,35 @@ using X.PagedList.EF;
 
 namespace Application.Games.Handlers
 {
-    public class GetGamesQueryHandler(IDatabase database)
+    public class GetGamesQueryHandler(IDatabase database, IGamePicturesHelper gamePicturesHelper)
         : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGame>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGame>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
         {
             var normalizedTitle = query.Title.Trim().ToLower();
             var totalCount = await database.Games.CountAsync(cancellationToken);
-            var games = await database.Games.AsNoTracking()
+            var pagedGames = await database.Games.AsNoTracking()
+                .Include(g => g.Genres)
+                .Include(g => g.Pictures)
                 .Where(g => g.NormalizedTitle.Contains(normalizedTitle)
                     || g.Genres.Any(gg => query.Genres.Contains(gg.Id)))
-                .Select(g => ApplicationGame.FromEntity(g))
                 .ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);
-            return PaginatedApplicationResponse<ApplicationGame>.FromPagedList(games);
+
+            var applicationGames = new List<ApplicationGame>(pagedGames.Count);
+            foreach (var game in pagedGames)
+            {
+                var pictures = await gamePicturesHelper.GetPictures(game, cancellationToken);
+                applicationGames.Add(ApplicationGame.FromEntity(game, pictures));
+            }
+
+            return new PaginatedApplicationResponse<ApplicationGame>(
+                applicationGames,
+                pagedGames.PageNumber,
+                pagedGames.PageSize,
+                pagedGames.PageCount,
+                pagedGames.TotalItemCount,
+                pagedGames.HasNextPage,
+                pagedGames.HasPreviousPage);
         }
     }
 }

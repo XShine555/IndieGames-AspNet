@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Application.Contracts.Application;
 using Application.Contracts.Infrastructure;
 using Infrastructure.Configurations;
 
@@ -51,6 +52,11 @@ namespace Infrastructure.Services
             };
             var result = amazonS3.GetPreSignedURL(request);
             return result;
+        }
+
+        public Task UploadFileAsync(IFileData fileData, string keyName, CancellationToken cancellationToken)
+        {
+            return UploadFileAsync(fileData.FileStream, keyName, fileData.ContentType, cancellationToken);
         }
     }
 }

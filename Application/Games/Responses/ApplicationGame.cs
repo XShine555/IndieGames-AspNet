@@ -8,16 +8,18 @@ namespace Application.Games.Responses
         string Title,
         string Description,
         string OwnerId,
-        ICollection<ApplicationGenre> Genres)
+        IReadOnlyCollection<ApplicationGenre> Genres,
+        IReadOnlyCollection<ApplicationGamePicture> Pictures)
     {
-        public static ApplicationGame FromEntity(Game game)
+        public static ApplicationGame FromEntity(Game game, IReadOnlyCollection<ApplicationGamePicture> pictures)
         {
             return new ApplicationGame(
                 game.Id,
                 game.Title,
                 game.Description,
                 game.OwnerId,
-                game.Genres.Select(ApplicationGenre.FromEntity).ToArray());
+                game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
+                pictures);
         }
     }
 }

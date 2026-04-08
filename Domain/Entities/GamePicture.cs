@@ -18,5 +18,8 @@ namespace Domain.Entities
 
         [ForeignKey(nameof(GameId) )]
         public Game Game { get; set; }
+
+        [Required]
+        public DateTime AddedAt { get; set; } = DateTime.UtcNow;
     }
 }

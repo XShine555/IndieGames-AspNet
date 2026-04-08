@@ -16,6 +16,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
 
+        public DbSet<GamePicture> GamePictures => Set<GamePicture>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);

@@ -1,4 +1,5 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Application;
+using Application.Contracts.Infrastructure;
 using Application.Games.Commands;
 using Application.Games.Responses;
 using Ardalis.Result;
@@ -9,12 +10,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class UpdateGameCommandHandler(IDatabase database, ILogger<UpdateGameCommandHandler> logger)
+    public class UpdateGameCommandHandler(IDatabase database, ILogger<UpdateGameCommandHandler> logger,
+        IGamePicturesHelper gamePicturesHelper)
         : ICommandHandler<UpdateGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
         {
-            var game = await database.Games.SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
+            var game = await database.Games
+                .Include(g => g.Genres)
+                .Include(g => g.Pictures)
+                .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
                 logger.LogWarning("Game with id {GameId} not found for update", command.GameId);
@@ -36,7 +41,8 @@ namespace Application.Games.Handlers
                 return genresResult;
 
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success(ApplicationGame.FromEntity(game));
+            var pictures = await gamePicturesHelper.GetPictures(game, cancellationToken);
+            return Result.Success(ApplicationGame.FromEntity(game, pictures));
         }
 
         async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)
