@@ -14,7 +14,8 @@ namespace Application.Genres.Handlers
     {
         public async ValueTask<Result<ApplicationGenre>> Handle(UpdateGenreCommand command, CancellationToken cancellationToken)
         {
-            var genre = await database.Genres.FindAsync(command.Id, cancellationToken);
+            var genre = await database.Genres.AsNoTracking()
+                .SingleOrDefaultAsync(g => g.Id == command.Id, cancellationToken);
             if (genre is null)
             {
                 logger.LogWarning("Genre with id {Id} not found", command.Id);

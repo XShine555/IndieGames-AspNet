@@ -2,6 +2,7 @@
 using Application.Genres.Commands;
 using Ardalis.Result;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Application.Genres.Handlers
@@ -11,7 +12,8 @@ namespace Application.Genres.Handlers
     {
         public async ValueTask<Result> Handle(RemoveGenreCommand command, CancellationToken cancellationToken)
         {
-            var genre = await database.Genres.FindAsync(command.Id, cancellationToken);
+            var genre = await database.Genres.AsNoTracking()
+                .SingleOrDefaultAsync(g => g.Id == command.Id, cancellationToken);
             if (genre is null)
             {
                 logger.LogWarning("Genre with id {Id} not found", command.Id);
