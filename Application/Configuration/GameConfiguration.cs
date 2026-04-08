@@ -17,5 +17,10 @@
         {
             return $"{ParentFolder}/{gameId}/{StorePicturesFolderName}";
         }
+
+        public string BuildStorePicturePath(int gameId, string pictureKey)
+        {
+            return $"{GetStorePictureFolderPath(gameId) }/{pictureKey}";
+        }
     }
 }

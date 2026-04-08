@@ -32,9 +32,7 @@ namespace Application.Games.Handlers
             }
 
             string pictureKey = Guid.NewGuid() + command.fileData.FileExtension;
-            string picturePath = Path.Combine(
-                gameConfiguration.Routes.GetStorePictureFolderPath(command.GameId),
-                pictureKey);
+            string picturePath = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureKey);
             try
             {
                 await s3Service.UploadFileAsync(command.fileData, picturePath, cancellationToken);

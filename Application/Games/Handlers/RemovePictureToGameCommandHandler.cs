@@ -30,9 +30,7 @@ namespace Application.Games.Handlers
 
             try
             {
-                var pictureKey = Path.Combine(
-                    gameConfiguration.Routes.GetStorePictureFolderPath(picture.GameId),
-                    picture.PictureKey);
+                var pictureKey = gameConfiguration.Routes.BuildStorePicturePath(picture.GameId, picture.PictureKey);
                 await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
             }
             catch (Exception exception)

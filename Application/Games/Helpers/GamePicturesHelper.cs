@@ -17,9 +17,7 @@ namespace Application.Games.Helpers
             {
                 try
                 {
-                    var pictureKey = Path.Combine(
-                        gameConfiguration.Routes.GetStorePictureFolderPath(game.Id),
-                        picture.PictureKey);
+                    var pictureKey = gameConfiguration.Routes.BuildStorePicturePath(game.Id, picture.PictureKey);
                     var pictureUrl = await s3Service.GetSignedUrlAsync(pictureKey, TimeSpan.FromHours(1), cancellationToken);
                     pictures.Add(ApplicationGamePicture.FromEntity(picture, pictureUrl));
                 }
