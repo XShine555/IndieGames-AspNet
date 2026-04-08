@@ -55,6 +55,7 @@ namespace Infrastructure.Services
                     RegionEndpoint.GetBySystemName(cognitoConfig.Region)
                 );
             } );
+            serviceDescriptors.AddScoped<ICognitoService, CognitoService>();
             return serviceDescriptors;
         }
     }
