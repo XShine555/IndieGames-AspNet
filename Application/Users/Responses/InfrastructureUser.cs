@@ -7,8 +7,7 @@ namespace Application.Users.Responses
     {
         public static InfrastructureUser FromCognitoUser(UserType userType)
         {
-            return new InfrastructureUser(
-                userType.Username);
+            return new InfrastructureUser(userType.Username);
         }
     }
 }
