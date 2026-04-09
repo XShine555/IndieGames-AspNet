@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
 {
-    public class Database(DatabaseConfiguration databaseConfiguration)
+    public class Database(DatabaseConfiguration databaseConfiguration, UpdateTimeStampInterceptor updateTimeStampInterceptor)
         : DbContext, IDatabase
     {
         public DbSet<User> Users => Set<User>();
@@ -21,6 +21,7 @@ namespace Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
+            optionsBuilder.AddInterceptors(updateTimeStampInterceptor);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
