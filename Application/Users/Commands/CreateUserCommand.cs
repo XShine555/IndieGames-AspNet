@@ -5,6 +5,7 @@ using Mediator;
 namespace Application.Users.Commands
 {
     public record CreateUserCommand(
-        string IdentityId)
+        string IdentityId,
+        string Username)
         : ICommand<Result<ApplicationUser>>;
 }

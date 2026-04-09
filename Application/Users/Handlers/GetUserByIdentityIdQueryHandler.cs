@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Contracts.Infrastructure;
 using Application.Users.Queries;
 using Application.Users.Responses;
 using Ardalis.Result;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserByIdentityIdQueryHandler(IDatabase database, ICognitoService cognitoService)
+    public class GetUserByIdentityIdQueryHandler(IDatabase database)
         : IQueryHandler<GetUserByIdentityIdQuery, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(GetUserByIdentityIdQuery query, CancellationToken cancellationToken)
@@ -30,8 +29,7 @@ namespace Application.Users.Handlers
             if (user is null)
                 return Result.NotFound();
 
-            var infrastructureUser = await cognitoService.GetUserByIdentityIdAsync(user.IdentityId, cancellationToken);
-            return infrastructureUser.Map(userResult => ApplicationUser.FromEntity(user, userResult));
+            return Result.Success(ApplicationUser.FromEntity(user));
         }
     }
 }

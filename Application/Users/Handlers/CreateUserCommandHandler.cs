@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class CreateUserCommandHandler(IDatabase database, ICognitoService cognitoService, ILogger<CreateUserCommandHandler> logger)
+    public class CreateUserCommandHandler(IDatabase database, ILogger<CreateUserCommandHandler> logger)
         : ICommandHandler<CreateUserCommand, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
@@ -24,13 +24,13 @@ namespace Application.Users.Handlers
             var newUser = new User
             {
                 IdentityId = command.IdentityId,
+                Username = command.Username,
             };
             await database.Users.AddAsync(newUser, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
-            var infrastructureUser = await cognitoService.GetUserByIdentityIdAsync(newUser.IdentityId, cancellationToken);
-            return infrastructureUser.Map(userResult => Result.Created(ApplicationUser.FromEntity(newUser, userResult)));
+            return Result.Success(ApplicationUser.FromEntity(newUser));
         }
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class AddGameToUserCommandHandler(IDatabase database, ICognitoService cognitoService, ILogger<AddGameToUserCommandHandler> logger)
+    public class AddGameToUserCommandHandler(IDatabase database, ILogger<AddGameToUserCommandHandler> logger)
          : ICommandHandler<AddGameToUserCommand, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(AddGameToUserCommand command, CancellationToken cancellationToken)
@@ -67,8 +67,7 @@ namespace Application.Users.Handlers
                         .ThenInclude(g => g.Pictures)
                 .SingleAsync(u => u.IdentityId == command.UserId, cancellationToken);
 
-            var infrastructureUser = await cognitoService.GetUserByIdentityIdAsync(user.IdentityId, cancellationToken);
-            return infrastructureUser.Map(userResult => Result.Success(ApplicationUser.FromEntity(refreshedUser, userResult)));
+            return Result.Success(ApplicationUser.FromEntity(user));
         }
     }
 }

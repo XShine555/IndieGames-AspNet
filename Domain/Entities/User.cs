@@ -11,6 +11,10 @@ namespace Domain.Entities
         [MaxLength(36)]
         public required string IdentityId { get; set; }
 
+        [Key]
+        [MaxLength(24)]
+        public required string Username { get; set; }
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

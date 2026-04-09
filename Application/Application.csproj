@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <PackageReference Include="Ardalis.Result" Version="10.1.0" />
-    <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="4.0.6.9" />
     <PackageReference Include="Mediator.Abstractions" Version="3.0.2" />
     <PackageReference Include="Mediator.SourceGenerator" Version="3.0.2">
       <PrivateAssets>all</PrivateAssets>
