@@ -1,4 +1,5 @@
 ﻿using Application.Genres.Responses;
+using Application.Users.Responses;
 using Domain.Entities;
 
 namespace Application.Games.Responses
@@ -7,7 +8,7 @@ namespace Application.Games.Responses
         int Id,
         string Title,
         string Description,
-        string OwnerId,
+        ApplicationUserSummary ApplicationUserSummary,
         IReadOnlyCollection<ApplicationGenre> Genres,
         IReadOnlyCollection<ApplicationGamePicture> Pictures)
     {
@@ -17,7 +18,7 @@ namespace Application.Games.Responses
                 game.Id,
                 game.Title,
                 game.Description,
-                game.OwnerId,
+                ApplicationUserSummary.FromEntity(game.Owner),
                 game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
                 game.Pictures.Select(ApplicationGamePicture.FromEntity).ToArray());
         }
