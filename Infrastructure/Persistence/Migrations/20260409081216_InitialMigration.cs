@@ -20,6 +20,7 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     IdentityId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
+                    Username = table.Column<string>(type: "varchar(24)", maxLength: 24, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },

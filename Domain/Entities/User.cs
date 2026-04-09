@@ -11,7 +11,7 @@ namespace Domain.Entities
         [MaxLength(36)]
         public required string IdentityId { get; set; }
 
-        [Key]
+        [Required]
         [MaxLength(24)]
         public required string Username { get; set; }
 

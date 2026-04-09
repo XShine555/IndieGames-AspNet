@@ -141,6 +141,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("varchar(24)");
+
                     b.HasKey("IdentityId");
 
                     b.HasIndex("IdentityId")
