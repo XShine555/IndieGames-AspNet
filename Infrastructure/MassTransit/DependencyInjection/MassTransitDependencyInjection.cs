@@ -100,61 +100,30 @@ namespace Infrastructure.MassTransit.DependencyInjection
                     endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
                 } );
 
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildExecuteActivityEndpointName(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.ExecuteActivityHost<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(busRegistrationContext);
-                } );
+            ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GeneratePictureWorkflowPathsActivity.ExecuteEndpointName);
 
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildExecuteActivityEndpointName(DownloadFileFromBucketActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.ExecuteActivityHost<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments>(busRegistrationContext);
-                } );
+            ConfigureActivityEndpoint<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments, DownloadFileFromBucketLog>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                DownloadFileFromBucketActivity.ExecuteEndpointName);
 
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildCompensateActivityEndpointName(DownloadFileFromBucketActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.CompensateActivityHost<DownloadFileFromBucketActivity, DownloadFileFromBucketLog>(busRegistrationContext);
-                } );
+            ConfigureActivityEndpoint<ResizePictureActivity, ResizePictureLocalArguments, ResizePictureLog>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                ResizePictureActivity.ExecuteEndpointName);
 
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildExecuteActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.ExecuteActivityHost<ResizePictureActivity, ResizePictureLocalArguments>(busRegistrationContext);
-                } );
+            ConfigureActivityEndpoint<UploadFileToBucketActivity, UploadFileToBucketArguments, UploadFileToBucketLog>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                UploadFileToBucketActivity.ExecuteEndpointName);
 
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildCompensateActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.CompensateActivityHost<ResizePictureActivity, ResizePictureLog>(busRegistrationContext);
-                } );
-
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildExecuteActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.ExecuteActivityHost<UploadFileToBucketActivity, UploadFileToBucketArguments>(busRegistrationContext);
-                } );
-
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildCompensateActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.CompensateActivityHost<UploadFileToBucketActivity, UploadFileToBucketLog>(busRegistrationContext);
-                } );
-
-            busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildExecuteActivityEndpointName(SynchronizeGamePicturesActivity.ExecuteEndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.ExecuteActivityHost<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>(busRegistrationContext);
-                } );
+            ConfigureExecuteActivityEndpoint<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                SynchronizeGamePicturesActivity.ExecuteEndpointName);
         }
 
         static void ConfigureAmazonSqsHost(
@@ -168,6 +137,46 @@ namespace Infrastructure.MassTransit.DependencyInjection
                     massTransitConfiguration.SecretKey,
                     massTransitConfiguration.SessionToken));
             } );
+        }
+
+        static void ConfigureExecuteActivityEndpoint<TActivity, TArguments>(
+            IAmazonSqsBusFactoryConfigurator busFactoryConfigurator,
+            IBusRegistrationContext busRegistrationContext,
+            string endpointName)
+            where TActivity : class, IExecuteActivity<TArguments>
+            where TArguments : class
+        {
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(endpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<TActivity, TArguments>(busRegistrationContext);
+                } );
+        }
+
+        static void ConfigureActivityEndpoint<TActivity, TArguments, TLog>(
+           IAmazonSqsBusFactoryConfigurator busFactoryConfigurator,
+           IBusRegistrationContext busRegistrationContext,
+           string endpointName)
+           where TActivity : class, IActivity<TArguments, TLog>
+           where TArguments : class
+           where TLog : class
+        {
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(endpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<TActivity, TArguments>(
+                        EndpointHelper.BuildCompensateActivityUri(endpointName),
+                        busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildCompensateActivityEndpointName(endpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.CompensateActivityHost<TActivity, TLog>(busRegistrationContext);
+                } );
         }
     }
 }
