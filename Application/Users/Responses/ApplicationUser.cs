@@ -6,8 +6,11 @@ namespace Application.Users.Responses
     public record ApplicationUser(
         string IdentityId,
         string Username,
+        string DisplayUsername,
         ICollection<ApplicationGame> CreatedGames,
-        ICollection<ApplicationGame> OwnedGames)
+        ICollection<ApplicationGame> OwnedGames,
+        DateTime CreatedAt,
+        DateTime UpdatedAt)
     {
         public static ApplicationUser FromEntity(User user)
         {
@@ -23,7 +26,14 @@ namespace Application.Users.Responses
                 ownedGames.Add(ApplicationGame.FromEntity(ownedGame.Game));
             }
 
-            return new ApplicationUser(user.IdentityId, user.Username, createdGames, ownedGames);
+            return new ApplicationUser(
+                user.IdentityId,
+                user.Username,
+                user.DisplayUsername,
+                createdGames,
+                ownedGames,
+                user.CreatedAt,
+                user.UpdatedAt);
         }
     }
 }

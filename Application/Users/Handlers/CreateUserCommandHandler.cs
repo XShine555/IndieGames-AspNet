@@ -25,6 +25,8 @@ namespace Application.Users.Handlers
             {
                 IdentityId = command.IdentityId,
                 Username = command.Username,
+                DisplayUsername = command.Username,
+                NormalizedUsername = command.Username.Trim().ToUpperInvariant()
             };
             await database.Users.AddAsync(newUser, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);

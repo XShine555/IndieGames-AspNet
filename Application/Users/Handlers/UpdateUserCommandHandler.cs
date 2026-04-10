@@ -2,6 +2,7 @@
 using Application.Users.Commands;
 using Application.Users.Responses;
 using Ardalis.Result;
+using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,11 +22,23 @@ namespace Application.Users.Handlers
                 return Result.NotFound("User not found");
             }
 
-            user.Username = command.Username;
+            UpdateDisplayUsername(command.NewDisplayUsername, user);
+
             database.Users.Update(user);
             await database.SaveChangesAsync(cancellationToken);
 
             return Result.Success(ApplicationUser.FromEntity(user));
+        }
+
+        void UpdateDisplayUsername(string newUsername, User user)
+        {
+            if (string.IsNullOrWhiteSpace(newUsername))
+                return;
+
+            user.DisplayUsername = newUsername;
+            user.NormalizedUsername = newUsername.Trim().ToUpperInvariant();
+            logger.LogInformation("Updated DisplayUsername to {DisplayUsername} and NormalizedUsername to {NormalizedUsername} for user with IdentityId {IdentityId}",
+                user.DisplayUsername, user.NormalizedUsername, user.IdentityId);
         }
     }
 }
