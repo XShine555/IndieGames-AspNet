@@ -30,7 +30,7 @@ namespace Infrastructure.MassTransit.Activities.Files
                 await s3Service.UploadFileAsync(
                     fileStream,
                     MimeUtility.GetMimeMapping(fileName),
-                    Path.Combine(executeContext.Arguments.DestinationRoute, fileName),
+                    $"{executeContext.Arguments.DestinationRoute}/{fileName}",
                     executeContext.CancellationToken);
 
                 return executeContext.CompletedWithVariables(new UploadFileToBucketLog(
