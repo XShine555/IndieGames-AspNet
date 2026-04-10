@@ -8,6 +8,16 @@ namespace Application.Games.Responses
         string FileExtension,
         string RelativePath,
         string Name,
+        string? SmallRelativePath,
+        string? SmallName,
+        string? SmallFileExtension,
+        string? MediumRelativePath,
+        string? MediumName,
+        string? MediumFileExtension,
+        string? LargeRelativePath,
+        string? LargeName,
+        string? LargeFileExtension,
+        GamePictureProcessingStatus ProcessingStatus,
         DateTime AddedAt)
     {
         public static ApplicationGamePicture FromEntity(GameOriginalPicture gamePicture)
@@ -18,6 +28,16 @@ namespace Application.Games.Responses
                 gamePicture.FileExtension,
                 gamePicture.RelativePath,
                 gamePicture.Name,
+                gamePicture.SmallRelativePath,
+                gamePicture.SmallName,
+                gamePicture.SmallFileExtension,
+                gamePicture.MediumRelativePath,
+                gamePicture.MediumName,
+                gamePicture.MediumFileExtension,
+                gamePicture.LargeRelativePath,
+                gamePicture.LargeName,
+                gamePicture.LargeFileExtension,
+                gamePicture.ProcessingStatus,
                 gamePicture.AddedAt);
         }
     }
