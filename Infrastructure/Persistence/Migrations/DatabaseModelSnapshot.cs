@@ -182,7 +182,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(24)
                         .HasColumnType("varchar(24)");
 
-                    b.Property<string>("NormalizedUsername")
+                    b.Property<string>("NormalizedDisplayUsername")
                         .IsRequired()
                         .HasMaxLength(24)
                         .HasColumnType("varchar(24)");

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260410232018_DisplayUsername")]
+    [Migration("20260410233023_DisplayUsername")]
     partial class DisplayUsername
     {
         /// <inheritdoc />
@@ -185,7 +185,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(24)
                         .HasColumnType("varchar(24)");
 
-                    b.Property<string>("NormalizedUsername")
+                    b.Property<string>("NormalizedDisplayUsername")
                         .IsRequired()
                         .HasMaxLength(24)
                         .HasColumnType("varchar(24)");
