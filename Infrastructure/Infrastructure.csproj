@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="4.0.21" />
+    <PackageReference Include="MassTransit" Version="9.1.0" />
+    <PackageReference Include="MassTransit.AmazonSQS" Version="9.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -29,12 +31,18 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.5" />
     <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.5" />
+    <PackageReference Include="MimeMapping" Version="4.0.0" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MassTransit\Filters\" />
   </ItemGroup>
 
 </Project>

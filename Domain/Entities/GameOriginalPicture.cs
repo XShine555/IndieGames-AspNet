@@ -29,6 +29,36 @@ namespace Domain.Entities
         [MaxLength(16)]
         public required string FileExtension { get; set; }
 
+        [MaxLength(128)]
+        public string? SmallRelativePath { get; set; }
+
+        [MaxLength(36)]
+        public string? SmallName { get; set; }
+
+        [MaxLength(16)]
+        public string? SmallFileExtension { get; set; }
+
+        [MaxLength(128)]
+        public string? MediumRelativePath { get; set; }
+
+        [MaxLength(36)]
+        public string? MediumName { get; set; }
+
+        [MaxLength(16)]
+        public string? MediumFileExtension { get; set; }
+
+        [MaxLength(128)]
+        public string? LargeRelativePath { get; set; }
+
+        [MaxLength(36)]
+        public string? LargeName { get; set; }
+
+        [MaxLength(16)]
+        public string? LargeFileExtension { get; set; }
+
+        [Required]
+        public GamePictureProcessingStatus ProcessingStatus { get; set; } = GamePictureProcessingStatus.Pending;
+
         [ForeignKey(nameof(GameId) )]
         public Game Game { get; set; }
 

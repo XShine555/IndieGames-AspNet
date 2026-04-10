@@ -1,5 +1,6 @@
 ﻿using Application.Configuration;
 using Application.Contracts.Infrastructure;
+using Application.Events;
 using Application.Games.Commands;
 using Application.Games.Responses;
 using Ardalis.Result;
@@ -10,18 +11,64 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class AddStorePictureToGameCommandHandler(IDatabase database, IS3Service s3Service, ILogger<AddStorePictureToGameCommandHandler> logger,
+    public class AddStorePictureToGameCommandHandler(
+        IDatabase database,
+        IS3Service s3Service,
+        IEventBus eventBus,
+        ILogger<AddStorePictureToGameCommandHandler> logger,
         GameConfiguration gameConfiguration)
         : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
+        {
+            var gameResult = await ValidateGameOwnershipAsync(command, cancellationToken);
+            if (!gameResult.IsSuccess)
+            {
+                return gameResult.Status switch
+                {
+                    ResultStatus.NotFound => Result.NotFound("Game not found"),
+                    ResultStatus.Unauthorized => Result.Unauthorized(),
+                    _ => Result.Error()
+                };
+            }
+
+            var game = gameResult.Value;
+            var pictureName = Guid.NewGuid() + command.fileData.FileExtension;
+            var pictureKey = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureName);
+
+            var uploadResult = await UploadOriginalPictureAsync(command, pictureKey, cancellationToken);
+            if (!uploadResult.IsSuccess)
+            {
+                return Result.Error("Error uploading picture");
+            }
+
+            var newPicture = await CreatePictureRecordAsync(command, pictureName, cancellationToken);
+            if (newPicture is null)
+            {
+                await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
+                return Result.Error("Error saving picture");
+            }
+
+            var enqueueResult = await PublishGeneratePicturesEventAsync(game.Id, newPicture.Id, pictureKey, cancellationToken);
+            if (!enqueueResult.IsSuccess)
+            {
+                database.GamePictures.Remove(newPicture);
+                await database.SaveChangesAsync(cancellationToken);
+                await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
+                return Result.Error("Error scheduling picture processing");
+            }
+
+            return Result.Success(ApplicationGame.FromEntity(game));
+        }
+
+        private async Task<Result<Game>> ValidateGameOwnershipAsync(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
         {
             var game = await database.Games.AsNoTracking()
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
                 logger.LogWarning("Game with id {GameId} not found", command.GameId);
-                return Result.NotFound("Game not found");
+                return Result.NotFound();
             }
 
             if (game.OwnerId != command.IdentityId)
@@ -30,39 +77,70 @@ namespace Application.Games.Handlers
                 return Result.Unauthorized();
             }
 
-            string pictureName = Guid.NewGuid() + command.fileData.FileExtension;
-            string pictureKey = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureName);
+            return Result.Success(game);
+        }
+
+        private async Task<Result> UploadOriginalPictureAsync(AddStorePictureToGameCommand command, string pictureKey, CancellationToken cancellationToken)
+        {
             try
             {
                 await s3Service.UploadFileAsync(command.fileData, pictureKey, cancellationToken);
+                return Result.Success();
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Error uploading picture for game with id {GameId}", command.GameId);
-                return Result.Error("Error uploading picture");
+                return Result.Error();
             }
+        }
 
+        private async Task<GameOriginalPicture?> CreatePictureRecordAsync(AddStorePictureToGameCommand command, string pictureName, CancellationToken cancellationToken)
+        {
             var newPicture = new GameOriginalPicture
             {
                 GameId = command.GameId,
                 OriginalName = pictureName,
                 FileExtension = command.fileData.FileExtension,
                 Name = pictureName,
-                RelativePath = gameConfiguration.Routes.GetStorePictureFolderPath(game.Id),
+                RelativePath = gameConfiguration.Routes.GetStorePictureFolderPath(command.GameId),
+                ProcessingStatus = GamePictureProcessingStatus.Pending
             };
+
             await database.GamePictures.AddAsync(newPicture, cancellationToken);
             try
             {
                 await database.SaveChangesAsync(cancellationToken);
+                return newPicture;
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Error saving picture for game with id {GameId}", command.GameId);
-                await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
-                return Result.Error("Error saving picture");
+                return null;
             }
+        }
 
-            return Result.Success(ApplicationGame.FromEntity(game));
+        private async Task<Result> PublishGeneratePicturesEventAsync(int gameId, int pictureId, string sourceKey, CancellationToken cancellationToken)
+        {
+            var @event = new GenerateGamesPicturesEvent(
+                pictureId,
+                sourceKey,
+                gameConfiguration.Routes.GetSmallPictureFolderPath(gameId),
+                gameConfiguration.Routes.GetMediumPictureFolderPath(gameId),
+                gameConfiguration.Routes.GetLargePictureFolderPath(gameId),
+                new PictureResizeSize(gameConfiguration.Sizes.Small.Width, gameConfiguration.Sizes.Small.Height),
+                new PictureResizeSize(gameConfiguration.Sizes.Medium.Width, gameConfiguration.Sizes.Medium.Height),
+                new PictureResizeSize(gameConfiguration.Sizes.Large.Width, gameConfiguration.Sizes.Large.Height));
+
+            try
+            {
+                await eventBus.PublishAsync(@event, cancellationToken);
+                return Result.Success();
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Error publishing picture generation event for picture id {PictureId}", pictureId);
+                return Result.Error();
+            }
         }
     }
 }

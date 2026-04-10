@@ -33,5 +33,11 @@ namespace Infrastructure.Services
             serviceDescriptors.AddScoped<IS3Service, S3Service>();
             return serviceDescriptors;
         }
+
+        public static IServiceCollection AddPictureService(this IServiceCollection services)
+        {
+            services.AddScoped<IPictureService, PictureService>();
+            return services;
+        }
     }
 }

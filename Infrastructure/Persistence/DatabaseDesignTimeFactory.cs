@@ -23,7 +23,7 @@ namespace Infrastructure.Persistence
             var optionsBuilder = new DbContextOptionsBuilder<Database>();
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
 
-            return new Database(databaseConfiguration);
+            return new Database(databaseConfiguration, new UpdateTimeStampInterceptor());
         }
     }
 }
