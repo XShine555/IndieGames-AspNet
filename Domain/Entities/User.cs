@@ -21,7 +21,7 @@ namespace Domain.Entities
 
         [Required]
         [MaxLength(24)]
-        public required string NormalizedUsername { get; set; }
+        public required string NormalizedDisplayUsername { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

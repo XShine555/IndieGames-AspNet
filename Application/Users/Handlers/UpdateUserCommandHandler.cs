@@ -36,9 +36,9 @@ namespace Application.Users.Handlers
                 return;
 
             user.DisplayUsername = newUsername;
-            user.NormalizedUsername = newUsername.Trim().ToUpperInvariant();
-            logger.LogInformation("Updated DisplayUsername to {DisplayUsername} and NormalizedUsername to {NormalizedUsername} for user with IdentityId {IdentityId}",
-                user.DisplayUsername, user.NormalizedUsername, user.IdentityId);
+            user.NormalizedDisplayUsername = newUsername.Trim().ToUpperInvariant();
+            logger.LogInformation("Updated DisplayUsername to {DisplayUsername} and NormalizedDisplayUsername to {NormalizedDisplayUsername} for user with IdentityId {IdentityId}",
+                user.DisplayUsername, user.NormalizedDisplayUsername, user.IdentityId);
         }
     }
 }
