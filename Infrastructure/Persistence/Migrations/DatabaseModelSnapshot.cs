@@ -75,6 +75,30 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
+                    b.Property<string>("LargeFileExtension")
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<string>("LargeName")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<string>("LargeRelativePath")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("MediumFileExtension")
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<string>("MediumName")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<string>("MediumRelativePath")
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(36)
@@ -85,8 +109,23 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
+                    b.Property<int>("ProcessingStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("RelativePath")
                         .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<string>("SmallFileExtension")
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<string>("SmallName")
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
+                    b.Property<string>("SmallRelativePath")
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 

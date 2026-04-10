@@ -66,6 +66,16 @@ namespace Infrastructure.Persistence.Migrations
                     RelativePath = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
                     Name = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
                     FileExtension = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false),
+                    SmallRelativePath = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: true),
+                    SmallName = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: true),
+                    SmallFileExtension = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: true),
+                    MediumRelativePath = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: true),
+                    MediumName = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: true),
+                    MediumFileExtension = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: true),
+                    LargeRelativePath = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: true),
+                    LargeName = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: true),
+                    LargeFileExtension = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: true),
+                    ProcessingStatus = table.Column<int>(type: "int", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
