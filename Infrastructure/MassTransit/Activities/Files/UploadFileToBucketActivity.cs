@@ -1,5 +1,4 @@
 ﻿using Application.Contracts.Infrastructure;
-using Automatonymous;
 using Infrastructure.MassTransit.Arguments;
 using Infrastructure.MassTransit.Logs;
 using MassTransit;
