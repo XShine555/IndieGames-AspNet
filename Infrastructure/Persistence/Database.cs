@@ -2,10 +2,11 @@
 using Domain.Entities;
 using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Infrastructure.Persistence
 {
-    public class Database(DatabaseConfiguration databaseConfiguration, UpdateTimeStampInterceptor updateTimeStampInterceptor)
+    public class Database(DatabaseConfiguration databaseConfiguration, SaveChangesInterceptor saveChangesInterceptor)
         : DbContext, IDatabase
     {
         public DbSet<User> Users => Set<User>();
@@ -21,7 +22,7 @@ namespace Infrastructure.Persistence
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
-            optionsBuilder.AddInterceptors(updateTimeStampInterceptor);
+            optionsBuilder.AddInterceptors(saveChangesInterceptor);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
