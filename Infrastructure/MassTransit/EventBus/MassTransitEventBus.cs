@@ -9,7 +9,6 @@ namespace Infrastructure.MassTransit.EventBus
         public async Task PublishAsync<T>(T message, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
-
             await publishEndpoint.Publish(message, cancellationToken);
         }
     }
