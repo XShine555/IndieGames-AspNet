@@ -21,7 +21,7 @@ namespace Application.Games.Handlers
     {
         public async ValueTask<Result<ApplicationGame>> Handle(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
         {
-            var gameResult = await ValidateGameOwnershipAsync(command, cancellationToken);
+            var gameResult = await ValidateGameOwnerAsync(command, cancellationToken);
             if (!gameResult.IsSuccess)
             {
                 return gameResult.Status switch
@@ -61,9 +61,12 @@ namespace Application.Games.Handlers
             return Result.Success(ApplicationGame.FromEntity(game));
         }
 
-        private async Task<Result<Game>> ValidateGameOwnershipAsync(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
+        private async Task<Result<Game>> ValidateGameOwnerAsync(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
         {
             var game = await database.Games.AsNoTracking()
+                .Include(x => x.Owner)
+                .Include(x => x.Pictures)
+                .Include(x => x.Genres)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
