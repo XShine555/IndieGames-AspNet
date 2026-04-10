@@ -24,8 +24,8 @@ namespace Infrastructure.MassTransit.Activities.Files
                 using var fileStream = File.OpenRead(sourceFilePath);
                 await s3Service.UploadFileAsync(
                     fileStream,
-                    MimeUtility.GetMimeMapping(fileName),
                     $"{executeContext.Arguments.DestinationRoute}/{fileName}",
+                    MimeUtility.GetMimeMapping(fileName),
                     executeContext.CancellationToken);
 
                 return executeContext.CompletedWithVariables(new UploadFileToBucketLog(
