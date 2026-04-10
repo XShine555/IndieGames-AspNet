@@ -60,11 +60,7 @@ namespace Infrastructure.MassTransit.DependencyInjection
             serviceDescriptors.AddScoped<PictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
-                options.AddConsumer<GenerateGamesPicturesConsumer>();
-                options.AddExecuteActivity<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>();
-                options.AddActivity<ResizePictureActivity, ResizePictureLocalArguments, ResizePictureLog>();
-                options.AddActivity<UploadFileToBucketActivity, UploadFileToBucketArguments, UploadFileToBucketLog>();
-                options.AddExecuteActivity<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>();
+                ConfigurePictureWorkflowRegistrations(options);
 
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
                 {
@@ -72,57 +68,93 @@ namespace Infrastructure.MassTransit.DependencyInjection
                         busFactoryConfigurator,
                         busRegistrationContext.GetRequiredService<MassTransitConfiguration>());
 
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildConsumerEndpointName(GenerateGamesPicturesConsumer.EndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
-                        } );
-
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildExecuteActivityEndpointName(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.ExecuteActivityHost<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(busRegistrationContext);
-                        } );
-
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildExecuteActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.ExecuteActivityHost<ResizePictureActivity, ResizePictureLocalArguments>(busRegistrationContext);
-                        } );
-
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildCompensateActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.CompensateActivityHost<ResizePictureActivity, ResizePictureLog>(busRegistrationContext);
-                        } );
-
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildExecuteActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.ExecuteActivityHost<UploadFileToBucketActivity, UploadFileToBucketArguments>(busRegistrationContext);
-                        } );
-
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildCompensateActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.CompensateActivityHost<UploadFileToBucketActivity, UploadFileToBucketLog>(busRegistrationContext);
-                        } );
-
-                    busFactoryConfigurator.ReceiveEndpoint(
-                        EndpointHelper.BuildExecuteActivityEndpointName(SynchronizeGamePicturesActivity.ExecuteEndpointName),
-                        endpointConfigurator =>
-                        {
-                            endpointConfigurator.ExecuteActivityHost<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>(busRegistrationContext);
-                        } );
+                    ConfigurePictureWorkflowEndpoints(busRegistrationContext, busFactoryConfigurator);
                 } );
             } );
             return serviceDescriptors;
+        }
+
+        private static void ConfigurePictureWorkflowRegistrations(IBusRegistrationConfigurator options)
+        {
+            options.AddConsumer<GenerateGamesPicturesConsumer>();
+
+            options.AddExecuteActivity<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>();
+
+            options.AddActivity<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments, DownloadFileFromBucketLog>();
+
+            options.AddActivity<ResizePictureActivity, ResizePictureLocalArguments, ResizePictureLog>();
+
+            options.AddActivity<UploadFileToBucketActivity, UploadFileToBucketArguments, UploadFileToBucketLog>();
+
+            options.AddExecuteActivity<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>();
+        }
+
+        private static void ConfigurePictureWorkflowEndpoints(
+            IBusRegistrationContext busRegistrationContext,
+            IAmazonSqsBusFactoryConfigurator busFactoryConfigurator)
+        {
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(GenerateGamesPicturesConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(DownloadFileFromBucketActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildCompensateActivityEndpointName(DownloadFileFromBucketActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.CompensateActivityHost<DownloadFileFromBucketActivity, DownloadFileFromBucketLog>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<ResizePictureActivity, ResizePictureLocalArguments>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildCompensateActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.CompensateActivityHost<ResizePictureActivity, ResizePictureLog>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<UploadFileToBucketActivity, UploadFileToBucketArguments>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildCompensateActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.CompensateActivityHost<UploadFileToBucketActivity, UploadFileToBucketLog>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildExecuteActivityEndpointName(SynchronizeGamePicturesActivity.ExecuteEndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ExecuteActivityHost<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>(busRegistrationContext);
+                } );
         }
 
         static void ConfigureAmazonSqsHost(
