@@ -35,7 +35,7 @@ namespace Infrastructure.MassTransit.DependencyInjection
                     ConfigureAmazonSqsHost(
                         busFactoryConfigurator,
                         busRegistrationContext.GetRequiredService<MassTransitConfiguration>()));
-            });
+            } );
             return serviceDescriptors;
         }
 
@@ -77,51 +77,51 @@ namespace Infrastructure.MassTransit.DependencyInjection
                         endpointConfigurator =>
                         {
                             endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
-                        });
+                        } );
 
                     busFactoryConfigurator.ReceiveEndpoint(
                         EndpointHelper.BuildExecuteActivityEndpointName(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
                         endpointConfigurator =>
                         {
                             endpointConfigurator.ExecuteActivityHost<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(busRegistrationContext);
-                        });
+                        } );
 
                     busFactoryConfigurator.ReceiveEndpoint(
                         EndpointHelper.BuildExecuteActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
                         endpointConfigurator =>
                         {
                             endpointConfigurator.ExecuteActivityHost<ResizePictureActivity, ResizePictureLocalArguments>(busRegistrationContext);
-                        });
+                        } );
 
                     busFactoryConfigurator.ReceiveEndpoint(
                         EndpointHelper.BuildCompensateActivityEndpointName(ResizePictureActivity.ExecuteEndpointName),
                         endpointConfigurator =>
                         {
                             endpointConfigurator.CompensateActivityHost<ResizePictureActivity, ResizePictureLog>(busRegistrationContext);
-                        });
+                        } );
 
                     busFactoryConfigurator.ReceiveEndpoint(
                         EndpointHelper.BuildExecuteActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
                         endpointConfigurator =>
                         {
                             endpointConfigurator.ExecuteActivityHost<UploadFileToBucketActivity, UploadFileToBucketArguments>(busRegistrationContext);
-                        });
+                        } );
 
                     busFactoryConfigurator.ReceiveEndpoint(
                         EndpointHelper.BuildCompensateActivityEndpointName(UploadFileToBucketActivity.ExecuteEndpointName),
                         endpointConfigurator =>
                         {
                             endpointConfigurator.CompensateActivityHost<UploadFileToBucketActivity, UploadFileToBucketLog>(busRegistrationContext);
-                        });
+                        } );
 
                     busFactoryConfigurator.ReceiveEndpoint(
                         EndpointHelper.BuildExecuteActivityEndpointName(SynchronizeGamePicturesActivity.ExecuteEndpointName),
                         endpointConfigurator =>
                         {
                             endpointConfigurator.ExecuteActivityHost<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>(busRegistrationContext);
-                        });
-                });
-            });
+                        } );
+                } );
+            } );
             return serviceDescriptors;
         }
 
@@ -135,7 +135,7 @@ namespace Infrastructure.MassTransit.DependencyInjection
                     massTransitConfiguration.AccessKey,
                     massTransitConfiguration.SecretKey,
                     massTransitConfiguration.SessionToken));
-            });
+            } );
         }
     }
 }

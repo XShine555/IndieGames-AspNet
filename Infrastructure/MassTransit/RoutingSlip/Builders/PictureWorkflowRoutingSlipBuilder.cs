@@ -24,6 +24,14 @@ namespace Infrastructure.MassTransit.RoutingSlip.Builders
                     @event.SourceKey));
 
             builder.AddActivity(
+                ActivityNames.DownloadFile,
+                EndpointHelper.BuildExecuteActivityUri(DownloadFileFromBucketActivity.ExecuteEndpointName),
+                new DownloadFileFromBucketArguments(
+                    @event.SourceKey,
+                    RoutingSlipVariableNames.Picture.OriginalFilePath
+                    ));
+
+            builder.AddActivity(
                 ActivityNames.ResizeSmall,
                 EndpointHelper.BuildExecuteActivityUri(ResizePictureActivity.ExecuteEndpointName),
                 new ResizePictureLocalArguments(

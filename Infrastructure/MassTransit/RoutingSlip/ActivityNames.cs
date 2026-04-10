@@ -3,6 +3,7 @@
     internal static class ActivityNames
     {
         internal const string GeneratePictureWorkflowPaths = "GeneratePictureWorkflowPaths";
+        internal const string DownloadFile = "DownloadFile";
         internal const string ResizeSmall = "ResizeSmall";
         internal const string ResizeMedium = "ResizeMedium";
         internal const string ResizeLarge = "ResizeLarge";
