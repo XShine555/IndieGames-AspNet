@@ -5,10 +5,6 @@ using Infrastructure.MassTransit.Logs;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using MimeMapping;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Infrastructure.MassTransit.Activities.Files
 {
@@ -38,7 +34,7 @@ namespace Infrastructure.MassTransit.Activities.Files
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "Error uploading file {FilePath} to bucket at {Key}",
+                logger.LogError(exception, "Error uploading file {FilePath} to {Key}",
                     sourceFilePath, executeContext.Arguments.DestinationRoute);
                 throw;
             }
@@ -55,7 +51,7 @@ namespace Infrastructure.MassTransit.Activities.Files
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "Error compensating upload of file to bucket at {Key}",
+                logger.LogError(exception, "Error compensating upload of file to {Key}",
                     compensateContext.Log.DestinationKey);
                 return compensateContext.Failed(exception);
             }
