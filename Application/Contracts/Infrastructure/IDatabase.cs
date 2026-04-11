@@ -15,6 +15,10 @@ namespace Application.Contracts.Infrastructure
 
         DbSet<GameOriginalPicture> GamePictures { get; }
 
+        DbSet<GameArtwork> GameArtworks { get; }
+
+        DbSet<GameArtworkVariant> GameArtworkVariants { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

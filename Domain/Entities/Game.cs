@@ -29,6 +29,8 @@ namespace Domain.Entities
 
         public ICollection<GameOriginalPicture> Pictures { get; set; } = new List<GameOriginalPicture>();
 
+        public ICollection<GameArtwork> Artworks { get; set; } = new List<GameArtwork>();
+
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 
         public ICollection<UserOwnedGame> UserOwnedGames { get; set; } = new List<UserOwnedGame>();
