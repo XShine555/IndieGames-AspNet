@@ -1,5 +1,5 @@
 ﻿using Application.Configuration;
-using Application.Contracts.Infrastructure;
+using Application.Abstractions;
 using Application.Events;
 using Application.Games.Commands;
 using Application.Games.Responses;

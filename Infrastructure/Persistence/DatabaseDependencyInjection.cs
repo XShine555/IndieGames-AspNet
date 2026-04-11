@@ -1,4 +1,4 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using Application.Abstractions;
 using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;

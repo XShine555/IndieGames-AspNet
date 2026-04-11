@@ -1,4 +1,4 @@
-using Application.Contracts.Infrastructure;
+using Application.Abstractions;
 using Application.Users.Queries;
 using Application.Users.Responses;
 using Ardalis.Result;

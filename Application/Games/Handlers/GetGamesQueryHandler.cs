@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Abstractions;
 using Application.Games.Queries;
 using Application.Games.Responses;
 using Mediator;

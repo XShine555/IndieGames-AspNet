@@ -1,5 +1,4 @@
-﻿using Application.Contracts.Application;
-using Application.Contracts.Infrastructure;
+﻿using Application.Abstractions;
 using Application.Genres.Queries;
 using Application.Genres.Responses;
 using Mediator;

@@ -1,4 +1,4 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using Application.Abstractions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 

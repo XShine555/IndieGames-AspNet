@@ -1,4 +1,4 @@
-﻿using Application.Contracts.Infrastructure;
+﻿using Application.Abstractions;
 using Infrastructure.MassTransit.Arguments;
 using Infrastructure.MassTransit.Logs;
 using MassTransit;

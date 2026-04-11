@@ -1,4 +1,4 @@
-﻿namespace Application.Contracts.Infrastructure
+namespace Application.Abstractions
 {
     public interface IEventBus
     {

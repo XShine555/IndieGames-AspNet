@@ -1,7 +1,7 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Contracts.Infrastructure
+namespace Application.Abstractions
 {
     public interface IDatabase
     {

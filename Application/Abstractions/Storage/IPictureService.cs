@@ -1,6 +1,6 @@
-﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp;
 
-namespace Application.Contracts.Infrastructure
+namespace Application.Abstractions
 {
     public interface IPictureService
     {

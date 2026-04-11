@@ -1,5 +1,5 @@
-﻿using Amazon.Runtime;
-using Application.Contracts.Infrastructure;
+using Amazon.Runtime;
+using Application.Abstractions;
 using Infrastructure.Configurations;
 using Infrastructure.MassTransit.Activities.Files;
 using Infrastructure.MassTransit.Activities.Pictures;

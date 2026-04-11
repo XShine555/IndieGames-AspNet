@@ -1,5 +1,5 @@
 ﻿using Application.Configuration;
-using Application.Contracts.Infrastructure;
+using Application.Abstractions;
 using Application.Games.Commands;
 using Ardalis.Result;
 using Mediator;

@@ -1,6 +1,4 @@
-﻿using Application.Contracts.Application;
-
-namespace Application.Contracts.Infrastructure
+namespace Application.Abstractions
 {
     public interface IS3Service
     {

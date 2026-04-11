@@ -1,4 +1,4 @@
-﻿namespace Application.Contracts.Application
+namespace Application.Abstractions
 {
     public interface IFileData
     {

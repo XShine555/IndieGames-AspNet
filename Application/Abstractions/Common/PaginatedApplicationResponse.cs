@@ -1,6 +1,6 @@
-﻿using X.PagedList;
+using X.PagedList;
 
-namespace Application.Contracts.Application
+namespace Application.Abstractions
 {
     public record PaginatedApplicationResponse<T>(
         IReadOnlyCollection<T> Items,
