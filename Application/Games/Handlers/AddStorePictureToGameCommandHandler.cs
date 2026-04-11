@@ -1,6 +1,6 @@
 ﻿using Application.Configuration;
 using Application.Abstractions;
-using Application.Events;
+using Application.Abstractions.Messaging.Games.V1;
 using Application.Games.Commands;
 using Application.Games.Responses;
 using Ardalis.Result;

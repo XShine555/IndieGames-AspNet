@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MassTransit\Filters\" />
+    <Folder Include="Messaging\Features\Games\Activities\Pictures\" />
   </ItemGroup>
 
 </Project>
