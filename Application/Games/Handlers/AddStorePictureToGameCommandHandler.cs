@@ -65,7 +65,7 @@ namespace Application.Games.Handlers
         {
             var game = await database.Games.AsNoTracking()
                 .Include(x => x.Owner)
-                .Include(x => x.Pictures)
+                .Include(x => x.StorePictures)
                 .Include(x => x.Genres)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
@@ -97,9 +97,9 @@ namespace Application.Games.Handlers
             }
         }
 
-        private async Task<GameOriginalPicture?> CreatePictureRecordAsync(AddStorePictureToGameCommand command, string pictureName, CancellationToken cancellationToken)
+        private async Task<GameStorePictures?> CreatePictureRecordAsync(AddStorePictureToGameCommand command, string pictureName, CancellationToken cancellationToken)
         {
-            var newPicture = new GameOriginalPicture
+            var newPicture = new GameStorePictures
             {
                 GameId = command.GameId,
                 OriginalName = pictureName,

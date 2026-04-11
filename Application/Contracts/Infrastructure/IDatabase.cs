@@ -13,7 +13,7 @@ namespace Application.Contracts.Infrastructure
 
         DbSet<UserOwnedGame> UserOwnedGames { get; }
 
-        DbSet<GameOriginalPicture> GamePictures { get; }
+        DbSet<GameStorePictures> GamePictures { get; }
 
         DbSet<GameArtwork> GameArtworks { get; }
 

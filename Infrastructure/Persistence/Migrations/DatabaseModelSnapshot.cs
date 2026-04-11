@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GameOriginalPicture", b =>
+            modelBuilder.Entity("Domain.Entities.GameStorePictures", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,10 +233,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GameOriginalPicture", b =>
+            modelBuilder.Entity("Domain.Entities.GameStorePictures", b =>
                 {
                     b.HasOne("Domain.Entities.Game", "Game")
-                        .WithMany("Pictures")
+                        .WithMany("StorePictures")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -274,7 +274,7 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Genres");
 
-                    b.Navigation("Pictures");
+                    b.Navigation("StorePictures");
 
                     b.Navigation("UserOwnedGames");
                 });

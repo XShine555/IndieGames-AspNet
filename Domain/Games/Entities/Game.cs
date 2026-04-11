@@ -1,4 +1,4 @@
-﻿using Domain.Contracts;
+using Domain.Contracts;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -27,7 +27,7 @@ namespace Domain.Entities
         [MaxLength(36)]
         public required string OwnerId { get; set; }
 
-        public ICollection<GameOriginalPicture> Pictures { get; set; } = new List<GameOriginalPicture>();
+        public ICollection<GameStorePictures> StorePictures { get; set; } = new List<GameStorePictures>();
 
         public ICollection<GameArtwork> Artworks { get; set; } = new List<GameArtwork>();
 
@@ -41,7 +41,7 @@ namespace Domain.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(OwnerId)) ]
+        [ForeignKey(nameof(OwnerId))]
         public User Owner { get; set; }
     }
 }

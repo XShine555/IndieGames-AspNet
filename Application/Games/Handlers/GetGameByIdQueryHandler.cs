@@ -14,7 +14,7 @@ namespace Application.Games.Handlers
         {
             var game = await database.Games.AsNoTracking()
                 .Include(g => g.Genres)
-                .Include(g => g.Pictures)
+                .Include(g => g.StorePictures)
                 .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
             if (game is null)
                 return Result.NotFound();

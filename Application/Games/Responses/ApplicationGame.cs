@@ -20,7 +20,7 @@ namespace Application.Games.Responses
                 game.Description,
                 ApplicationUserSummary.FromEntity(game.Owner),
                 game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
-                game.Pictures.Select(ApplicationGamePicture.FromEntity).ToArray());
+                game.StorePictures.Select(ApplicationGamePicture.FromEntity).ToArray());
         }
     }
 }

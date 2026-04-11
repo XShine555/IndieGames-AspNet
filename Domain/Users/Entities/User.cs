@@ -1,4 +1,4 @@
-﻿using Domain.Contracts;
+using Domain.Contracts;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,7 +28,7 @@ namespace Domain.Entities
 
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        
+
         public ICollection<Game> CreatedGames { get; set; } = new List<Game>();
 
         public ICollection<UserOwnedGame> OwnedGames { get; set; } = new List<UserOwnedGame>();

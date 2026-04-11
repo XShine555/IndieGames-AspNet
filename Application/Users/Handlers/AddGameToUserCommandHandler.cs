@@ -18,13 +18,13 @@ namespace Application.Users.Handlers
                 .Include(u => u.CreatedGames)
                     .ThenInclude(g => g.Genres)
                 .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.Pictures)
+                    .ThenInclude(g => g.StorePictures)
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
                         .ThenInclude(g => g.Genres)
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.Pictures)
+                        .ThenInclude(g => g.StorePictures)
                 .SingleOrDefaultAsync(u => u.IdentityId == command.UserId, cancellationToken);
             if (user is null)
             {
@@ -58,13 +58,13 @@ namespace Application.Users.Handlers
                 .Include(u => u.CreatedGames)
                     .ThenInclude(g => g.Genres)
                 .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.Pictures)
+                    .ThenInclude(g => g.StorePictures)
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
                         .ThenInclude(g => g.Genres)
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.Pictures)
+                        .ThenInclude(g => g.StorePictures)
                 .SingleAsync(u => u.IdentityId == command.UserId, cancellationToken);
 
             return Result.Success(ApplicationUser.FromEntity(user));

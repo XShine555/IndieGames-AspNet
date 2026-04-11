@@ -7,7 +7,7 @@ namespace Domain.Entities
 #pragma warning disable CS8618
     [Table("Game_Artworks")]
     [Index(nameof(GameId), nameof(Type), nameof(SortOrder), IsUnique = true)]
-    [Index(nameof(GameId), nameof(Type)) ]
+    [Index(nameof(GameId), nameof(Type))]
     public class GameArtwork
     {
         [Key]
@@ -48,7 +48,7 @@ namespace Domain.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(GameId)) ]
+        [ForeignKey(nameof(GameId))]
         public Game Game { get; set; }
 
         public ICollection<GameArtworkVariant> Variants { get; set; } = new List<GameArtworkVariant>();
@@ -60,7 +60,7 @@ namespace Domain.Entities
 
             if (Variants.Any(v => v.Size == variant.Size && v.Format == variant.Format))
                 throw new InvalidOperationException("Duplicate artwork variant for the same size and format.");
-            
+
             Variants.Add(variant);
         }
     }

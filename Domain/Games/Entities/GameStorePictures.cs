@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
 #pragma warning disable CS8618
-    [Table("Game_Original_Pictures")]
-    public class GameOriginalPicture
+    [Table("Game_Store_Pictures")]
+    public class GameStorePictures
     {
         [Key]
         public int Id { get; set; }
@@ -59,7 +59,7 @@ namespace Domain.Entities
         [Required]
         public GamePictureProcessingStatus ProcessingStatus { get; set; } = GamePictureProcessingStatus.Pending;
 
-        [ForeignKey(nameof(GameId) )]
+        [ForeignKey(nameof(GameId))]
         public Game Game { get; set; }
 
         [Required]

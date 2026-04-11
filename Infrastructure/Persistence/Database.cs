@@ -17,7 +17,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
 
-        public DbSet<GameOriginalPicture> GamePictures => Set<GameOriginalPicture>();
+        public DbSet<GameStorePictures> GamePictures => Set<GameStorePictures>();
 
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
 

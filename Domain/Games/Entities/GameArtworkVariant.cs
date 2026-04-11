@@ -7,7 +7,7 @@ namespace Domain.Entities
 #pragma warning disable CS8618
     [Table("Game_Artwork_Variants")]
     [Index(nameof(GameArtworkId), nameof(Size), nameof(Format), IsUnique = true)]
-    [Index(nameof(GameArtworkId), nameof(IsPrimary)) ]
+    [Index(nameof(GameArtworkId), nameof(IsPrimary))]
     public class GameArtworkVariant
     {
         [Key]
@@ -48,7 +48,7 @@ namespace Domain.Entities
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(GameArtworkId)) ]
+        [ForeignKey(nameof(GameArtworkId))]
         public GameArtwork GameArtwork { get; set; }
     }
 }

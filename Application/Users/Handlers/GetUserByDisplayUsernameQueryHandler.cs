@@ -19,13 +19,13 @@ namespace Application.Users.Handlers
                 .Include(u => u.CreatedGames)
                     .ThenInclude(g => g.Genres)
                 .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.Pictures)
+                    .ThenInclude(g => g.StorePictures)
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
                         .ThenInclude(g => g.Genres)
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.Pictures)
+                        .ThenInclude(g => g.StorePictures)
                 .SingleOrDefaultAsync(u => u.NormalizedDisplayUsername == normalizedDisplayUsername, cancellationToken);
 
             if (user is null)

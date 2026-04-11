@@ -16,7 +16,7 @@ namespace Application.Games.Handlers
         {
             var game = await database.Games
                 .Include(g => g.Genres)
-                .Include(g => g.Pictures)
+                .Include(g => g.StorePictures)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {

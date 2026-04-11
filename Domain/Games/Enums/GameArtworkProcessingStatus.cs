@@ -1,6 +1,6 @@
 namespace Domain.Entities
 {
-    public enum GamePictureProcessingStatus
+    public enum GameArtworkProcessingStatus
     {
         Pending = 0,
         Processing = 1,

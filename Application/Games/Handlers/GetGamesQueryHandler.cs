@@ -17,7 +17,7 @@ namespace Application.Games.Handlers
             var totalCount = await database.Games.CountAsync(cancellationToken);
             var pagedGames = await database.Games.AsNoTracking()
                 .Include(g => g.Genres)
-                .Include(g => g.Pictures)
+                .Include(g => g.StorePictures)
                 .Where(g => g.NormalizedTitle.Contains(normalizedTitle)
                     || g.Genres.Any(gg => query.Genres.Contains(gg.Id)))
                 .ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);

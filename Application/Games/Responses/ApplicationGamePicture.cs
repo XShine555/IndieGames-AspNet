@@ -20,7 +20,7 @@ namespace Application.Games.Responses
         string ProcessingStatus,
         DateTime AddedAt)
     {
-        public static ApplicationGamePicture FromEntity(GameOriginalPicture gamePicture)
+        public static ApplicationGamePicture FromEntity(GameStorePictures gamePicture)
         {
             return new ApplicationGamePicture(
                 gamePicture.Id,
