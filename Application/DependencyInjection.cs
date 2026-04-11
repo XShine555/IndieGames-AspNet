@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Application
 {
-    public static class IndieGamesApplicationDependencyInjection
+    public static class DependencyInjection
     {
         public static IServiceCollection AddApplicationMediator(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
