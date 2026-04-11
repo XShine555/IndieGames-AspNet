@@ -17,7 +17,7 @@ namespace Application.Games.Responses
         string? LargeRelativePath,
         string? LargeName,
         string? LargeFileExtension,
-        GamePictureProcessingStatus ProcessingStatus,
+        string ProcessingStatus,
         DateTime AddedAt)
     {
         public static ApplicationGamePicture FromEntity(GameOriginalPicture gamePicture)
@@ -37,7 +37,7 @@ namespace Application.Games.Responses
                 gamePicture.LargeRelativePath,
                 gamePicture.LargeName,
                 gamePicture.LargeFileExtension,
-                gamePicture.ProcessingStatus,
+                gamePicture.ProcessingStatus.ToString(),
                 gamePicture.AddedAt);
         }
     }
