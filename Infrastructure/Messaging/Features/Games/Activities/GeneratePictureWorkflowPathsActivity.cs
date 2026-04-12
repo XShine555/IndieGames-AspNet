@@ -1,5 +1,5 @@
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Variables;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -38,12 +38,12 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 return executeContext.CompletedWithVariables(new Dictionary<string, object>
                 {
-                    [RoutingSlipVariableNames.Workflow.TemporalDirectory] = workingDirectory,
-                    [RoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
-                    [RoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
-                    [RoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
-                    [RoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath,
-                    [RoutingSlipVariableNames.Picture.DestinationFolderName] = destinationFolderName
+                    [GameStorePictureRoutingSlipVariableNames.Workflow.TemporalDirectory] = workingDirectory,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.DestinationFolderName] = destinationFolderName
                 });
             }
             catch (Exception exception)

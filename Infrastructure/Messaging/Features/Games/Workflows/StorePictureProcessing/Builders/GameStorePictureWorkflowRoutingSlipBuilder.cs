@@ -3,14 +3,14 @@ using Infrastructure.Messaging.Configuration;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Games.Activities;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Variables;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
 
-namespace Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Builders
+namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders
 {
-    public class PictureWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
+    public class GameStorePictureWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
     {
         public RoutingSlipBuilder Build(GenerateGamesPicturesEvent @event)
         {
@@ -18,76 +18,75 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Bu
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
 
             builder.AddActivity(
-                GameActivityNames.GeneratePictureWorkflowPaths,
+                GameStorePictureActivityNames.GeneratePictureWorkflowPaths,
                 EndpointHelper.BuildExecuteActivityUri(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
                 new GeneratePictureWorkflowPathsArguments(
                     workerConfiguration.Routes.TemporaryFilesDirectory,
                     @event.SourceKey));
 
             builder.AddActivity(
-                GameActivityNames.DownloadFile,
+                GameStorePictureActivityNames.DownloadFile,
                 EndpointHelper.BuildExecuteActivityUri(DownloadFileFromBucketActivity.ExecuteEndpointName),
                 new DownloadFileFromBucketArguments(
                     @event.SourceKey,
-                    RoutingSlipVariableNames.Picture.OriginalFilePath
-                    ));
+                    GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath));
 
             builder.AddActivity(
-                GameActivityNames.ResizeSmall,
+                GameStorePictureActivityNames.ResizeSmall,
                 EndpointHelper.BuildExecuteActivityUri(ResizePictureActivity.ExecuteEndpointName),
                 new ResizePictureLocalArguments(
-                    RoutingSlipVariableNames.Picture.OriginalFilePath,
-                    RoutingSlipVariableNames.Picture.SmallResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath,
                     @event.SmallSize.Width,
                     @event.SmallSize.Height));
 
             builder.AddActivity(
-                GameActivityNames.ResizeMedium,
+                GameStorePictureActivityNames.ResizeMedium,
                 EndpointHelper.BuildExecuteActivityUri(ResizePictureActivity.ExecuteEndpointName),
                 new ResizePictureLocalArguments(
-                    RoutingSlipVariableNames.Picture.OriginalFilePath,
-                    RoutingSlipVariableNames.Picture.MediumResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath,
                     @event.MediumSize.Width,
                     @event.MediumSize.Height));
 
             builder.AddActivity(
-                GameActivityNames.ResizeLarge,
+                GameStorePictureActivityNames.ResizeLarge,
                 EndpointHelper.BuildExecuteActivityUri(ResizePictureActivity.ExecuteEndpointName),
                 new ResizePictureLocalArguments(
-                    RoutingSlipVariableNames.Picture.OriginalFilePath,
-                    RoutingSlipVariableNames.Picture.LargeResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath,
                     @event.LargeSize.Width,
                     @event.LargeSize.Height));
 
             builder.AddActivity(
-                GameActivityNames.UploadSmall,
+                GameStorePictureActivityNames.UploadSmall,
                 EndpointHelper.BuildExecuteActivityUri(UploadFileToBucketActivity.ExecuteEndpointName),
                 new UploadFileToBucketArguments(
-                    RoutingSlipVariableNames.Picture.SmallResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath,
                     @event.SmallDestinationRoute));
 
             builder.AddActivity(
-                GameActivityNames.UploadMedium,
+                GameStorePictureActivityNames.UploadMedium,
                 EndpointHelper.BuildExecuteActivityUri(UploadFileToBucketActivity.ExecuteEndpointName),
                 new UploadFileToBucketArguments(
-                    RoutingSlipVariableNames.Picture.MediumResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath,
                     @event.MediumDestinationRoute));
 
             builder.AddActivity(
-                GameActivityNames.UploadLarge,
+                GameStorePictureActivityNames.UploadLarge,
                 EndpointHelper.BuildExecuteActivityUri(UploadFileToBucketActivity.ExecuteEndpointName),
                 new UploadFileToBucketArguments(
-                    RoutingSlipVariableNames.Picture.LargeResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath,
                     @event.LargeDestinationRoute));
 
             builder.AddActivity(
-                GameActivityNames.SynchronizeGamePictures,
-                EndpointHelper.BuildExecuteActivityUri(SynchronizeGamePicturesActivity.ExecuteEndpointName),
-                new SynchronizeGamePicturesArguments(
+                GameStorePictureActivityNames.SynchronizeGameStorePictures,
+                EndpointHelper.BuildExecuteActivityUri(SynchronizeGameStorePicturesActivity.ExecuteEndpointName),
+                new SynchronizeGameStorePicturesArguments(
                     @event.PictureId,
-                    RoutingSlipVariableNames.Picture.SmallResizedFilePath,
-                    RoutingSlipVariableNames.Picture.MediumResizedFilePath,
-                    RoutingSlipVariableNames.Picture.LargeResizedFilePath));
+                    GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath,
+                    GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath));
 
             return builder;
         }

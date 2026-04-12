@@ -3,7 +3,7 @@ using Infrastructure.Messaging.Configuration;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Games.Activities;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Users.Activities;
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Variables;

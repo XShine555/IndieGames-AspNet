@@ -1,6 +1,6 @@
-namespace Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Variables
+namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables
 {
-    internal static class RoutingSlipVariableNames
+    internal static class GameStorePictureRoutingSlipVariableNames
     {
         internal static class Workflow
         {

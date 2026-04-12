@@ -1,12 +1,12 @@
 using Application.Abstractions.Messaging.Games.V1;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Builders;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Messaging.Features.Games.Consumers
 {
     public class GenerateGamesPicturesConsumer(
-        PictureWorkflowRoutingSlipBuilder pictureWorkflowRoutingSlipBuilder,
+        GameStorePictureWorkflowRoutingSlipBuilder gameStorePictureWorkflowRoutingSlipBuilder,
         ILogger<GenerateGamesPicturesConsumer> logger)
         : IConsumer<GenerateGamesPicturesEvent>
     {
@@ -16,7 +16,7 @@ namespace Infrastructure.Messaging.Features.Games.Consumers
         {
             try
             {
-                var routingSlip = pictureWorkflowRoutingSlipBuilder
+                var routingSlip = gameStorePictureWorkflowRoutingSlipBuilder
                     .Build(context.Message)
                     .Build();
 

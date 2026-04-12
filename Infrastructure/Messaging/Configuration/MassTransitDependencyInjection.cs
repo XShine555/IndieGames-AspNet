@@ -7,9 +7,9 @@ using Infrastructure.Messaging.Features.Common.Registrations;
 using Infrastructure.Messaging.Features.Games.Activities;
 using Infrastructure.Messaging.Features.Games.Consumers;
 using Infrastructure.Messaging.Features.Games.Registrations;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Builders;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Logs;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
 using Infrastructure.Messaging.Features.Users.Activities;
 using Infrastructure.Messaging.Features.Users.Consumers;
 using Infrastructure.Messaging.Features.Users.Registrations;
@@ -64,7 +64,7 @@ namespace Infrastructure.Messaging.Configuration
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<WorkerConfiguration>>().Value);
 
-            serviceDescriptors.AddScoped<PictureWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<GameStorePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<UserProfilePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
@@ -122,10 +122,10 @@ namespace Infrastructure.Messaging.Configuration
                 busRegistrationContext,
                 UploadFileToBucketActivity.ExecuteEndpointName);
 
-            ConfigureExecuteActivityEndpoint<SynchronizeGamePicturesActivity, SynchronizeGamePicturesArguments>(
+            ConfigureExecuteActivityEndpoint<SynchronizeGameStorePicturesActivity, SynchronizeGameStorePicturesArguments>(
                 busFactoryConfigurator,
                 busRegistrationContext,
-                SynchronizeGamePicturesActivity.ExecuteEndpointName);
+                SynchronizeGameStorePicturesActivity.ExecuteEndpointName);
 
             ConfigureExecuteActivityEndpoint<SynchronizeUserProfilePicturesActivity, SynchronizeUserProfilePicturesArguments>(
                 busFactoryConfigurator,

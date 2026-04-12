@@ -1,6 +1,6 @@
 using Application.Abstractions;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Logs;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;

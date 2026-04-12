@@ -1,4 +1,4 @@
-namespace Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments
+namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments
 {
     public record GeneratePictureWorkflowPathsArguments(
         string TemporaryDirectory,

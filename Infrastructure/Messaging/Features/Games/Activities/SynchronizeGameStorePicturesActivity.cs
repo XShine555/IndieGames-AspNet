@@ -1,20 +1,20 @@
 using Application.Abstractions;
 using Domain.Entities;
-using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
-    public class SynchronizeGamePicturesActivity(
+    public class SynchronizeGameStorePicturesActivity(
         IDatabase database,
-        ILogger<SynchronizeGamePicturesActivity> logger)
-        : IExecuteActivity<SynchronizeGamePicturesArguments>
+        ILogger<SynchronizeGameStorePicturesActivity> logger)
+        : IExecuteActivity<SynchronizeGameStorePicturesArguments>
     {
-        public const string ExecuteEndpointName = "synchronize-game-pictures";
+        public const string ExecuteEndpointName = "synchronize-game-store-pictures";
 
-        public async Task<ExecutionResult> Execute(ExecuteContext<SynchronizeGamePicturesArguments> executeContext)
+        public async Task<ExecutionResult> Execute(ExecuteContext<SynchronizeGameStorePicturesArguments> executeContext)
         {
             var smallResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.SmallPictureVariable);
             ArgumentNullException.ThrowIfNull(smallResizedVariable, nameof(smallResizedVariable));
@@ -53,7 +53,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 logger.LogDebug("Synchronized generated pictures for picture {PictureId}",
                     picture.Id);
-                logger.LogInformation("Synchronize game pictures activity completed for picture {PictureId}",
+                logger.LogInformation("Synchronize game store pictures activity completed for picture {PictureId}",
                     picture.Id);
 
                 return executeContext.Completed();
