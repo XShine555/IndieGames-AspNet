@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Persistence;
 using Domain.Entities;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using MassTransit;

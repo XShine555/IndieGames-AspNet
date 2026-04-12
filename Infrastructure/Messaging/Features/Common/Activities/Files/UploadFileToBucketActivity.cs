@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Storage;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
 using MassTransit;

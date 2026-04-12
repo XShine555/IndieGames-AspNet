@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Common;
 using Application.Genres.Responses;
 using Mediator;
 

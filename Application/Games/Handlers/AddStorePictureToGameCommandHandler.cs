@@ -1,5 +1,7 @@
 ﻿using Application.Configuration;
-using Application.Abstractions;
+using Application.Abstractions.Persistence;
+using Application.Abstractions.Storage;
+using Application.Abstractions.Messaging;
 using Application.Abstractions.Messaging.Games.V1;
 using Application.Games.Commands;
 using Application.Games.Responses;

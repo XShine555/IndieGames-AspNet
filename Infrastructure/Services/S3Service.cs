@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
-using Application.Abstractions;
+using Application.Abstractions.Common;
+using Application.Abstractions.Storage;
 using Infrastructure.Configurations;
 
 namespace Infrastructure.Services

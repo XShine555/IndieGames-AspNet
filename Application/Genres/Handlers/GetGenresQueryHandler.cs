@@ -1,4 +1,5 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Common;
+using Application.Abstractions.Persistence;
 using Application.Genres.Queries;
 using Application.Genres.Responses;
 using Mediator;

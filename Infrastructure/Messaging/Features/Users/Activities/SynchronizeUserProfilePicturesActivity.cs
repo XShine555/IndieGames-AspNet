@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Persistence;
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Arguments;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;

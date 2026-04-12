@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using MassTransit;
 
 namespace Infrastructure.Messaging.EventBus

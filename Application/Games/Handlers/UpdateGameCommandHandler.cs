@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Persistence;
 using Application.Games.Commands;
 using Application.Games.Responses;
 using Ardalis.Result;

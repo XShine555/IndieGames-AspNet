@@ -1,6 +1,6 @@
 ﻿using Amazon;
 using Amazon.S3;
-using Application.Abstractions;
+using Application.Abstractions.Storage;
 using Infrastructure.Configurations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

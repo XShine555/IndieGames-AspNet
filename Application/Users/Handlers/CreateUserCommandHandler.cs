@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Persistence;
 using Application.Configuration;
 using Application.Users.Commands;
 using Application.Users.Responses;

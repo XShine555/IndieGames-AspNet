@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Persistence;
 using Application.Users.Queries;
 using Application.Users.Responses;
 using Ardalis.Result;

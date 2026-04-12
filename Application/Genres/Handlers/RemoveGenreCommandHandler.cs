@@ -1,4 +1,4 @@
-using Application.Abstractions;
+using Application.Abstractions.Persistence;
 using Application.Genres.Commands;
 using Ardalis.Result;
 using Mediator;

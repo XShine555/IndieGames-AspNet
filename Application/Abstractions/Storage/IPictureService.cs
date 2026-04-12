@@ -1,6 +1,6 @@
 using SixLabors.ImageSharp;
 
-namespace Application.Abstractions
+namespace Application.Abstractions.Storage
 {
     public interface IPictureService
     {

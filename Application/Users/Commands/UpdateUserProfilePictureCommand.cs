@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Common;
 using Application.Users.Responses;
 using Ardalis.Result;
 using Mediator;

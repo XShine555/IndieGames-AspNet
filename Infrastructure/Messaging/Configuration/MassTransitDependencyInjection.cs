@@ -1,5 +1,5 @@
 using Amazon.Runtime;
-using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Infrastructure.Messaging.EventBus;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;

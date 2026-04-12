@@ -1,4 +1,4 @@
-﻿using Application.Abstractions;
+﻿using Application.Abstractions.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 

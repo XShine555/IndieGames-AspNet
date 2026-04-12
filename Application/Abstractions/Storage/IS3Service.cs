@@ -1,4 +1,6 @@
-namespace Application.Abstractions
+using Application.Abstractions.Common;
+
+namespace Application.Abstractions.Storage
 {
     public interface IS3Service
     {
