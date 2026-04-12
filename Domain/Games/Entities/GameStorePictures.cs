@@ -32,7 +32,7 @@ namespace Domain.Entities
         public string? SmallName { get; set; }
 
         [MaxLength(16)]
-        public string? SmallFileExtension { get; set; }
+        public string? SmallFileContentType { get; set; }
 
         [MaxLength(128)]
         public string? MediumRelativePath { get; set; }
@@ -41,7 +41,7 @@ namespace Domain.Entities
         public string? MediumName { get; set; }
 
         [MaxLength(16)]
-        public string? MediumFileExtension { get; set; }
+        public string? MediumContentType { get; set; }
 
         [MaxLength(128)]
         public string? LargeRelativePath { get; set; }
@@ -50,7 +50,7 @@ namespace Domain.Entities
         public string? LargeName { get; set; }
 
         [MaxLength(16)]
-        public string? LargeFileExtension { get; set; }
+        public string? LargeContentType { get; set; }
 
         [Required]
         public GamePictureProcessingStatus ProcessingStatus { get; set; } = GamePictureProcessingStatus.Pending;

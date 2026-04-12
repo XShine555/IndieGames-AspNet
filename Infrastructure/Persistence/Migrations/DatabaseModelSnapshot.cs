@@ -184,7 +184,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<string>("LargeFileExtension")
+                    b.Property<string>("LargeContentType")
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
 
@@ -196,7 +196,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("MediumFileExtension")
+                    b.Property<string>("MediumContentType")
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
 
@@ -226,7 +226,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("ProcessingStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("SmallFileExtension")
+                    b.Property<string>("SmallFileContentType")
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
 
@@ -340,7 +340,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("LargeFileExtension")
+                    b.Property<string>("LargeContentType")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
@@ -355,7 +355,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("MediumFileExtension")
+                    b.Property<string>("MediumContentType")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
@@ -382,7 +382,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("SmallFileExtension")
+                    b.Property<string>("SmallFileContentType")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");

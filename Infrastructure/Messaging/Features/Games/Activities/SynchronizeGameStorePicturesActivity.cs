@@ -4,6 +4,7 @@ using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.A
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MimeMapping;
 
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
@@ -36,15 +37,15 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 }
 
                 picture.SmallName = Path.GetFileName(smallResizedVariable);
-                picture.SmallFileExtension = Path.GetExtension(smallResizedVariable);
+                picture.SmallFileContentType = MimeUtility.GetMimeMapping(smallResizedVariable);
                 picture.SmallRelativePath = picture.OriginalRelativePath;
 
                 picture.MediumName = Path.GetFileName(mediumResizedVariable);
-                picture.MediumFileExtension = Path.GetExtension(mediumResizedVariable);
+                picture.MediumContentType = MimeUtility.GetMimeMapping(mediumResizedVariable);
                 picture.MediumRelativePath = picture.OriginalRelativePath;
 
                 picture.LargeName = Path.GetFileName(largeResizedVariable);
-                picture.LargeFileExtension = Path.GetExtension(largeResizedVariable);
+                picture.LargeContentType = MimeUtility.GetMimeMapping(largeResizedVariable);
                 picture.LargeRelativePath = picture.OriginalRelativePath;
 
                 picture.ProcessingStatus = GamePictureProcessingStatus.Completed;
