@@ -340,7 +340,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("LargeContentType")
+                    b.Property<string>("LargeFileExtension")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
@@ -355,7 +355,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("MediumContentType")
+                    b.Property<string>("MediumFileExtension")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
@@ -382,7 +382,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("SmallFileContentType")
+                    b.Property<string>("SmallFileExtension")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
