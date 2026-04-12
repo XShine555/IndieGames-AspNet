@@ -1,11 +1,10 @@
-﻿using Application.Configuration;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Application
+namespace Application.Configuration
 {
-    public static class DependencyInjection
+    public static class MediatorDependencyInjection
     {
         public static IServiceCollection AddApplicationMediator(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
