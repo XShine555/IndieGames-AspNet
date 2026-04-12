@@ -5,6 +5,8 @@
         public const string SectionName = "UserConfiguration";
 
         public UserRoutes Routes { get; set; } = new UserRoutes();
+
+        public UserProfilePictureSizes Sizes { get; set; } = new UserProfilePictureSizes();
     }
 
     public class UserRoutes
@@ -44,5 +46,21 @@
         public string PresetMediumProfilePicture { get; set; } = "preset_medium_profile_picture.png";
 
         public string PresetLargeProfilePicture { get; set; } = "preset_large_profile_picture.png";
+    }
+
+    public class UserProfilePictureSizes
+    {
+        public UserProfilePictureSize Small { get; set; } = new UserProfilePictureSize() { Width = 64, Height = 64 };
+
+        public UserProfilePictureSize Medium { get; set; } = new UserProfilePictureSize() { Width = 128, Height = 128 };
+
+        public UserProfilePictureSize Large { get; set; } = new UserProfilePictureSize() { Width = 256, Height = 256 };
+    }
+
+    public class UserProfilePictureSize
+    {
+        public int Width { get; set; }
+
+        public int Height { get; set; }
     }
 }
