@@ -39,22 +39,20 @@ namespace Application.Games.Handlers
 
             var uploadResult = await UploadOriginalPictureAsync(command, pictureKey, cancellationToken);
             if (!uploadResult.IsSuccess)
-            {
                 return Result.Error("Error uploading picture");
-            }
 
-            var newPicture = await CreatePictureRecordAsync(command, pictureName, cancellationToken);
-            if (newPicture is null)
+            var pictureResult = await CreatePictureRecordAsync(command, pictureName, cancellationToken);
+            if (!pictureResult.IsSuccess)
             {
                 await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
                 return Result.Error("Error saving picture");
             }
 
+            var newPicture = pictureResult.Value;
             var enqueueResult = await PublishGeneratePicturesEventAsync(game.Id, newPicture.Id, pictureKey, cancellationToken);
             if (!enqueueResult.IsSuccess)
             {
-                database.GamePictures.Remove(newPicture);
-                await database.SaveChangesAsync(cancellationToken);
+                await RemovePictureRecordAsync(newPicture, cancellationToken);
                 await s3Service.RemoveFileAsync(pictureKey, cancellationToken);
                 return Result.Error("Error scheduling picture processing");
             }
@@ -98,7 +96,7 @@ namespace Application.Games.Handlers
             }
         }
 
-        private async Task<GameStorePictures?> CreatePictureRecordAsync(AddStorePictureToGameCommand command, string pictureName, CancellationToken cancellationToken)
+        private async Task<Result<GameStorePictures>> CreatePictureRecordAsync(AddStorePictureToGameCommand command, string pictureName, CancellationToken cancellationToken)
         {
             var newPicture = new GameStorePictures
             {
@@ -114,12 +112,12 @@ namespace Application.Games.Handlers
             try
             {
                 await database.SaveChangesAsync(cancellationToken);
-                return newPicture;
+                return Result.Success(newPicture);
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Error saving picture for game with id {GameId}", command.GameId);
-                return null;
+                return Result.Error();
             }
         }
 
@@ -145,6 +143,12 @@ namespace Application.Games.Handlers
                 logger.LogError(exception, "Error publishing picture generation event for picture id {PictureId}", pictureId);
                 return Result.Error();
             }
+        }
+
+        private async Task RemovePictureRecordAsync(GameStorePictures picture, CancellationToken cancellationToken)
+        {
+            database.GamePictures.Remove(picture);
+            await database.SaveChangesAsync(cancellationToken);
         }
     }
 }
