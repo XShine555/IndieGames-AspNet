@@ -15,6 +15,8 @@ namespace Application.Abstractions
 
         DbSet<GameStorePictures> GamePictures { get; }
 
+        DbSet<UserProfilePictures> UserProfilePictures { get; }
+
         DbSet<GameArtwork> GameArtworks { get; }
 
         DbSet<GameArtworkVariant> GameArtworkVariants { get; }

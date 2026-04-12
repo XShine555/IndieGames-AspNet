@@ -14,6 +14,7 @@ namespace Application.Users.Handlers
         {
             var user = await database.Users
                 .AsNoTracking()
+                .Include(u => u.ProfilePicture)
                 .Include(u => u.CreatedGames)
                     .ThenInclude(g => g.Genres)
                 .Include(u => u.CreatedGames)

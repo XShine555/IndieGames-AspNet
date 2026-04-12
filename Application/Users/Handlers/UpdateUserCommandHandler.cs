@@ -15,6 +15,7 @@ namespace Application.Users.Handlers
         public async ValueTask<Result<ApplicationUser>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
         {
             var user = await database.Users.AsNoTracking()
+                .Include(u => u.ProfilePicture)
                 .SingleOrDefaultAsync(u => u.IdentityId == command.IdentityId, cancellationToken);
             if (user is null)
             {

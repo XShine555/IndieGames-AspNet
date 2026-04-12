@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Configuration;
 using Application.Users.Commands;
 using Application.Users.Responses;
 using Ardalis.Result;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class CreateUserCommandHandler(IDatabase database, ILogger<CreateUserCommandHandler> logger)
+    public class CreateUserCommandHandler(
+        IDatabase database,
+        UserConfiguration userConfiguration,
+        ILogger<CreateUserCommandHandler> logger)
         : ICommandHandler<CreateUserCommand, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
@@ -26,8 +30,22 @@ namespace Application.Users.Handlers
                 IdentityId = command.IdentityId,
                 Username = command.Username,
                 DisplayUsername = command.Username,
-                NormalizedDisplayUsername = command.Username.Trim().ToUpperInvariant()
+                NormalizedDisplayUsername = command.Username.Trim().ToUpperInvariant(),
+                ProfilePicture = new UserProfilePictures
+                {
+                    UserId = command.IdentityId,
+                    SmallRelativePath = userConfiguration.Routes.GetSmallProfilePicturesFolderPath(command.IdentityId),
+                    SmallName = userConfiguration.Routes.PresetSmallProfilePicture,
+                    SmallFileExtension = Path.GetExtension(userConfiguration.Routes.PresetSmallProfilePicture),
+                    MediumRelativePath = userConfiguration.Routes.GetMediumProfilePicturesFolderPath(command.IdentityId),
+                    MediumName = userConfiguration.Routes.PresetMediumProfilePicture,
+                    MediumFileExtension = Path.GetExtension(userConfiguration.Routes.PresetMediumProfilePicture),
+                    LargeRelativePath = userConfiguration.Routes.GetLargeProfilePicturesFolderPath(command.IdentityId),
+                    LargeName = userConfiguration.Routes.PresetLargeProfilePicture,
+                    LargeFileExtension = Path.GetExtension(userConfiguration.Routes.PresetLargeProfilePicture)
+                }
             };
+
             await database.Users.AddAsync(newUser, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);

@@ -19,6 +19,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameStorePictures> GamePictures => Set<GameStorePictures>();
 
+        public DbSet<UserProfilePictures> UserProfilePictures => Set<UserProfilePictures>();
+
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
 
         public DbSet<GameArtworkVariant> GameArtworkVariants => Set<GameArtworkVariant>();
@@ -34,6 +36,15 @@ namespace Infrastructure.Persistence
             modelBuilder.Entity<User>(u =>
             {
                 u.HasIndex(x => x.IdentityId).IsUnique();
+            } );
+
+            modelBuilder.Entity<UserProfilePictures>(p =>
+            {
+                p.HasIndex(x => x.UserId).IsUnique();
+                p.HasOne(x => x.User)
+                    .WithOne(x => x.ProfilePicture)
+                    .HasForeignKey<UserProfilePictures>(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             } );
 
             modelBuilder.Entity<GameArtwork>(a =>

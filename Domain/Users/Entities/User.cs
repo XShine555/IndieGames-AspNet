@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
+#pragma warning disable CS8618
     [Table("Users")]
     public class User : IUpdatableEntity
     {
@@ -28,6 +29,8 @@ namespace Domain.Entities
 
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public UserProfilePictures ProfilePicture { get; set; }
 
         public ICollection<Game> CreatedGames { get; set; } = new List<Game>();
 

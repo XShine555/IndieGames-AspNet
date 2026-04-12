@@ -16,6 +16,13 @@ namespace Application
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<GameConfiguration>>().Value);
 
+            serviceDescriptors
+                .AddOptionsWithValidateOnStart<UserConfiguration>()
+                .Bind(configuration.GetRequiredSection(UserConfiguration.SectionName))
+                .ValidateDataAnnotations();
+            serviceDescriptors.AddSingleton(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<UserConfiguration>>().Value);
+
             serviceDescriptors.AddMediator();
             return serviceDescriptors;
         }
