@@ -2,7 +2,7 @@
 {
     public class UserConfiguration
     {
-        public const string SectionName = "UserConfiguration";
+        public const string SectionName = "Users";
 
         public UserRoutes Routes { get; set; } = new UserRoutes();
 
