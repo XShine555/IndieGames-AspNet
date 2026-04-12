@@ -8,7 +8,7 @@ namespace Application.Games.Responses
         string? SmallPictureKey,
         string? MediumPictureKey,
         string? LargePictureKey,
-        string ProcessingStatus,
+        GamePictureProcessingStatus ProcessingStatus,
         DateTime AddedAt)
     {
         public static ApplicationGamePicture FromEntity(GameStorePictures gamePicture)
@@ -19,7 +19,7 @@ namespace Application.Games.Responses
                 BuildPictureKey(gamePicture.SmallRelativePath, gamePicture.SmallName),
                 BuildPictureKey(gamePicture.MediumRelativePath, gamePicture.MediumName),
                 BuildPictureKey(gamePicture.LargeRelativePath, gamePicture.LargeName),
-                gamePicture.ProcessingStatus.ToString(),
+                gamePicture.ProcessingStatus,
                 gamePicture.AddedAt);
         }
 
