@@ -23,17 +23,17 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Messaging.Configuration
 {
-    public static class MassTransitDependencyInjection
+    public static class MessagingDependencyInjection
     {
         public static IServiceCollection AddMassTransitClient(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
             serviceDescriptors
-                .AddOptionsWithValidateOnStart<MassTransitConfiguration>()
-                .Bind(configuration.GetRequiredSection(MassTransitConfiguration.SectionName))
+                .AddOptionsWithValidateOnStart<MessagingConfiguration>()
+                .Bind(configuration.GetRequiredSection(MessagingConfiguration.SectionName))
                 .ValidateDataAnnotations();
 
             serviceDescriptors.AddSingleton(serviceProvider =>
-                serviceProvider.GetRequiredService<IOptions<MassTransitConfiguration>>().Value);
+                serviceProvider.GetRequiredService<IOptions<MessagingConfiguration>>().Value);
 
             serviceDescriptors.AddScoped<IEventBus, MassTransitEventBus>();
             serviceDescriptors.AddMassTransit(options =>
@@ -41,7 +41,7 @@ namespace Infrastructure.Messaging.Configuration
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
                     ConfigureAmazonSqsHost(
                         busFactoryConfigurator,
-                        busRegistrationContext.GetRequiredService<MassTransitConfiguration>()));
+                        busRegistrationContext.GetRequiredService<MessagingConfiguration>()));
             } );
             return serviceDescriptors;
         }
@@ -49,12 +49,12 @@ namespace Infrastructure.Messaging.Configuration
         public static IServiceCollection AddMassTransitConsumer(this IServiceCollection serviceDescriptors, IConfiguration configuration)
         {
             serviceDescriptors
-                .AddOptionsWithValidateOnStart<MassTransitConfiguration>()
-                .Bind(configuration.GetRequiredSection(MassTransitConfiguration.SectionName))
+                .AddOptionsWithValidateOnStart<MessagingConfiguration>()
+                .Bind(configuration.GetRequiredSection(MessagingConfiguration.SectionName))
                 .ValidateDataAnnotations();
 
             serviceDescriptors.AddSingleton(serviceProvider =>
-                serviceProvider.GetRequiredService<IOptions<MassTransitConfiguration>>().Value);
+                serviceProvider.GetRequiredService<IOptions<MessagingConfiguration>>().Value);
 
             serviceDescriptors
                 .AddOptionsWithValidateOnStart<WorkerConfiguration>()
@@ -76,7 +76,7 @@ namespace Infrastructure.Messaging.Configuration
                 {
                     ConfigureAmazonSqsHost(
                         busFactoryConfigurator,
-                        busRegistrationContext.GetRequiredService<MassTransitConfiguration>());
+                        busRegistrationContext.GetRequiredService<MessagingConfiguration>());
 
                     ConfigurePictureWorkflowEndpoints(busRegistrationContext, busFactoryConfigurator);
                 } );
@@ -135,7 +135,7 @@ namespace Infrastructure.Messaging.Configuration
 
         private static void ConfigureAmazonSqsHost(
             IAmazonSqsBusFactoryConfigurator busFactoryConfigurator,
-            MassTransitConfiguration massTransitConfiguration)
+            MessagingConfiguration massTransitConfiguration)
         {
             busFactoryConfigurator.Host(massTransitConfiguration.Address, options =>
             {

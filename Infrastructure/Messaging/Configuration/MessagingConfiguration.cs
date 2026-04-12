@@ -2,9 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Infrastructure.Messaging.Configuration
 {
-    public class MassTransitConfiguration
+    public class MessagingConfiguration
     {
-        public const string SectionName = "MassTransit";
+        public const string SectionName = "Messaging";
 
         [Required]
         public required string Address { get; set; }
