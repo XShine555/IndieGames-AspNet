@@ -41,8 +41,4 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Messaging\Features\Games\Activities\Pictures\" />
-  </ItemGroup>
-
 </Project>

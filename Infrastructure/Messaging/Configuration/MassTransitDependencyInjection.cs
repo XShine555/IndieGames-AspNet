@@ -10,6 +10,11 @@ using Infrastructure.Messaging.Features.Games.Registrations;
 using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.PictureProcessing.Logs;
+using Infrastructure.Messaging.Features.Users.Activities;
+using Infrastructure.Messaging.Features.Users.Consumers;
+using Infrastructure.Messaging.Features.Users.Registrations;
+using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Builders;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -60,10 +65,12 @@ namespace Infrastructure.Messaging.Configuration
                 serviceProvider.GetRequiredService<IOptions<WorkerConfiguration>>().Value);
 
             serviceDescriptors.AddScoped<PictureWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<UserProfilePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
                 options.AddCommonMessaging();
                 options.AddGamesMessaging();
+                options.AddUsersMessaging();
 
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
                 {
@@ -86,6 +93,13 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(GenerateUsersProfilePicturesConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<GenerateUsersProfilePicturesConsumer>(busRegistrationContext);
                 } );
 
             ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
@@ -112,6 +126,11 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 SynchronizeGamePicturesActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<SynchronizeUserProfilePicturesActivity, SynchronizeUserProfilePicturesArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                SynchronizeUserProfilePicturesActivity.ExecuteEndpointName);
         }
 
         private static void ConfigureAmazonSqsHost(

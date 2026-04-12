@@ -8,6 +8,7 @@ using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Application.Abstractions.Common;
 
 namespace Application.Games.Handlers
 {

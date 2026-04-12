@@ -1,8 +1,8 @@
-using Application.Abstractions.Common;
+﻿using Application.Abstractions.Common;
 
-namespace Application.Abstractions.Messaging.Games.V1
+namespace Application.Abstractions.Messaging.Users.V1
 {
-    public record GenerateGamesPicturesEvent(
+    public record GenerateUsersProfilePicturesEvent(
         int PictureId,
         string SourceKey,
         string SmallDestinationRoute,
