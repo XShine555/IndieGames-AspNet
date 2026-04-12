@@ -20,9 +20,9 @@ namespace Application.Games.Handlers
         IEventBus eventBus,
         ILogger<AddStorePictureToGameCommandHandler> logger,
         GameConfiguration gameConfiguration)
-        : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGame>>
+        : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGamePicture>>
     {
-        public async ValueTask<Result<ApplicationGame>> Handle(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationGamePicture>> Handle(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
         {
             var gameResult = await ValidateGameOwnerAsync(command, cancellationToken);
             if (!gameResult.IsSuccess)
@@ -60,7 +60,7 @@ namespace Application.Games.Handlers
             }
 
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success(ApplicationGame.FromEntity(game));
+            return Result.Success(ApplicationGamePicture.FromEntity(newPicture));
         }
 
         private async Task<Result<Game>> ValidateGameOwnerAsync(AddStorePictureToGameCommand command, CancellationToken cancellationToken)

@@ -9,5 +9,5 @@ namespace Application.Games.Commands
         string IdentityId,
         int GameId,
         IFileData fileData)
-        : ICommand<Result<ApplicationGame>>;
+        : ICommand<Result<ApplicationGamePicture>>;
 }
