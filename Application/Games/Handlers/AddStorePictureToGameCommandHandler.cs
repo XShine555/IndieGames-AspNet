@@ -60,7 +60,7 @@ namespace Application.Games.Handlers
             }
 
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success(ApplicationGamePicture.FromEntity(newPicture));
+            return Result.Success();
         }
 
         private async Task<Result<Game>> ValidateGameOwnerAsync(AddStorePictureToGameCommand command, CancellationToken cancellationToken)
