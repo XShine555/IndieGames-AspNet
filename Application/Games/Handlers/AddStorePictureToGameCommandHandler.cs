@@ -59,6 +59,7 @@ namespace Application.Games.Handlers
                 return Result.Error("Error scheduling picture processing");
             }
 
+            await database.SaveChangesAsync(cancellationToken);
             return Result.Success(ApplicationGame.FromEntity(game));
         }
 
