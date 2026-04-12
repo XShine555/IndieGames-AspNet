@@ -6,8 +6,8 @@ namespace Domain.Entities
 {
 #pragma warning disable CS8618
     [Table("Game_Artwork_Variants")]
-    [Index(nameof(GameArtworkId), nameof(Size), nameof(Format), IsUnique = true)]
-    [Index(nameof(GameArtworkId), nameof(IsPrimary))]
+    [Index(nameof(GameArtworkId), nameof(Size), nameof(PictureContentType), IsUnique = true)]
+    [Index(nameof(GameArtworkId), nameof(IsPrimary)) ]
     public class GameArtworkVariant
     {
         [Key]
@@ -20,7 +20,8 @@ namespace Domain.Entities
         public GameArtworkVariantSize Size { get; set; }
 
         [Required]
-        public ImageFormat Format { get; set; }
+        [MaxLength(128)]
+        public required string PictureContentType { get; set; }
 
         [Required]
         [MaxLength(256)]
@@ -48,7 +49,7 @@ namespace Domain.Entities
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(GameArtworkId))]
+        [ForeignKey(nameof(GameArtworkId)) ]
         public GameArtwork GameArtwork { get; set; }
     }
 }

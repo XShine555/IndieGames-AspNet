@@ -26,8 +26,8 @@ namespace Domain.Entities
         public required string Name { get; set; }
 
         [Required]
-        [MaxLength(16)]
-        public required string FileExtension { get; set; }
+        [MaxLength(32)]
+        public required string ContentType { get; set; }
 
         [MaxLength(128)]
         public string? SmallRelativePath { get; set; }

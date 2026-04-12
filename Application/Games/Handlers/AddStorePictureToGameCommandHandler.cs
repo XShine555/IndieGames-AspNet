@@ -103,7 +103,7 @@ namespace Application.Games.Handlers
             {
                 GameId = command.GameId,
                 OriginalName = pictureName,
-                FileExtension = command.fileData.FileExtension,
+                ContentType = command.fileData.ContentType,
                 Name = pictureName,
                 RelativePath = gameConfiguration.Routes.GetStorePictureFolderPath(command.GameId),
                 ProcessingStatus = GamePictureProcessingStatus.Pending

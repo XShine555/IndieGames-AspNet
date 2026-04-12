@@ -25,7 +25,7 @@ namespace Application.Games.Responses
             return new ApplicationGamePicture(
                 gamePicture.Id,
                 gamePicture.OriginalName,
-                gamePicture.FileExtension,
+                gamePicture.ContentType,
                 gamePicture.RelativePath,
                 gamePicture.Name,
                 gamePicture.SmallRelativePath,
