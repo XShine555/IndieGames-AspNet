@@ -16,6 +16,7 @@ namespace Application.Games.Handlers
             var normalizedTitle = query.Title.Trim().ToLower();
             var totalCount = await database.Games.CountAsync(cancellationToken);
             var pagedGames = await database.Games.AsNoTracking()
+                .Include(g => g.Owner)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
                 .Where(g => g.NormalizedTitle.Contains(normalizedTitle)

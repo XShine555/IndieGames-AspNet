@@ -13,6 +13,7 @@ namespace Application.Games.Handlers
         public async ValueTask<Result<ApplicationGame>> Handle(GetGameByIdQuery query, CancellationToken cancellationToken)
         {
             var game = await database.Games.AsNoTracking()
+                .Include(g => g.Owner)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
                 .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
