@@ -37,15 +37,15 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 picture.SmallName = Path.GetFileName(smallResizedVariable);
                 picture.SmallFileExtension = Path.GetExtension(smallResizedVariable);
-                picture.SmallRelativePath = picture.RelativePath;
+                picture.SmallRelativePath = picture.OriginalRelativePath;
 
                 picture.MediumName = Path.GetFileName(mediumResizedVariable);
                 picture.MediumFileExtension = Path.GetExtension(mediumResizedVariable);
-                picture.MediumRelativePath = picture.RelativePath;
+                picture.MediumRelativePath = picture.OriginalRelativePath;
 
                 picture.LargeName = Path.GetFileName(largeResizedVariable);
                 picture.LargeFileExtension = Path.GetExtension(largeResizedVariable);
-                picture.LargeRelativePath = picture.RelativePath;
+                picture.LargeRelativePath = picture.OriginalRelativePath;
 
                 picture.ProcessingStatus = GamePictureProcessingStatus.Completed;
 

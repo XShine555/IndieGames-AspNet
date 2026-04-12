@@ -104,9 +104,8 @@ namespace Application.Games.Handlers
             {
                 GameId = command.GameId,
                 OriginalName = pictureName,
-                ContentType = command.fileData.ContentType,
-                Name = pictureName,
-                RelativePath = gameConfiguration.Routes.GetStorePictureFolderPath(command.GameId),
+                OriginalContentType = command.fileData.ContentType,
+                OriginalRelativePath = gameConfiguration.Routes.GetStorePictureFolderPath(command.GameId),
                 ProcessingStatus = GamePictureProcessingStatus.Pending
             };
 

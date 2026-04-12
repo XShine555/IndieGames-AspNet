@@ -4,19 +4,10 @@ namespace Application.Games.Responses
 {
     public record ApplicationGamePicture(
         int PictureId,
-        string OriginalName,
-        string FileExtension,
-        string RelativePath,
-        string Name,
-        string? SmallRelativePath,
-        string? SmallName,
-        string? SmallFileExtension,
-        string? MediumRelativePath,
-        string? MediumName,
-        string? MediumFileExtension,
-        string? LargeRelativePath,
-        string? LargeName,
-        string? LargeFileExtension,
+        string OriginalPictureKey,
+        string SmallPictureKey,
+        string MediumPictureKey,
+        string LargePictureKey,
         string ProcessingStatus,
         DateTime AddedAt)
     {
@@ -24,19 +15,10 @@ namespace Application.Games.Responses
         {
             return new ApplicationGamePicture(
                 gamePicture.Id,
-                gamePicture.OriginalName,
-                gamePicture.ContentType,
-                gamePicture.RelativePath,
-                gamePicture.Name,
-                gamePicture.SmallRelativePath,
-                gamePicture.SmallName,
-                gamePicture.SmallFileExtension,
-                gamePicture.MediumRelativePath,
-                gamePicture.MediumName,
-                gamePicture.MediumFileExtension,
-                gamePicture.LargeRelativePath,
-                gamePicture.LargeName,
-                gamePicture.LargeFileExtension,
+                gamePicture.OriginalRelativePath + gamePicture.OriginalName,
+                gamePicture.SmallRelativePath + gamePicture.SmallName,
+                gamePicture.MediumRelativePath + gamePicture.MediumName,
+                gamePicture.LargeRelativePath + gamePicture.LargeName,
                 gamePicture.ProcessingStatus.ToString(),
                 gamePicture.AddedAt);
         }

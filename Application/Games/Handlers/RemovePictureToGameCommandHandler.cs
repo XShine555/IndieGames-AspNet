@@ -30,7 +30,7 @@ namespace Application.Games.Handlers
 
             try
             {
-                await s3Service.RemoveFileAsync(picture.RelativePath + picture.Name, cancellationToken);
+                await s3Service.RemoveFileAsync(picture.OriginalRelativePath + picture.OriginalName, cancellationToken);
             }
             catch (Exception exception)
             {

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260412140423_InitialMigration")]
+    [Migration("20260412182056_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -184,11 +184,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varchar(32)");
-
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
@@ -216,23 +211,23 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("OriginalContentType")
                         .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("varchar(36)");
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
 
                     b.Property<string>("OriginalName")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<int>("ProcessingStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RelativePath")
+                    b.Property<string>("OriginalRelativePath")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
+
+                    b.Property<int>("ProcessingStatus")
+                        .HasColumnType("int");
 
                     b.Property<string>("SmallFileExtension")
                         .HasMaxLength(16)

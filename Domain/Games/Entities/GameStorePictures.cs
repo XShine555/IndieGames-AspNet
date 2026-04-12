@@ -19,15 +19,11 @@ namespace Domain.Entities
 
         [Required]
         [MaxLength(128)]
-        public required string RelativePath { get; set; }
-
-        [Required]
-        [MaxLength(36)]
-        public required string Name { get; set; }
+        public required string OriginalRelativePath { get; set; }
 
         [Required]
         [MaxLength(32)]
-        public required string ContentType { get; set; }
+        public required string OriginalContentType { get; set; }
 
         [MaxLength(128)]
         public string? SmallRelativePath { get; set; }
