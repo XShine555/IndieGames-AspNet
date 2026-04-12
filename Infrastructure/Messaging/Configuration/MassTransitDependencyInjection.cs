@@ -3,6 +3,7 @@ using Application.Abstractions;
 using Infrastructure.Messaging.EventBus;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
+using Infrastructure.Messaging.Features.Common.Registrations;
 using Infrastructure.Messaging.Features.Games.Activities;
 using Infrastructure.Messaging.Features.Games.Consumers;
 using Infrastructure.Messaging.Features.Games.Registrations;
@@ -36,7 +37,7 @@ namespace Infrastructure.Messaging.Configuration
                     ConfigureAmazonSqsHost(
                         busFactoryConfigurator,
                         busRegistrationContext.GetRequiredService<MassTransitConfiguration>()));
-            });
+            } );
             return serviceDescriptors;
         }
 
@@ -61,6 +62,7 @@ namespace Infrastructure.Messaging.Configuration
             serviceDescriptors.AddScoped<PictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
+                options.AddCommonMessaging();
                 options.AddGamesMessaging();
 
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
@@ -70,8 +72,8 @@ namespace Infrastructure.Messaging.Configuration
                         busRegistrationContext.GetRequiredService<MassTransitConfiguration>());
 
                     ConfigurePictureWorkflowEndpoints(busRegistrationContext, busFactoryConfigurator);
-                });
-            });
+                } );
+            } );
             return serviceDescriptors;
         }
 
@@ -84,7 +86,7 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
-                });
+                } );
 
             ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
                 busFactoryConfigurator,
@@ -122,7 +124,7 @@ namespace Infrastructure.Messaging.Configuration
                     massTransitConfiguration.AccessKey,
                     massTransitConfiguration.SecretKey,
                     massTransitConfiguration.SessionToken));
-            });
+            } );
         }
 
         private static void ConfigureExecuteActivityEndpoint<TActivity, TArguments>(
@@ -137,7 +139,7 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ExecuteActivityHost<TActivity, TArguments>(busRegistrationContext);
-                });
+                } );
         }
 
         private static void ConfigureActivityEndpoint<TActivity, TArguments, TLog>(
@@ -155,14 +157,14 @@ namespace Infrastructure.Messaging.Configuration
                     endpointConfigurator.ExecuteActivityHost<TActivity, TArguments>(
                         EndpointHelper.BuildCompensateActivityUri(endpointName),
                         busRegistrationContext);
-                });
+                } );
 
             busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildCompensateActivityEndpointName(endpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.CompensateActivityHost<TActivity, TLog>(busRegistrationContext);
-                });
+                } );
         }
     }
 }
