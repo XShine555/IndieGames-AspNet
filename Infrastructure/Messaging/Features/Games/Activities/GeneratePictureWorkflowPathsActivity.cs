@@ -1,3 +1,4 @@
+using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Variables;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
 using MassTransit;
@@ -43,7 +44,11 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                     [GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
                     [GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
                     [GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath,
-                    [GameStorePictureRoutingSlipVariableNames.Picture.DestinationFolderName] = destinationFolderName
+                    [GameStorePictureRoutingSlipVariableNames.Picture.DestinationFolderName] = destinationFolderName,
+                    [GameArtworkRoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
+                    [GameArtworkRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
+                    [GameArtworkRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
+                    [GameArtworkRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath
                 });
             }
             catch (Exception exception)

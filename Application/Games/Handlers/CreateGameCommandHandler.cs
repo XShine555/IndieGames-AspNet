@@ -30,7 +30,6 @@ namespace Application.Games.Handlers
                 return Result.Invalid(new ValidationError("Capsule, Header and Main artworks are required."));
 
             var owner = await database.Users
-                .AsNoTracking()
                 .SingleOrDefaultAsync(u => u.IdentityId == command.identityId, cancellationToken);
             if (owner is null)
             {
@@ -58,7 +57,7 @@ namespace Application.Games.Handlers
             }
 
             var game = CreateGameCommand.ToEntity(command, genres);
-            game.OwnerId = owner.IdentityId;
+            game.Owner = owner;
 
             await database.Games.AddAsync(game, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
