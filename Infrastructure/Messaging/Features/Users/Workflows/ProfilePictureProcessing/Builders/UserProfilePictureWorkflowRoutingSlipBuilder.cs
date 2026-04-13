@@ -1,5 +1,6 @@
 using Application.Abstractions.Messaging.Users.V1;
 using Infrastructure.Messaging.Configuration;
+using Infrastructure.Messaging.Consumers;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Games.Activities;
@@ -9,6 +10,7 @@ using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Variables;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
+using MassTransit.Courier.Contracts;
 
 namespace Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Builders
 {
@@ -20,6 +22,9 @@ namespace Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProces
         {
             ArgumentNullException.ThrowIfNull(@event);
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
+            builder.AddSubscription(
+                EndpointHelper.BuildConsumerUri(RoutingSlipCleanUpConsumer.QueueName),
+                RoutingSlipEvents.Completed | RoutingSlipEvents.Faulted);
 
             builder.AddActivity(
                 UserProfilePictureActivityNames.GeneratePictureWorkflowPaths,

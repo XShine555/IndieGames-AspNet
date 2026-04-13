@@ -3,6 +3,8 @@ using Domain.ProcessExecutions;
 using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Variables;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -35,17 +37,13 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 var workingDirectory = Path.Combine(executeContext.Arguments.TemporaryDirectory, destinationFolderName);
 
                 var sourceFilePath = Path.Combine(
-                    workingDirectory,
-                    Guid.NewGuid() + Path.GetExtension(executeContext.Arguments.SourceKey));
+                    workingDirectory, Guid.NewGuid().ToString() + Path.GetExtension(executeContext.Arguments.SourceKey));
                 var smallPictureFilePath = Path.Combine(
-                    workingDirectory,
-                    Guid.NewGuid() + ResizedPictureFileExtension);
+                    workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension);
                 var mediumPictureFilePath = Path.Combine(
-                    workingDirectory,
-                    Guid.NewGuid() + ResizedPictureFileExtension);
+                    workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension);
                 var largePictureFilePath = Path.Combine(
-                    workingDirectory,
-                    Guid.NewGuid() + ResizedPictureFileExtension);
+                    workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension);
 
                 Directory.CreateDirectory(workingDirectory);
                 logger.LogDebug("Generated game artwork workflow paths in {WorkingDirectory}", workingDirectory);
@@ -56,6 +54,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 var result = executeContext.CompletedWithVariables(new Dictionary<string, object>
                 {
+                    [GameStorePictureRoutingSlipVariableNames.Workflow.TemporalDirectory] = workingDirectory,
                     [GameArtworkRoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
                     [GameArtworkRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
                     [GameArtworkRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,

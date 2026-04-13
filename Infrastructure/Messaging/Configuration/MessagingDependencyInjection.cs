@@ -1,5 +1,6 @@
 using Amazon.Runtime;
 using Application.Abstractions.Messaging;
+using Infrastructure.Messaging.Consumers;
 using Infrastructure.Messaging.EventBus;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
@@ -19,6 +20,7 @@ using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Builders;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
+using MassTransit.Courier.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -91,6 +93,13 @@ namespace Infrastructure.Messaging.Configuration
             IBusRegistrationContext busRegistrationContext,
             IAmazonSqsBusFactoryConfigurator busFactoryConfigurator)
         {
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(RoutingSlipCleanUpConsumer.QueueName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<RoutingSlipCleanUpConsumer>(busRegistrationContext);
+                } );
+
             busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildConsumerEndpointName(GenerateGamesPicturesConsumer.EndpointName),
                 endpointConfigurator =>
