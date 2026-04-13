@@ -1,3 +1,6 @@
+using Application.Abstractions.Persistence;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Variables;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
@@ -7,56 +10,86 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class GeneratePictureWorkflowPathsActivity(
+        IProcessTrackingStore processTrackingStore,
         ILogger<GeneratePictureWorkflowPathsActivity> logger)
         : IExecuteActivity<GeneratePictureWorkflowPathsArguments>
     {
         public const string ExecuteEndpointName = "generate-picture-workflow-paths";
 
-        internal const String ResizedPictureFileExtension = ".webp";
+        internal const string ResizedPictureFileExtension = ".webp";
 
         public async Task<ExecutionResult> Execute(ExecuteContext<GeneratePictureWorkflowPathsArguments> executeContext)
         {
+            var processExecutionId = GetProcessExecutionId(executeContext);
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             try
             {
-                var destinationFolderName = Guid.NewGuid().ToString();
-                var workingDirectory = Path.Combine(executeContext.Arguments.TemporaryDirectory, destinationFolderName);
+                var workflowPaths = CreateWorkflowPaths(executeContext.Arguments.TemporaryDirectory, executeContext.Arguments.SourceKey);
 
-                var sourceFilePath = Path.Combine(
-                    workingDirectory, Guid.NewGuid().ToString() + Path.GetExtension(executeContext.Arguments.SourceKey));
-                var smallPictureFilePath = Path.Combine(
-                    workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension);
-                var mediumPictureFilePath = Path.Combine(
-                    workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension);
-                var largePictureFilePath = Path.Combine(
-                    workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension);
-
-                Directory.CreateDirectory(workingDirectory);
-                logger.LogDebug("Generated picture workflow paths in {WorkingDirectory}",
-                    workingDirectory);
-                logger.LogInformation("Generate workflow paths activity completed for source {SourceKey} in {WorkingDirectory}",
+                Directory.CreateDirectory(workflowPaths.WorkingDirectory);
+                logger.LogDebug("Generated picture workflow paths in {WorkingDirectory}", workflowPaths.WorkingDirectory);
+                logger.LogInformation(
+                    "Generate picture workflow paths activity completed for source {SourceKey} in {WorkingDirectory}",
                     executeContext.Arguments.SourceKey,
-                    workingDirectory);
+                    workflowPaths.WorkingDirectory);
 
-                return executeContext.CompletedWithVariables(new Dictionary<string, object>
+                var result = executeContext.CompletedWithVariables(new Dictionary<string, object>
                 {
-                    [GameStorePictureRoutingSlipVariableNames.Workflow.TemporalDirectory] = workingDirectory,
-                    [GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
-                    [GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
-                    [GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
-                    [GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath,
-                    [GameStorePictureRoutingSlipVariableNames.Picture.DestinationFolderName] = destinationFolderName,
-                    [GameArtworkRoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
-                    [GameArtworkRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
-                    [GameArtworkRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
-                    [GameArtworkRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath
-                });
+                    [GameStorePictureRoutingSlipVariableNames.Workflow.TemporalDirectory] = workflowPaths.WorkingDirectory,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath] = workflowPaths.SourceFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath] = workflowPaths.SmallPictureFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath] = workflowPaths.MediumPictureFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath] = workflowPaths.LargePictureFilePath,
+                    [GameStorePictureRoutingSlipVariableNames.Picture.DestinationFolderName] = workflowPaths.DestinationFolderName,
+                    [GameArtworkRoutingSlipVariableNames.Picture.OriginalFilePath] = workflowPaths.SourceFilePath,
+                    [GameArtworkRoutingSlipVariableNames.Picture.SmallResizedFilePath] = workflowPaths.SmallPictureFilePath,
+                    [GameArtworkRoutingSlipVariableNames.Picture.MediumResizedFilePath] = workflowPaths.MediumPictureFilePath,
+                    [GameArtworkRoutingSlipVariableNames.Picture.LargeResizedFilePath] = workflowPaths.LargePictureFilePath
+                } );
+
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "Failed to generate picture workflow paths for {SourceKey}",
-                    executeContext.Arguments.SourceKey);
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
+                logger.LogError(exception, "Failed to generate picture workflow paths for {SourceKey}", executeContext.Arguments.SourceKey);
                 throw;
             }
         }
+
+        private static Guid GetProcessExecutionId(ExecuteContext<GeneratePictureWorkflowPathsArguments> executeContext)
+        {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            return Guid.Parse(processExecutionIdValue);
+        }
+
+        private static PictureWorkflowPaths CreateWorkflowPaths(string temporaryDirectory, string sourceKey)
+        {
+            var destinationFolderName = Guid.NewGuid().ToString();
+            var workingDirectory = Path.Combine(temporaryDirectory, destinationFolderName);
+
+            return new PictureWorkflowPaths(
+                workingDirectory,
+                Path.Combine(workingDirectory, Guid.NewGuid().ToString() + Path.GetExtension(sourceKey)),
+                Path.Combine(workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension),
+                Path.Combine(workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension),
+                Path.Combine(workingDirectory, Guid.NewGuid().ToString() + ResizedPictureFileExtension),
+                destinationFolderName);
+        }
+
+        private sealed record PictureWorkflowPaths(
+            string WorkingDirectory,
+            string SourceFilePath,
+            string SmallPictureFilePath,
+            string MediumPictureFilePath,
+            string LargePictureFilePath,
+            string DestinationFolderName);
     }
 }

@@ -1,4 +1,6 @@
 using Application.Abstractions.Messaging.Games.V1;
+using Application.Abstractions.Persistence;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Builders;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -6,6 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Games.Consumers
 {
     public class ProcessNewGameArtworkConsumer(
+        IProcessTrackingStore processTrackingStore,
         GameArtworkWorkflowRoutingSlipBuilder gameArtworkWorkflowRoutingSlipBuilder,
         ILogger<ProcessNewGameArtworkConsumer> logger)
         : IConsumer<ProcessNewGameArtworkEvent>
@@ -16,9 +19,17 @@ namespace Infrastructure.Messaging.Features.Games.Consumers
         {
             try
             {
-                var routingSlip = gameArtworkWorkflowRoutingSlipBuilder
-                    .Build(context.Message)
-                    .Build();
+                var processExecutionId = await processTrackingStore.GetOrCreateProcessAsync(
+                    GameArtworkWorkflowRoutingSlipBuilder.ProcessName,
+                    context.CorrelationId,
+                    context.ConversationId,
+                    context.MessageId,
+                    context.CancellationToken);
+
+                var routingSlipBuilder = gameArtworkWorkflowRoutingSlipBuilder.Build(context.Message);
+                routingSlipBuilder.AddVariable(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId, processExecutionId.ToString("D"));
+
+                var routingSlip = routingSlipBuilder.Build();
 
                 await context.Execute(routingSlip, context.CancellationToken);
 

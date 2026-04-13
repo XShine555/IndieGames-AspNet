@@ -1,5 +1,7 @@
 using Application.Abstractions.Persistence;
 using Domain.Entities;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using MimeMapping;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class SynchronizeGameStorePicturesActivity(
+        IProcessTrackingStore processTrackingStore,
         IDatabase database,
         ILogger<SynchronizeGameStorePicturesActivity> logger)
         : IExecuteActivity<SynchronizeGameStorePicturesArguments>
@@ -17,6 +20,16 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
         public async Task<ExecutionResult> Execute(ExecuteContext<SynchronizeGameStorePicturesArguments> executeContext)
         {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             var smallResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.SmallPictureVariable);
             ArgumentNullException.ThrowIfNull(smallResizedVariable, nameof(smallResizedVariable));
             var mediumResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.MediumPictureVariable);
@@ -57,10 +70,14 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 logger.LogInformation("Synchronize game store pictures activity completed for picture {PictureId}",
                     picture.Id);
 
-                return executeContext.Completed();
+                var result = executeContext.Completed();
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                await processTrackingStore.CompleteProcessAsync(processExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "An error occurred while synchronizing generated pictures for picture id {PictureId}",
                     executeContext.Arguments.PictureId);
                 throw;

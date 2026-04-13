@@ -27,6 +27,16 @@ namespace Infrastructure.Persistence
 
             if (existingProcess is not null)
             {
+                if (existingProcess.Status is ProcessExecutionStatus.Failed or ProcessExecutionStatus.Compensated)
+                {
+                    existingProcess.Status = ProcessExecutionStatus.Running;
+                    existingProcess.StartedDateTime = DateTime.UtcNow;
+                    existingProcess.FinishedDateTime = null;
+                    existingProcess.ErrorMessage = null;
+
+                    await database.SaveChangesAsync(cancellationToken);
+                }
+
                 return existingProcess.Id;
             }
 
@@ -49,9 +59,13 @@ namespace Infrastructure.Persistence
             Guid processExecutionId,
             string stepName,
             ProcessStepComponentType componentType,
-            int attempt,
             CancellationToken cancellationToken)
         {
+            var attempt = (await database.ProcessStepExecutions
+                    .Where(step => step.ProcessExecutionId == processExecutionId && step.StepName == stepName)
+                    .Select(step => (int?)step.Attempt)
+                    .MaxAsync(cancellationToken) ?? 0) + 1;
+
             var step = new ProcessStepExecution
             {
                 ProcessExecutionId = processExecutionId,
@@ -75,27 +89,57 @@ namespace Infrastructure.Persistence
             step.Status = ProcessExecutionStatus.Succeeded;
             step.FinishedDateTime = DateTime.UtcNow;
 
+            await database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task CompensateStepAsync(Guid processExecutionId, string stepName, CancellationToken cancellationToken)
+        {
+            var step = await database.ProcessStepExecutions
+                .Where(currentStep => currentStep.ProcessExecutionId == processExecutionId
+                                      && currentStep.StepName == stepName
+                                      && currentStep.Status == ProcessExecutionStatus.Succeeded)
+                .OrderByDescending(currentStep => currentStep.StartedDateTime)
+                .ThenByDescending(currentStep => currentStep.Attempt)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (step is null)
+            {
+                return;
+            }
+
+            step.Status = ProcessExecutionStatus.Compensated;
+            step.FinishedDateTime = DateTime.UtcNow;
+
+            var hasRunningOrSucceededSteps = await database.ProcessStepExecutions
+                .AnyAsync(
+                    currentStep => currentStep.ProcessExecutionId == processExecutionId
+                                   && (currentStep.Status == ProcessExecutionStatus.Running
+                                       || currentStep.Status == ProcessExecutionStatus.Succeeded),
+                    cancellationToken);
+
+            if (!hasRunningOrSucceededSteps)
+            {
+                var process = await database.ProcessExecutions
+                    .SingleAsync(currentProcess => currentProcess.Id == processExecutionId, cancellationToken);
+
+                if (process.Status != ProcessExecutionStatus.Failed)
+                {
+                    process.Status = ProcessExecutionStatus.Compensated;
+                    process.FinishedDateTime = DateTime.UtcNow;
+                }
+            }
+
+            await database.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task CompleteProcessAsync(Guid processExecutionId, CancellationToken cancellationToken)
+        {
             var process = await database.ProcessExecutions
                 .SingleAsync(currentProcess => currentProcess.Id == processExecutionId, cancellationToken);
 
-            var hasRunningSteps = await database.ProcessStepExecutions
-                .AnyAsync(
-                    currentStep => currentStep.ProcessExecutionId == processExecutionId
-                                   && currentStep.Status == ProcessExecutionStatus.Running,
-                    cancellationToken);
-
-            var hasFailedSteps = await database.ProcessStepExecutions
-                .AnyAsync(
-                    currentStep => currentStep.ProcessExecutionId == processExecutionId
-                                   && currentStep.Status == ProcessExecutionStatus.Failed,
-                    cancellationToken);
-
-            if (!hasRunningSteps && !hasFailedSteps)
-            {
-                process.Status = ProcessExecutionStatus.Succeeded;
-                process.FinishedDateTime = DateTime.UtcNow;
-                process.ErrorMessage = string.Empty;
-            }
+            process.Status = ProcessExecutionStatus.Succeeded;
+            process.FinishedDateTime = DateTime.UtcNow;
+            process.ErrorMessage = string.Empty;
 
             await database.SaveChangesAsync(cancellationToken);
         }

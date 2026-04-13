@@ -13,6 +13,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Bu
 {
     public class GameArtworkWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
     {
+        public const string ProcessName = "ProcessNewGameArtwork";
+
         public RoutingSlipBuilder Build(ProcessNewGameArtworkEvent @event)
         {
             ArgumentNullException.ThrowIfNull(@event);

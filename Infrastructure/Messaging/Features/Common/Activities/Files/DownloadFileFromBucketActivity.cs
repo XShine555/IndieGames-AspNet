@@ -1,4 +1,7 @@
+using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
 using MassTransit;
@@ -7,28 +10,48 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Common.Activities.Files
 {
     public class DownloadFileFromBucketActivity(
+        IProcessTrackingStore processTrackingStore,
         IS3Service s3Service,
         ILogger<DownloadFileFromBucketActivity> logger)
          : IActivity<DownloadFileFromBucketArguments, DownloadFileFromBucketLog>
     {
         public const string ExecuteEndpointName = "download-file-from-bucket";
 
-        public Task<CompensationResult> Compensate(CompensateContext<DownloadFileFromBucketLog> compensateContext)
+        public async Task<CompensationResult> Compensate(CompensateContext<DownloadFileFromBucketLog> compensateContext)
         {
             try
             {
+                var processExecutionIdValue = compensateContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                    ?? throw new InvalidOperationException("Process execution id is required.");
+                var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+                await processTrackingStore.CompensateStepAsync(
+                    processExecutionId,
+                    ExecuteEndpointName,
+                    compensateContext.CancellationToken);
+
                 File.Delete(compensateContext.Log.DestinationFilePath);
-                return Task.FromResult(compensateContext.Compensated());
+                return compensateContext.Compensated();
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Failed to compensate DownloadFileFromBucketActivity");
-                return Task.FromResult(compensateContext.Failed());
+                return compensateContext.Failed();
             }
         }
 
         public async Task<ExecutionResult> Execute(ExecuteContext<DownloadFileFromBucketArguments> executeContext)
         {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             var destinationPath = executeContext.GetVariable<string>(executeContext.Arguments.DestinationFilePathVariable);
             ArgumentNullException.ThrowIfNull(destinationPath, nameof(destinationPath));
 
@@ -52,12 +75,16 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
                     executeContext.Arguments.Key,
                     destinationPath);
 
-                return executeContext.Completed(new DownloadFileFromBucketLog(
+                var result = executeContext.Completed(new DownloadFileFromBucketLog(
                     executeContext.Arguments.Key,
                     destinationPath));
+
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "Failed to download file from bucket");
                 throw;
             }

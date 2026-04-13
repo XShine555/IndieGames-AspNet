@@ -1,3 +1,6 @@
+using Application.Abstractions.Persistence;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
 using MassTransit;
@@ -6,6 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class GenerateGameStorePictureWorkflowPathsActivity(
+        IProcessTrackingStore processTrackingStore,
         ILogger<GenerateGameStorePictureWorkflowPathsActivity> logger)
         : IExecuteActivity<GenerateGameStorePictureWorkflowPathsArguments>
     {
@@ -13,8 +17,18 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
         internal const string ResizedPictureFileExtension = ".webp";
 
-        public Task<ExecutionResult> Execute(ExecuteContext<GenerateGameStorePictureWorkflowPathsArguments> executeContext)
+        public async Task<ExecutionResult> Execute(ExecuteContext<GenerateGameStorePictureWorkflowPathsArguments> executeContext)
         {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             try
             {
                 var destinationFolderName = Guid.NewGuid().ToString();
@@ -40,7 +54,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                     executeContext.Arguments.SourceKey,
                     workingDirectory);
 
-                return Task.FromResult(executeContext.CompletedWithVariables(new Dictionary<string, object>
+                var result = executeContext.CompletedWithVariables(new Dictionary<string, object>
                 {
                     [GameStorePictureRoutingSlipVariableNames.Workflow.TemporalDirectory] = workingDirectory,
                     [GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath] = sourceFilePath,
@@ -48,10 +62,14 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                     [GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
                     [GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath,
                     [GameStorePictureRoutingSlipVariableNames.Picture.DestinationFolderName] = destinationFolderName
-                }));
+                });
+
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "Failed to generate game store picture workflow paths for {SourceKey}", executeContext.Arguments.SourceKey);
                 throw;
             }

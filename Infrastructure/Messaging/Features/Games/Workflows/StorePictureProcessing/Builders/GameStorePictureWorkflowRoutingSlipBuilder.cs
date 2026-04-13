@@ -12,6 +12,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
 {
     public class GameStorePictureWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
     {
+        public const string ProcessName = "GenerateGamesPictures";
+
         public RoutingSlipBuilder Build(GenerateGamesPicturesEvent @event)
         {
             ArgumentNullException.ThrowIfNull(@event);

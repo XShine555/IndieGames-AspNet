@@ -14,6 +14,8 @@ namespace Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProces
 {
     public class UserProfilePictureWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
     {
+        public const string ProcessName = "GenerateUsersProfilePictures";
+
         public RoutingSlipBuilder Build(GenerateUsersProfilePicturesEvent @event)
         {
             ArgumentNullException.ThrowIfNull(@event);

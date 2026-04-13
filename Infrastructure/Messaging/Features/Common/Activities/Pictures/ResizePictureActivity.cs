@@ -1,4 +1,7 @@
+using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
 using MassTransit;
@@ -8,28 +11,48 @@ using SixLabors.ImageSharp;
 namespace Infrastructure.Messaging.Features.Common.Activities.Pictures
 {
     public class ResizePictureActivity(
+        IProcessTrackingStore processTrackingStore,
         IPictureService pictureService,
         ILogger<ResizePictureActivity> logger)
         : IActivity<ResizePictureLocalArguments, ResizePictureLog>
     {
         public const string ExecuteEndpointName = "resize-picture";
 
-        public Task<CompensationResult> Compensate(CompensateContext<ResizePictureLog> compensateContext)
+        public async Task<CompensationResult> Compensate(CompensateContext<ResizePictureLog> compensateContext)
         {
             try
             {
+                var processExecutionIdValue = compensateContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                    ?? throw new InvalidOperationException("Process execution id is required.");
+                var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+                await processTrackingStore.CompensateStepAsync(
+                    processExecutionId,
+                    ExecuteEndpointName,
+                    compensateContext.CancellationToken);
+
                 File.Delete(compensateContext.Log.DestinationFilePath);
-                return Task.FromResult(compensateContext.Compensated());
+                return compensateContext.Compensated();
             }
             catch (Exception exception)
             {
                 logger.LogError(exception, "Failed to compensate resized file {DestinationFilePath}", compensateContext.Log.DestinationFilePath);
-                return Task.FromResult(compensateContext.Failed(exception));
+                return compensateContext.Failed(exception);
             }
         }
 
         public async Task<ExecutionResult> Execute(ExecuteContext<ResizePictureLocalArguments> executeContext)
         {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             var sourceFilePath = executeContext.GetVariable<string>(executeContext.Arguments.SourceFilePathVariable);
             ArgumentNullException.ThrowIfNull(sourceFilePath, nameof(sourceFilePath));
             var destinationFilePath = executeContext.GetVariable<string>(executeContext.Arguments.DestinationFilePathVariable);
@@ -61,10 +84,13 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Pictures
                     sourceFilePath,
                     destinationFilePath);
 
-                return executeContext.Completed(new ResizePictureLog(destinationFilePath));
+                var result = executeContext.Completed(new ResizePictureLog(destinationFilePath));
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "An error occurred while resizing the picture from {SourceFilePath} to {DestinationFilePath} with width {Width} and height {Height}.",
                     sourceFilePath, destinationFilePath, executeContext.Arguments.Width, executeContext.Arguments.Height);
                 throw;

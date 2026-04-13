@@ -1,4 +1,6 @@
 using Application.Abstractions.Persistence;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Arguments;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Users.Activities
 {
     public class SynchronizeUserProfilePicturesActivity(
+        IProcessTrackingStore processTrackingStore,
         IDatabase database,
         ILogger<SynchronizeUserProfilePicturesActivity> logger)
         : IExecuteActivity<SynchronizeUserProfilePicturesArguments>
@@ -15,6 +18,16 @@ namespace Infrastructure.Messaging.Features.Users.Activities
 
         public async Task<ExecutionResult> Execute(ExecuteContext<SynchronizeUserProfilePicturesArguments> executeContext)
         {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             var smallResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.SmallPictureVariable);
             ArgumentNullException.ThrowIfNull(smallResizedVariable, nameof(smallResizedVariable));
             var mediumResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.MediumPictureVariable);
@@ -51,10 +64,14 @@ namespace Infrastructure.Messaging.Features.Users.Activities
                 logger.LogDebug("Synchronized generated user profile pictures for picture {PictureId}", picture.Id);
                 logger.LogInformation("Synchronize user profile pictures activity completed for picture {PictureId}", picture.Id);
 
-                return executeContext.Completed();
+                var result = executeContext.Completed();
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                await processTrackingStore.CompleteProcessAsync(processExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "An error occurred while synchronizing generated user profile pictures for picture id {PictureId}",
                     executeContext.Arguments.PictureId);
                 throw;

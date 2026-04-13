@@ -1,4 +1,6 @@
 using Application.Abstractions.Persistence;
+using Domain.ProcessExecutions;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Arguments;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +10,7 @@ using MimeMapping;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class SynchronizeGameArtworkActivity(
+        IProcessTrackingStore processTrackingStore,
         IDatabase database,
         ILogger<SynchronizeGameArtworkActivity> logger)
         : IExecuteActivity<SynchronizeGameArtworkArguments>
@@ -16,6 +19,16 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
         public async Task<ExecutionResult> Execute(ExecuteContext<SynchronizeGameArtworkArguments> executeContext)
         {
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+                ?? throw new InvalidOperationException("Process execution id is required.");
+            var processExecutionId = Guid.Parse(processExecutionIdValue);
+
+            var stepExecutionId = await processTrackingStore.StartStepAsync(
+                processExecutionId,
+                ExecuteEndpointName,
+                ProcessStepComponentType.Activity,
+                executeContext.CancellationToken);
+
             var smallResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.SmallPictureVariable);
             ArgumentNullException.ThrowIfNull(smallResizedVariable, nameof(smallResizedVariable));
             var mediumResizedVariable = executeContext.GetVariable<string>(executeContext.Arguments.MediumPictureVariable);
@@ -83,10 +96,14 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 logger.LogDebug("Synchronized generated variants for artwork {ArtworkId}", artwork.Id);
                 logger.LogInformation("Synchronize game artwork activity completed for artwork {ArtworkId}", artwork.Id);
 
-                return executeContext.Completed();
+                var result = executeContext.Completed();
+                await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
+                await processTrackingStore.CompleteProcessAsync(processExecutionId, executeContext.CancellationToken);
+                return result;
             }
             catch (Exception exception)
             {
+                await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception,
                     "An error occurred while synchronizing generated variants for artwork id {ArtworkId}",
                     executeContext.Arguments.ArtworkId);

@@ -15,10 +15,13 @@ namespace Application.Abstractions.Persistence
             Guid processExecutionId,
             string stepName,
             ProcessStepComponentType componentType,
-            int attempt,
             CancellationToken cancellationToken);
 
         Task CompleteStepAsync(Guid processExecutionId, Guid stepExecutionId, CancellationToken cancellationToken);
+
+        Task CompensateStepAsync(Guid processExecutionId, string stepName, CancellationToken cancellationToken);
+
+        Task CompleteProcessAsync(Guid processExecutionId, CancellationToken cancellationToken);
 
         Task FailStepAsync(Guid processExecutionId, Guid stepExecutionId, string errorMessage, CancellationToken cancellationToken);
     }
