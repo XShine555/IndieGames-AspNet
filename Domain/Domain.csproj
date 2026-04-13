@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<PackageId>IndieGames.Domain</PackageId>
-	<Version>0.1.14</Version>
+	<Version>0.1.15</Version>
 	<Authors>NotS1mp</Authors>
 	<RepositoryUrl>https://github.com/XShine555/IndieGames-AspNet</RepositoryUrl>
   </PropertyGroup>
