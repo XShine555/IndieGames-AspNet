@@ -7,6 +7,8 @@ using Infrastructure.Messaging.Features.Common.Registrations;
 using Infrastructure.Messaging.Features.Games.Activities;
 using Infrastructure.Messaging.Features.Games.Consumers;
 using Infrastructure.Messaging.Features.Games.Registrations;
+using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
@@ -65,6 +67,7 @@ namespace Infrastructure.Messaging.Configuration
                 serviceProvider.GetRequiredService<IOptions<WorkerConfiguration>>().Value);
 
             serviceDescriptors.AddScoped<GameStorePictureWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<GameArtworkWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<UserProfilePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
@@ -93,6 +96,13 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(GenerateGameArtworksConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<GenerateGameArtworksConsumer>(busRegistrationContext);
                 } );
 
             busFactoryConfigurator.ReceiveEndpoint(
@@ -126,6 +136,11 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 SynchronizeGameStorePicturesActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<SynchronizeGameArtworkActivity, SynchronizeGameArtworkArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                SynchronizeGameArtworkActivity.ExecuteEndpointName);
 
             ConfigureExecuteActivityEndpoint<SynchronizeUserProfilePicturesActivity, SynchronizeUserProfilePicturesArguments>(
                 busFactoryConfigurator,

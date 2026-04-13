@@ -23,8 +23,6 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
 
-        public DbSet<GameArtworkVariant> GameArtworkVariants => Set<GameArtworkVariant>();
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
@@ -56,21 +54,6 @@ namespace Infrastructure.Persistence
 
                 a.Property(x => x.ProcessingError)
                     .HasMaxLength(512);
-            } );
-
-            modelBuilder.Entity<GameArtworkVariant>(v =>
-            {
-                v.HasOne(x => x.GameArtwork)
-                    .WithMany(x => x.Variants)
-                    .HasForeignKey(x => x.GameArtworkId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                v.ToTable(t =>
-                {
-                    t.HasCheckConstraint("CK_GameArtworkVariant_Width", "Width > 0");
-                    t.HasCheckConstraint("CK_GameArtworkVariant_Height", "Height > 0");
-                    t.HasCheckConstraint("CK_GameArtworkVariant_FileSizeInBytes", "FileSizeInBytes > 0");
-                } );
             } );
         }
     }

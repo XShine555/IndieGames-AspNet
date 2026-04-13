@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260412194909_InitialMigration")]
+    [Migration("20260413081506_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -76,9 +76,58 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("Kind")
                         .HasColumnType("int");
 
+                    b.Property<string>("LargeContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
+                    b.Property<string>("LargeFileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<long>("LargeFileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("LargeHeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LargeRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<int>("LargeWidth")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MediumContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
+                    b.Property<string>("MediumFileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<long>("MediumFileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("MediumHeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MediumRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<int>("MediumWidth")
+                        .HasColumnType("int");
+
                     b.Property<string>("OriginalExtension")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
 
                     b.Property<string>("OriginalFileName")
                         .IsRequired()
@@ -91,10 +140,35 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("ProcessingError")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("varchar(512)");
 
                     b.Property<int>("ProcessingStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SmallContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
+                    b.Property<string>("SmallFileName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
+
+                    b.Property<long>("SmallFileSizeInBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SmallHeight")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SmallRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<int>("SmallWidth")
                         .HasColumnType("int");
 
                     b.Property<int>("SortOrder")
@@ -114,65 +188,6 @@ namespace Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Game_Artworks");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GameArtworkVariant", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<long>("FileSizeInBytes")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("GameArtworkId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsPrimary")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("PictureContentType")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("RelativePath")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Width")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameArtworkId", "IsPrimary");
-
-                    b.HasIndex("GameArtworkId", "Size", "PictureContentType")
-                        .IsUnique();
-
-                    b.ToTable("Game_Artwork_Variants", t =>
-                        {
-                            t.HasCheckConstraint("CK_GameArtworkVariant_FileSizeInBytes", "FileSizeInBytes > 0");
-
-                            t.HasCheckConstraint("CK_GameArtworkVariant_Height", "Height > 0");
-
-                            t.HasCheckConstraint("CK_GameArtworkVariant_Width", "Width > 0");
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.GameStorePictures", b =>
@@ -435,17 +450,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GameArtworkVariant", b =>
-                {
-                    b.HasOne("Domain.Entities.GameArtwork", "GameArtwork")
-                        .WithMany("Variants")
-                        .HasForeignKey("GameArtworkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GameArtwork");
-                });
-
             modelBuilder.Entity("Domain.Entities.GameStorePictures", b =>
                 {
                     b.HasOne("Domain.Entities.Game", "Game")
@@ -503,11 +507,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("StorePictures");
 
                     b.Navigation("UserOwnedGames");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GameArtwork", b =>
-                {
-                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

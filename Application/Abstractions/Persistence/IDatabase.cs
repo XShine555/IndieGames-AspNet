@@ -19,8 +19,6 @@ namespace Application.Abstractions.Persistence
 
         DbSet<GameArtwork> GameArtworks { get; }
 
-        DbSet<GameArtworkVariant> GameArtworkVariants { get; }
-
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

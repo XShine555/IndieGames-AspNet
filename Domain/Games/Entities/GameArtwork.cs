@@ -20,9 +20,6 @@ namespace Domain.Entities
         public GameArtworkType Type { get; set; }
 
         [Required]
-        public GameArtworkKind Kind { get; set; } = GameArtworkKind.Single;
-
-        [Required]
         public int SortOrder { get; set; }
 
         [Required]
@@ -34,13 +31,78 @@ namespace Domain.Entities
         public required string OriginalFileName { get; set; }
 
         [Required]
-        public string OriginalExtension { get; set; }
+        [MaxLength(16)]
+        public required string OriginalExtension { get; set; }
+
+        [Required]
+        [MaxLength(256)]
+        public string SmallRelativePath { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(128)]
+        public string SmallFileName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(32)]
+        public string SmallContentType { get; set; } = string.Empty;
+
+        [Required]
+        public int SmallWidth { get; set; }
+
+        [Required]
+        public int SmallHeight { get; set; }
+
+        [Required]
+        public long SmallFileSizeInBytes { get; set; }
+
+        [Required]
+        [MaxLength(256)]
+        public string MediumRelativePath { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(128)]
+        public string MediumFileName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(32)]
+        public string MediumContentType { get; set; } = string.Empty;
+
+        [Required]
+        public int MediumWidth { get; set; }
+
+        [Required]
+        public int MediumHeight { get; set; }
+
+        [Required]
+        public long MediumFileSizeInBytes { get; set; }
+
+        [Required]
+        [MaxLength(256)]
+        public string LargeRelativePath { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(128)]
+        public string LargeFileName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(32)]
+        public string LargeContentType { get; set; } = string.Empty;
+
+        [Required]
+        public int LargeWidth { get; set; }
+
+        [Required]
+        public int LargeHeight { get; set; }
+
+        [Required]
+        public long LargeFileSizeInBytes { get; set; }
 
         [Required]
         public GameArtworkProcessingStatus ProcessingStatus { get; set; } = GameArtworkProcessingStatus.Pending;
 
+        [Required]
         [MaxLength(512)]
-        public string? ProcessingError { get; set; }
+        public string ProcessingError { get; set; } = string.Empty;
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -50,18 +112,5 @@ namespace Domain.Entities
 
         [ForeignKey(nameof(GameId)) ]
         public Game Game { get; set; }
-
-        public ICollection<GameArtworkVariant> Variants { get; set; } = new List<GameArtworkVariant>();
-
-        public void AddVariant(GameArtworkVariant variant)
-        {
-            if (variant.IsPrimary && Variants.Any(v => v.IsPrimary))
-                throw new InvalidOperationException("An artwork can only have one primary variant.");
-
-            if (Variants.Any(v => v.Size == variant.Size && v.PictureContentType == variant.PictureContentType))
-                throw new InvalidOperationException("Duplicate artwork variant for the same size and format.");
-
-            Variants.Add(variant);
-        }
     }
 }

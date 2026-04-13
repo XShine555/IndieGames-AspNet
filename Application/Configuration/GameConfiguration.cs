@@ -1,4 +1,6 @@
-﻿namespace Application.Configuration
+﻿using Domain.Entities;
+
+namespace Application.Configuration
 {
     public class GameConfiguration
     {
@@ -7,6 +9,8 @@
         public GameRoutes Routes { get; set; } = new GameRoutes();
 
         public GamePictureSizes Sizes { get; set; } = new GamePictureSizes();
+
+        public GamePictureSizes ArtworkSizes { get; set; } = new GamePictureSizes();
     }
 
     public class GameRoutes
@@ -20,6 +24,16 @@
         public string MediumPicturesFolderName { get; set; } = "MediumPictures";
 
         public string LargePicturesFolderName { get; set; } = "LargePictures";
+
+        public string ArtworksFolderName { get; set; } = "Artworks";
+
+        public string OriginalArtworkFolderName { get; set; } = "Original";
+
+        public string SmallArtworkFolderName { get; set; } = "Small";
+
+        public string MediumArtworkFolderName { get; set; } = "Medium";
+
+        public string LargeArtworkFolderName { get; set; } = "Large";
 
         public string GetStorePictureFolderPath(int gameId)
         {
@@ -44,6 +58,36 @@
         public string BuildStorePicturePath(int gameId, string pictureKey)
         {
             return $"{GetStorePictureFolderPath(gameId) }/{pictureKey}";
+        }
+
+        public string GetOriginalArtworkFolderPath(int gameId, GameArtworkType artworkType)
+        {
+            return BuildArtworkFolderPath(gameId, artworkType, OriginalArtworkFolderName);
+        }
+
+        public string GetSmallArtworkFolderPath(int gameId, GameArtworkType artworkType)
+        {
+            return BuildArtworkFolderPath(gameId, artworkType, SmallArtworkFolderName);
+        }
+
+        public string GetMediumArtworkFolderPath(int gameId, GameArtworkType artworkType)
+        {
+            return BuildArtworkFolderPath(gameId, artworkType, MediumArtworkFolderName);
+        }
+
+        public string GetLargeArtworkFolderPath(int gameId, GameArtworkType artworkType)
+        {
+            return BuildArtworkFolderPath(gameId, artworkType, LargeArtworkFolderName);
+        }
+
+        public string BuildOriginalArtworkPath(int gameId, GameArtworkType artworkType, string pictureKey)
+        {
+            return $"{GetOriginalArtworkFolderPath(gameId, artworkType)}/{pictureKey}";
+        }
+
+        private string BuildArtworkFolderPath(int gameId, GameArtworkType artworkType, string sizeFolder)
+        {
+            return $"{ParentFolder}/{gameId}/{ArtworksFolderName}/{artworkType}/{sizeFolder}";
         }
     }
 

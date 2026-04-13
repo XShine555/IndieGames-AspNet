@@ -102,9 +102,27 @@ namespace Infrastructure.Persistence.Migrations
                     SortOrder = table.Column<int>(type: "int", nullable: false),
                     OriginalRelativePath = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
                     OriginalFileName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
-                    OriginalExtension = table.Column<string>(type: "longtext", nullable: false),
+                    OriginalExtension = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false),
+                    SmallRelativePath = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
+                    SmallFileName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
+                    SmallContentType = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    SmallWidth = table.Column<int>(type: "int", nullable: false),
+                    SmallHeight = table.Column<int>(type: "int", nullable: false),
+                    SmallFileSizeInBytes = table.Column<long>(type: "bigint", nullable: false),
+                    MediumRelativePath = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
+                    MediumFileName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
+                    MediumContentType = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    MediumWidth = table.Column<int>(type: "int", nullable: false),
+                    MediumHeight = table.Column<int>(type: "int", nullable: false),
+                    MediumFileSizeInBytes = table.Column<long>(type: "bigint", nullable: false),
+                    LargeRelativePath = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
+                    LargeFileName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
+                    LargeContentType = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    LargeWidth = table.Column<int>(type: "int", nullable: false),
+                    LargeHeight = table.Column<int>(type: "int", nullable: false),
+                    LargeFileSizeInBytes = table.Column<long>(type: "bigint", nullable: false),
                     ProcessingStatus = table.Column<int>(type: "int", nullable: false),
-                    ProcessingError = table.Column<string>(type: "varchar(512)", maxLength: 512, nullable: true),
+                    ProcessingError = table.Column<string>(type: "varchar(512)", maxLength: 512, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -203,49 +221,6 @@ namespace Infrastructure.Persistence.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
-            migrationBuilder.CreateTable(
-                name: "Game_Artwork_Variants",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    GameArtworkId = table.Column<int>(type: "int", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
-                    PictureContentType = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
-                    RelativePath = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
-                    FileName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<int>(type: "int", nullable: false),
-                    FileSizeInBytes = table.Column<long>(type: "bigint", nullable: false),
-                    IsPrimary = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Game_Artwork_Variants", x => x.Id);
-                    table.CheckConstraint("CK_GameArtworkVariant_FileSizeInBytes", "FileSizeInBytes > 0");
-                    table.CheckConstraint("CK_GameArtworkVariant_Height", "Height > 0");
-                    table.CheckConstraint("CK_GameArtworkVariant_Width", "Width > 0");
-                    table.ForeignKey(
-                        name: "FK_Game_Artwork_Variants_Game_Artworks_GameArtworkId",
-                        column: x => x.GameArtworkId,
-                        principalTable: "Game_Artworks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Game_Artwork_Variants_GameArtworkId_IsPrimary",
-                table: "Game_Artwork_Variants",
-                columns: new[] { "GameArtworkId", "IsPrimary" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Game_Artwork_Variants_GameArtworkId_Size_PictureContentType",
-                table: "Game_Artwork_Variants",
-                columns: new[] { "GameArtworkId", "Size", "PictureContentType" },
-                unique: true);
-
             migrationBuilder.CreateIndex(
                 name: "IX_Game_Artworks_GameId_Type",
                 table: "Game_Artworks",
@@ -294,7 +269,7 @@ namespace Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Game_Artwork_Variants");
+                name: "Game_Artworks");
 
             migrationBuilder.DropTable(
                 name: "Game_Store_Pictures");
@@ -307,9 +282,6 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "User_Profile_Pictures");
-
-            migrationBuilder.DropTable(
-                name: "Game_Artworks");
 
             migrationBuilder.DropTable(
                 name: "Games");
