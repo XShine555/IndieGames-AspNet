@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>6870d1a4-c9aa-4452-80eb-8872794e01f4</UserSecretsId>
 	<PackageId>IndieGames.Infrastructure</PackageId>
-	<Version>0.1.34</Version>
+	<Version>0.1.35</Version>
 	<Authors>NotS1mp</Authors>
 	<RepositoryUrl>https://github.com/XShine555/IndieGames-AspNet</RepositoryUrl>
   </PropertyGroup>
