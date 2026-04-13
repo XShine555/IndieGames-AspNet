@@ -18,6 +18,23 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Genres",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    NormalizedName = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Genres", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -140,6 +157,32 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Game_Genres",
+                columns: table => new
+                {
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Game_Genres", x => new { x.GameId, x.GenreId });
+                    table.ForeignKey(
+                        name: "FK_Game_Genres_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Game_Genres_Genres_GenreId",
+                        column: x => x.GenreId,
+                        principalTable: "Genres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Game_Store_Pictures",
                 columns: table => new
                 {
@@ -174,29 +217,6 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Genres",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
-                    NormalizedName = table.Column<string>(type: "varchar(32)", maxLength: 32, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    GameId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genres", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Genres_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "User_Owned_Games",
                 columns: table => new
                 {
@@ -224,20 +244,20 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.InsertData(
                 table: "Genres",
-                columns: new[] { "Id", "CreatedAt", "GameId", "Name", "NormalizedName", "UpdatedAt" },
+                columns: new[] { "Id", "CreatedAt", "Name", "NormalizedName", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(4704), null, "Action", "ACTION", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(4707) },
-                    { 2, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5698), null, "Adventure", "ADVENTURE", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5699) },
-                    { 3, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5704), null, "RPG", "RPG", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5704) },
-                    { 4, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5706), null, "Strategy", "STRATEGY", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5706) },
-                    { 5, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5707), null, "Simulation", "SIMULATION", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5708) },
-                    { 6, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5708), null, "Sports", "SPORTS", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5709) },
-                    { 7, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5710), null, "Puzzle", "PUZZLE", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5710) },
-                    { 8, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5711), null, "Horror", "HORROR", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5711) },
-                    { 9, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5712), null, "Racing", "RACING", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5712) },
-                    { 10, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5713), null, "Indie", "INDIE", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5713) },
-                    { 11, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5714), null, "FPS", "FPS", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5714) }
+                    { 1, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(8498), "Action", "ACTION", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(8502) },
+                    { 2, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9530), "Adventure", "ADVENTURE", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9531) },
+                    { 3, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9536), "RPG", "RPG", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9536) },
+                    { 4, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9537), "Strategy", "STRATEGY", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9538) },
+                    { 5, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9539), "Simulation", "SIMULATION", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9540) },
+                    { 6, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9541), "Sports", "SPORTS", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9541) },
+                    { 7, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9542), "Puzzle", "PUZZLE", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9543) },
+                    { 8, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9544), "Horror", "HORROR", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9544) },
+                    { 9, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9545), "Racing", "RACING", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9545) },
+                    { 10, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9546), "Indie", "INDIE", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9546) },
+                    { 11, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9547), "FPS", "FPS", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9547) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -252,6 +272,11 @@ namespace Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Game_Genres_GenreId",
+                table: "Game_Genres",
+                column: "GenreId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Game_Store_Pictures_GameId",
                 table: "Game_Store_Pictures",
                 column: "GameId");
@@ -260,11 +285,6 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_Games_OwnerId",
                 table: "Games",
                 column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Genres_GameId",
-                table: "Genres",
-                column: "GameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Owned_Games_GameId",
@@ -291,16 +311,19 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Game_Artworks");
 
             migrationBuilder.DropTable(
-                name: "Game_Store_Pictures");
+                name: "Game_Genres");
 
             migrationBuilder.DropTable(
-                name: "Genres");
+                name: "Game_Store_Pictures");
 
             migrationBuilder.DropTable(
                 name: "User_Owned_Games");
 
             migrationBuilder.DropTable(
                 name: "User_Profile_Pictures");
+
+            migrationBuilder.DropTable(
+                name: "Genres");
 
             migrationBuilder.DropTable(
                 name: "Games");

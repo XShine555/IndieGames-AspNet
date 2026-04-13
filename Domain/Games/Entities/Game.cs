@@ -33,6 +33,8 @@ namespace Domain.Entities
 
         public ICollection<Genre> Genres { get; set; } = new List<Genre>();
 
+        public ICollection<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
+
         public ICollection<UserOwnedGame> UserOwnedGames { get; set; } = new List<UserOwnedGame>();
 
         [Required]

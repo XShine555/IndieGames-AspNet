@@ -15,6 +15,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<Genre> Genres => Set<Genre>();
 
+        public DbSet<GameGenre> GameGenres => Set<GameGenre>();
+
         public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
 
         public DbSet<GameStorePictures> GamePictures => Set<GameStorePictures>();
@@ -44,6 +46,25 @@ namespace Infrastructure.Persistence
                     .HasForeignKey<UserProfilePictures>(x => x.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             } );
+
+            modelBuilder.Entity<Game>(g =>
+            {
+                g.HasMany(x => x.Genres)
+                    .WithMany(x => x.Games)
+                    .UsingEntity<GameGenre>(
+                        x => x.HasOne(y => y.Genre)
+                            .WithMany(y => y.GameGenres)
+                            .HasForeignKey(y => y.GenreId),
+                        x => x.HasOne(y => y.Game)
+                            .WithMany(y => y.GameGenres)
+                            .HasForeignKey(y => y.GameId),
+                        x =>
+                        {
+                            x.ToTable("Game_Genres");
+                            x.HasKey(y => new { y.GameId, y.GenreId });
+                            x.Property(y => y.AddedAt).IsRequired();
+                        });
+            });
 
             modelBuilder.Entity<GameArtwork>(a =>
             {

@@ -18,6 +18,10 @@ namespace Domain.Entities
         [MaxLength(32)]
         public required string NormalizedName { get; set; }
 
+        public ICollection<Game> Games { get; set; } = new List<Game>();
+
+        public ICollection<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
