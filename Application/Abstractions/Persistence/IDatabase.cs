@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.ProcessExecutions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Abstractions.Persistence
@@ -18,6 +19,10 @@ namespace Application.Abstractions.Persistence
         DbSet<UserProfilePictures> UserProfilePictures { get; }
 
         DbSet<GameArtwork> GameArtworks { get; }
+
+        DbSet<ProcessExecution> ProcessExecutions { get; }
+
+        DbSet<ProcessStepExecution> ProcessStepExecutions { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Persistence;
 using Domain.Entities;
+using Domain.ProcessExecutions;
 using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -24,6 +25,10 @@ namespace Infrastructure.Persistence
         public DbSet<UserProfilePictures> UserProfilePictures => Set<UserProfilePictures>();
 
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
+
+        public DbSet<ProcessExecution> ProcessExecutions => Set<ProcessExecution>();
+
+        public DbSet<ProcessStepExecution> ProcessStepExecutions => Set<ProcessStepExecution>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
