@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.ProcessExecutions
 {
 #pragma warning disable CS8618
-    [Table("ProcessStepExecution")]
+    [Table("Process_Step_Execution")]
     public class ProcessStepExecution
     {
         [Key]
