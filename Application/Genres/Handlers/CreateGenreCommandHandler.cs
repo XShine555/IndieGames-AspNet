@@ -30,8 +30,7 @@ namespace Application.Genres.Handlers
             await database.Genres.AddAsync(newGenre, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new genre with ID '{GenreId}' and name '{GenreName}'.", newGenre.Id, newGenre.Name);
-
-            return Result.Success();
+            return Result.Created(ApplicationGenre.FromEntity(newGenre));
         }
     }
 }
