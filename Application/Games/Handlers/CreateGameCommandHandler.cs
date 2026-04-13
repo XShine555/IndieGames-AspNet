@@ -22,8 +22,13 @@ namespace Application.Games.Handlers
         ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGame>>
     {
+        private record GameArtworkInput(GameArtworkType Type, IFileData FileData);
+
         public async ValueTask<Result<ApplicationGame>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
         {
+            if (command.CapsulePicture is null || command.HeaderPicture is null || command.MainPicture is null)
+                return Result.Invalid(new ValidationError("Capsule, Header and Main artworks are required."));
+
             var owner = await database.Users
                 .AsNoTracking()
                 .SingleOrDefaultAsync(u => u.IdentityId == command.identityId, cancellationToken);
@@ -32,10 +37,6 @@ namespace Application.Games.Handlers
                 logger.LogWarning("User with ID '{identityId}' not found.", command.identityId);
                 return Result.NotFound();
             }
-
-            var artworkValidationError = ValidateArtworks(command.Artworks);
-            if (!string.IsNullOrWhiteSpace(artworkValidationError))
-                return Result.Invalid(new ValidationError(artworkValidationError));
 
             var normalizedTitle = command.Title.Trim().ToUpperInvariant();
             var existingGame = await database.Games
@@ -64,28 +65,30 @@ namespace Application.Games.Handlers
 
             var uploadedArtworkKeys = new List<string>();
             var artworkRecords = new List<GameArtwork>();
+            var inputArtworks = GetRequiredArtworks(command);
+
             try
             {
-                foreach (var artwork in command.Artworks)
+                foreach (var inputArtwork in inputArtworks)
                 {
-                    var originalName = Guid.NewGuid() + artwork.FileData.FileExtension;
-                    var originalRelativePath = gameConfiguration.Routes.GetOriginalArtworkFolderPath(game.Id, artwork.Type);
+                    var originalName = Guid.NewGuid() + inputArtwork.FileData.FileExtension;
+                    var originalRelativePath = gameConfiguration.Routes.GetOriginalArtworkFolderPath(game.Id, inputArtwork.Type);
                     var sourceKey = BuildBucketKey(originalRelativePath, originalName);
 
-                    await s3Service.UploadFileAsync(artwork.FileData, sourceKey, cancellationToken);
+                    await s3Service.UploadFileAsync(inputArtwork.FileData, sourceKey, cancellationToken);
                     uploadedArtworkKeys.Add(sourceKey);
 
                     artworkRecords.Add(new GameArtwork
                     {
                         GameId = game.Id,
-                        Type = artwork.Type,
+                        Type = inputArtwork.Type,
                         SortOrder = 0,
                         OriginalRelativePath = originalRelativePath,
                         OriginalFileName = originalName,
-                        OriginalExtension = artwork.FileData.FileExtension,
+                        OriginalExtension = inputArtwork.FileData.FileExtension,
                         ProcessingStatus = GameArtworkProcessingStatus.Pending,
                         ProcessingError = string.Empty
-                    });
+                    } );
                 }
 
                 await database.GameArtworks.AddRangeAsync(artworkRecords, cancellationToken);
@@ -135,29 +138,14 @@ namespace Application.Games.Handlers
             return Result.Created(ApplicationGame.FromEntity(game));
         }
 
-        private static string ValidateArtworks(ICollection<CreateGameArtworkInput> artworks)
+        private static IReadOnlyCollection<GameArtworkInput> GetRequiredArtworks(CreateGameCommand command)
         {
-            if (artworks.Count == 0)
-                return "Artworks are required.";
-
-            var requiredArtworkTypes = Enum.GetValues<GameArtworkType>();
-            foreach (var artworkType in requiredArtworkTypes)
-            {
-                var count = artworks.Count(x => x.Type == artworkType);
-                if (count == 0)
-                    return $"Missing artwork for type {artworkType}.";
-
-                if (count > 1)
-                    return $"Only one artwork is allowed for type {artworkType}.";
-            }
-
-            if (artworks.Count != requiredArtworkTypes.Length)
-                return "Unexpected artwork count for game creation.";
-
-            if (artworks.Any(x => x.FileData == null))
-                return "Artwork file data is required.";
-
-            return string.Empty;
+            return
+            [
+                new GameArtworkInput(GameArtworkType.Capsule, command.CapsulePicture),
+                new GameArtworkInput(GameArtworkType.Header, command.HeaderPicture),
+                new GameArtworkInput(GameArtworkType.Main, command.MainPicture)
+            ];
         }
 
         private async Task CleanupUploadedFilesAsync(IReadOnlyCollection<string> uploadedKeys, CancellationToken cancellationToken)

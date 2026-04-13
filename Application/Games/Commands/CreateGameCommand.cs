@@ -11,7 +11,9 @@ namespace Application.Games.Commands
         string Title,
         string Description,
         ICollection<int> Genres,
-        ICollection<CreateGameArtworkInput> Artworks)
+        IFileData CapsulePicture,
+        IFileData HeaderPicture,
+        IFileData MainPicture)
         : ICommand<Result<ApplicationGame>>
     {
         public static Game ToEntity(CreateGameCommand command, ICollection<Genre> Genres)
@@ -26,8 +28,4 @@ namespace Application.Games.Commands
             };
         }
     }
-
-    public record CreateGameArtworkInput(
-        GameArtworkType Type,
-        IFileData FileData);
 }
