@@ -10,6 +10,7 @@ namespace Application.Games.Commands
         string? Title,
         string? Description,
         string? OwnerId,
-        ICollection<int> Genres)
+        ICollection<int> Genres,
+        bool? IsPublic)
         : ICommand<Result<ApplicationGame>>;
 }

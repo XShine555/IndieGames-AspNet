@@ -27,6 +27,12 @@ namespace Domain.Entities
         [MaxLength(36)]
         public required string OwnerId { get; set; }
 
+        [Required]
+        public bool IsPublic { get; set; }
+
+        [Required]
+        public bool IsPublished { get; set; }
+
         public ICollection<GameStorePictures> StorePictures { get; set; } = new List<GameStorePictures>();
 
         public ICollection<GameArtwork> Artworks { get; set; } = new List<GameArtwork>();

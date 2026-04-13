@@ -15,8 +15,10 @@ namespace Application.Games.Handlers
         public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
         {
             var game = await database.Games
+                .Include(g => g.Owner)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
+                .Include(g => g.Artworks)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
@@ -44,8 +46,18 @@ namespace Application.Games.Handlers
             if (!genresResult.IsSuccess)
                 return genresResult;
 
+            UpdateIsPublic(command.IsPublic, game);
+
             await database.SaveChangesAsync(cancellationToken);
             return Result.Success(ApplicationGame.FromEntity(game));
+        }
+
+        void UpdateIsPublic(bool? isPublic, Game game)
+        {
+            if (!isPublic.HasValue)
+                return;
+
+            game.IsPublic = isPublic.Value;
         }
 
         async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)
@@ -81,6 +93,9 @@ namespace Application.Games.Handlers
 
         async Task<Result> UpdateOwnerId(string? ownerId, Game game, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(ownerId))
+                return Result.Success();
+
             var newOwner = await database.Users.SingleOrDefaultAsync(u => u.IdentityId == ownerId, cancellationToken);
             if (newOwner is null)
             {
