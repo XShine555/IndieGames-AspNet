@@ -34,7 +34,7 @@ namespace Domain.ProcessExecutions
         [MaxLength(2048)]
         public string? ErrorMessage { get; set; }
 
-        [ForeignKey(nameof(ProcessExecutionId))]
+        [ForeignKey(nameof(ProcessExecutionId)) ]
         public ProcessExecution ProcessExecution { get; set; }
     }
 }

@@ -139,7 +139,7 @@ namespace Infrastructure.Persistence
 
             process.Status = ProcessExecutionStatus.Succeeded;
             process.FinishedDateTime = DateTime.UtcNow;
-            process.ErrorMessage = string.Empty;
+            process.ErrorMessage = null;
 
             await database.SaveChangesAsync(cancellationToken);
         }
