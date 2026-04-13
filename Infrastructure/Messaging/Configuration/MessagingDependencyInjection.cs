@@ -99,17 +99,17 @@ namespace Infrastructure.Messaging.Configuration
                 } );
 
             busFactoryConfigurator.ReceiveEndpoint(
-                EndpointHelper.BuildConsumerEndpointName(GenerateGameArtworksConsumer.EndpointName),
-                endpointConfigurator =>
-                {
-                    endpointConfigurator.ConfigureConsumer<GenerateGameArtworksConsumer>(busRegistrationContext);
-                } );
-
-            busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildConsumerEndpointName(GenerateUsersProfilePicturesConsumer.EndpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateUsersProfilePicturesConsumer>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(ProcessNewGameArtworkConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<ProcessNewGameArtworkConsumer>(busRegistrationContext);
                 } );
 
             ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(

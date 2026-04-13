@@ -61,6 +61,7 @@ namespace Infrastructure.Persistence.Migrations
                     NormalizedTitle = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
                     Description = table.Column<string>(type: "varchar(1024)", maxLength: 1024, nullable: false),
                     OwnerId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
+                    StoreReadinessStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -247,17 +248,17 @@ namespace Infrastructure.Persistence.Migrations
                 columns: new[] { "Id", "CreatedAt", "Name", "NormalizedName", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(8498), "Action", "ACTION", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(8502) },
-                    { 2, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9530), "Adventure", "ADVENTURE", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9531) },
-                    { 3, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9536), "RPG", "RPG", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9536) },
-                    { 4, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9537), "Strategy", "STRATEGY", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9538) },
-                    { 5, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9539), "Simulation", "SIMULATION", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9540) },
-                    { 6, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9541), "Sports", "SPORTS", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9541) },
-                    { 7, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9542), "Puzzle", "PUZZLE", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9543) },
-                    { 8, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9544), "Horror", "HORROR", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9544) },
-                    { 9, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9545), "Racing", "RACING", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9545) },
-                    { 10, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9546), "Indie", "INDIE", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9546) },
-                    { 11, new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9547), "FPS", "FPS", new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9547) }
+                    { 1, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4387), "Action", "ACTION", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4388) },
+                    { 2, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4954), "Adventure", "ADVENTURE", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4954) },
+                    { 3, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4958), "RPG", "RPG", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4959) },
+                    { 4, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4960), "Strategy", "STRATEGY", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4961) },
+                    { 5, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4962), "Simulation", "SIMULATION", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4962) },
+                    { 6, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4963), "Sports", "SPORTS", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4963) },
+                    { 7, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4964), "Puzzle", "PUZZLE", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4964) },
+                    { 8, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4965), "Horror", "HORROR", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4965) },
+                    { 9, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4966), "Racing", "RACING", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4966) },
+                    { 10, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4967), "Indie", "INDIE", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4967) },
+                    { 11, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4968), "FPS", "FPS", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4968) }
                 });
 
             migrationBuilder.CreateIndex(

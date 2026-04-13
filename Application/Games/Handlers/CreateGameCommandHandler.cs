@@ -106,7 +106,7 @@ namespace Application.Games.Handlers
             foreach (var artwork in artworkRecords)
             {
                 var sourceKey = BuildBucketKey(artwork.OriginalRelativePath, artwork.OriginalFileName);
-                var @event = new GenerateGameArtworksEvent(
+                var @event = new ProcessNewGameArtworkEvent(
                     artwork.Id,
                     sourceKey,
                     gameConfiguration.Routes.GetSmallArtworkFolderPath(game.Id, artwork.Type),
@@ -126,7 +126,7 @@ namespace Application.Games.Handlers
                     artwork.ProcessingStatus = GameArtworkProcessingStatus.Failed;
                     artwork.ProcessingError = "Failed to publish artwork processing event";
                     logger.LogError(exception,
-                        "Error publishing artwork generation event for artwork id {ArtworkId}",
+                        "Error publishing artwork processing event for artwork id {ArtworkId}",
                         artwork.Id);
                 }
             }

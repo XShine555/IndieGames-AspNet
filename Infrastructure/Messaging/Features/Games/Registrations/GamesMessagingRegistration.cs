@@ -11,7 +11,7 @@ namespace Infrastructure.Messaging.Features.Games.Registrations
         internal static void AddGamesMessaging(this IBusRegistrationConfigurator options)
         {
             options.AddConsumer<GenerateGamesPicturesConsumer>();
-            options.AddConsumer<GenerateGameArtworksConsumer>();
+            options.AddConsumer<ProcessNewGameArtworkConsumer>();
 
             options.AddExecuteActivity<GenerateGameStorePictureWorkflowPathsActivity, GenerateGameStorePictureWorkflowPathsArguments>();
             options.AddExecuteActivity<GenerateGameArtworkWorkflowPathsActivity, GenerateGameArtworkWorkflowPathsArguments>();

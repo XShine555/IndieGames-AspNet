@@ -24,6 +24,7 @@ namespace Application.Games.Commands
                 NormalizedTitle = command.Title.Trim().ToUpperInvariant(),
                 Description = command.Description,
                 OwnerId = command.identityId,
+                StoreReadinessStatus = GameStoreReadinessStatus.NotReadyForStore,
                 Genres = Genres
             };
         }

@@ -8,6 +8,7 @@ namespace Application.Games.Responses
         int Id,
         string Title,
         string Description,
+        bool IsReadyForStore,
         ApplicationUserSummary ApplicationUserSummary,
         IReadOnlyCollection<ApplicationGenre> Genres,
         IReadOnlyCollection<ApplicationGamePicture> Pictures)
@@ -18,6 +19,7 @@ namespace Application.Games.Responses
                 game.Id,
                 game.Title,
                 game.Description,
+                game.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
                 ApplicationUserSummary.FromEntity(game.Owner),
                 game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
                 game.StorePictures.Select(ApplicationGamePicture.FromEntity).ToArray());

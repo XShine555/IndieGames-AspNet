@@ -13,7 +13,7 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Bu
 {
     public class GameArtworkWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
     {
-        public RoutingSlipBuilder Build(GenerateGameArtworksEvent @event)
+        public RoutingSlipBuilder Build(ProcessNewGameArtworkEvent @event)
         {
             ArgumentNullException.ThrowIfNull(@event);
             var builder = new RoutingSlipBuilder(NewId.NextGuid());

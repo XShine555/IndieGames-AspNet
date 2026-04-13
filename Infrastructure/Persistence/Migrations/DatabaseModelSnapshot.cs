@@ -43,6 +43,9 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("varchar(36)");
 
+                    b.Property<int>("StoreReadinessStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -305,90 +308,90 @@ namespace Infrastructure.Persistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(8498),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4387),
                             Name = "Action",
                             NormalizedName = "ACTION",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(8502)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4388)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9530),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4954),
                             Name = "Adventure",
                             NormalizedName = "ADVENTURE",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9531)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4954)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9536),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4958),
                             Name = "RPG",
                             NormalizedName = "RPG",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9536)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4959)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9537),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4960),
                             Name = "Strategy",
                             NormalizedName = "STRATEGY",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9538)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4961)
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9539),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4962),
                             Name = "Simulation",
                             NormalizedName = "SIMULATION",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9540)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4962)
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9541),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4963),
                             Name = "Sports",
                             NormalizedName = "SPORTS",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9541)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4963)
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9542),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4964),
                             Name = "Puzzle",
                             NormalizedName = "PUZZLE",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9543)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4964)
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9544),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4965),
                             Name = "Horror",
                             NormalizedName = "HORROR",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9544)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4965)
                         },
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9545),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4966),
                             Name = "Racing",
                             NormalizedName = "RACING",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9545)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4966)
                         },
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9546),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4967),
                             Name = "Indie",
                             NormalizedName = "INDIE",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9546)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4967)
                         },
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9547),
+                            CreatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4968),
                             Name = "FPS",
                             NormalizedName = "FPS",
-                            UpdatedAt = new DateTime(2026, 4, 13, 9, 2, 27, 89, DateTimeKind.Utc).AddTicks(9547)
+                            UpdatedAt = new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4968)
                         });
                 });
 

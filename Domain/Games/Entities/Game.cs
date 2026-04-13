@@ -38,6 +38,9 @@ namespace Domain.Entities
         public ICollection<UserOwnedGame> UserOwnedGames { get; set; } = new List<UserOwnedGame>();
 
         [Required]
+        public GameStoreReadinessStatus StoreReadinessStatus { get; set; } = GameStoreReadinessStatus.NotReadyForStore;
+
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Required]

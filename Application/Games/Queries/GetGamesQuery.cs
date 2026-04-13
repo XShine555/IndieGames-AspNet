@@ -8,6 +8,7 @@ namespace Application.Games.Queries
         string Title,
         ICollection<int> Genres,
         int PageNumber,
-        int PageSize)
+        int PageSize,
+        bool ReadyOnly = true)
         : IQuery<PaginatedApplicationResponse<ApplicationGame>>;
 }

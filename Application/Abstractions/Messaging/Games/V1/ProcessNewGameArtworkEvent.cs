@@ -2,7 +2,7 @@ using Application.Abstractions.Common;
 
 namespace Application.Abstractions.Messaging.Games.V1
 {
-    public record GenerateGameArtworksEvent(
+    public record ProcessNewGameArtworkEvent(
         int ArtworkId,
         string SourceKey,
         string SmallDestinationRoute,

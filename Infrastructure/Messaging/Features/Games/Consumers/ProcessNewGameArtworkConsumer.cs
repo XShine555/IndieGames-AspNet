@@ -5,14 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Messaging.Features.Games.Consumers
 {
-    public class GenerateGameArtworksConsumer(
+    public class ProcessNewGameArtworkConsumer(
         GameArtworkWorkflowRoutingSlipBuilder gameArtworkWorkflowRoutingSlipBuilder,
-        ILogger<GenerateGameArtworksConsumer> logger)
-        : IConsumer<GenerateGameArtworksEvent>
+        ILogger<ProcessNewGameArtworkConsumer> logger)
+        : IConsumer<ProcessNewGameArtworkEvent>
     {
-        public const string EndpointName = "generate-game-artworks";
+        public const string EndpointName = "process-new-game-artwork";
 
-        public async Task Consume(ConsumeContext<GenerateGameArtworksEvent> context)
+        public async Task Consume(ConsumeContext<ProcessNewGameArtworkEvent> context)
         {
             try
             {
