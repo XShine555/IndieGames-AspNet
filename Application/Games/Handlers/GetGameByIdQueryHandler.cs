@@ -16,6 +16,7 @@ namespace Application.Games.Handlers
                 .Include(g => g.Owner)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
+                .Include(g => g.Artworks)
                 .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
             if (game is null)
                 return Result.NotFound();

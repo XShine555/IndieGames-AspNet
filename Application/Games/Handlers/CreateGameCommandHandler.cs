@@ -134,6 +134,8 @@ namespace Application.Games.Handlers
             if (anyPublishError)
                 await database.SaveChangesAsync(cancellationToken);
 
+            game.Artworks = artworkRecords;
+
             return Result.Created(ApplicationGame.FromEntity(game));
         }
 

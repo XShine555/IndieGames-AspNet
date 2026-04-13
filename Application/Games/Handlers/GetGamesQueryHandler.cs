@@ -20,6 +20,7 @@ namespace Application.Games.Handlers
                 .Include(g => g.Owner)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
+                .Include(g => g.Artworks)
                 .Where(g => g.NormalizedTitle.Contains(normalizedTitle)
                     || g.Genres.Any(gg => query.Genres.Contains(gg.Id)));
 

@@ -11,7 +11,8 @@ namespace Application.Games.Responses
         bool IsReadyForStore,
         ApplicationUserSummary ApplicationUserSummary,
         IReadOnlyCollection<ApplicationGenre> Genres,
-        IReadOnlyCollection<ApplicationGamePicture> Pictures)
+        IReadOnlyCollection<ApplicationGamePicture> Pictures,
+        IReadOnlyCollection<ApplicationGameArtwork> Artworks)
     {
         public static ApplicationGame FromEntity(Game game)
         {
@@ -22,7 +23,8 @@ namespace Application.Games.Responses
                 game.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
                 ApplicationUserSummary.FromEntity(game.Owner),
                 game.Genres.Select(ApplicationGenre.FromEntity).ToArray(),
-                game.StorePictures.Select(ApplicationGamePicture.FromEntity).ToArray());
+                game.StorePictures.Select(ApplicationGamePicture.FromEntity).ToArray(),
+                game.Artworks.Select(ApplicationGameArtwork.FromEntity).ToArray());
         }
     }
 }
