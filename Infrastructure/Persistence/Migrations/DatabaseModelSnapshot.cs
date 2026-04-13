@@ -70,9 +70,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Kind")
-                        .HasColumnType("int");
-
                     b.Property<string>("LargeContentType")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -290,6 +287,96 @@ namespace Infrastructure.Persistence.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("Genres");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(4704),
+                            Name = "Action",
+                            NormalizedName = "ACTION",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(4707)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5698),
+                            Name = "Adventure",
+                            NormalizedName = "ADVENTURE",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5699)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5704),
+                            Name = "RPG",
+                            NormalizedName = "RPG",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5704)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5706),
+                            Name = "Strategy",
+                            NormalizedName = "STRATEGY",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5706)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5707),
+                            Name = "Simulation",
+                            NormalizedName = "SIMULATION",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5708)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5708),
+                            Name = "Sports",
+                            NormalizedName = "SPORTS",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5709)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5710),
+                            Name = "Puzzle",
+                            NormalizedName = "PUZZLE",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5710)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5711),
+                            Name = "Horror",
+                            NormalizedName = "HORROR",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5711)
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5712),
+                            Name = "Racing",
+                            NormalizedName = "RACING",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5712)
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5713),
+                            Name = "Indie",
+                            NormalizedName = "INDIE",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5713)
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5714),
+                            Name = "FPS",
+                            NormalizedName = "FPS",
+                            UpdatedAt = new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5714)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

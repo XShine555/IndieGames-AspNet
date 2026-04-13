@@ -4,6 +4,8 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -98,7 +100,6 @@ namespace Infrastructure.Persistence.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     GameId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    Kind = table.Column<int>(type: "int", nullable: false),
                     SortOrder = table.Column<int>(type: "int", nullable: false),
                     OriginalRelativePath = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
                     OriginalFileName = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
@@ -220,6 +221,24 @@ namespace Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Genres",
+                columns: new[] { "Id", "CreatedAt", "GameId", "Name", "NormalizedName", "UpdatedAt" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(4704), null, "Action", "ACTION", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(4707) },
+                    { 2, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5698), null, "Adventure", "ADVENTURE", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5699) },
+                    { 3, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5704), null, "RPG", "RPG", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5704) },
+                    { 4, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5706), null, "Strategy", "STRATEGY", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5706) },
+                    { 5, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5707), null, "Simulation", "SIMULATION", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5708) },
+                    { 6, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5708), null, "Sports", "SPORTS", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5709) },
+                    { 7, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5710), null, "Puzzle", "PUZZLE", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5710) },
+                    { 8, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5711), null, "Horror", "HORROR", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5711) },
+                    { 9, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5712), null, "Racing", "RACING", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5712) },
+                    { 10, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5713), null, "Indie", "INDIE", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5713) },
+                    { 11, new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5714), null, "FPS", "FPS", new DateTime(2026, 4, 13, 8, 52, 22, 147, DateTimeKind.Utc).AddTicks(5714) }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Game_Artworks_GameId_Type",
