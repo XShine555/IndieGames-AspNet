@@ -20,8 +20,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Bu
 
             builder.AddActivity(
                 GameArtworkActivityNames.GeneratePictureWorkflowPaths,
-                EndpointHelper.BuildExecuteActivityUri(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
-                new GeneratePictureWorkflowPathsArguments(
+                EndpointHelper.BuildExecuteActivityUri(GenerateGameArtworkWorkflowPathsActivity.ExecuteEndpointName),
+                new GenerateGameArtworkWorkflowPathsArguments(
                     workerConfiguration.Routes.TemporaryFilesDirectory,
                     @event.SourceKey));
 

@@ -19,8 +19,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
 
             builder.AddActivity(
                 GameStorePictureActivityNames.GeneratePictureWorkflowPaths,
-                EndpointHelper.BuildExecuteActivityUri(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
-                new GeneratePictureWorkflowPathsArguments(
+                EndpointHelper.BuildExecuteActivityUri(GenerateGameStorePictureWorkflowPathsActivity.ExecuteEndpointName),
+                new GenerateGameStorePictureWorkflowPathsArguments(
                     workerConfiguration.Routes.TemporaryFilesDirectory,
                     @event.SourceKey));
 

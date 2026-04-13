@@ -117,6 +117,16 @@ namespace Infrastructure.Messaging.Configuration
                 busRegistrationContext,
                 GeneratePictureWorkflowPathsActivity.ExecuteEndpointName);
 
+            ConfigureExecuteActivityEndpoint<GenerateGameStorePictureWorkflowPathsActivity, GenerateGameStorePictureWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateGameStorePictureWorkflowPathsActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<GenerateGameArtworkWorkflowPathsActivity, GenerateGameArtworkWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateGameArtworkWorkflowPathsActivity.ExecuteEndpointName);
+
             ConfigureActivityEndpoint<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments, DownloadFileFromBucketLog>(
                 busFactoryConfigurator,
                 busRegistrationContext,

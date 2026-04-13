@@ -13,6 +13,8 @@ namespace Infrastructure.Messaging.Features.Games.Registrations
             options.AddConsumer<GenerateGamesPicturesConsumer>();
             options.AddConsumer<GenerateGameArtworksConsumer>();
 
+            options.AddExecuteActivity<GenerateGameStorePictureWorkflowPathsActivity, GenerateGameStorePictureWorkflowPathsArguments>();
+            options.AddExecuteActivity<GenerateGameArtworkWorkflowPathsActivity, GenerateGameArtworkWorkflowPathsArguments>();
             options.AddExecuteActivity<SynchronizeGameStorePicturesActivity, SynchronizeGameStorePicturesArguments>();
             options.AddExecuteActivity<SynchronizeGameArtworkActivity, SynchronizeGameArtworkArguments>();
         }
