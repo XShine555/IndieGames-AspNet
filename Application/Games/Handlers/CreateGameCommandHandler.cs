@@ -58,7 +58,7 @@ namespace Application.Games.Handlers
             }
 
             var game = CreateGameCommand.ToEntity(command, genres);
-            game.Owner = owner;
+            game.OwnerId = owner.IdentityId;
 
             await database.Games.AddAsync(game, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
