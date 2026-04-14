@@ -11,7 +11,7 @@ using MimeMapping;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class SynchronizeGameStorePicturesActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         IDatabase database,
         ILogger<SynchronizeGameStorePicturesActivity> logger)
         : IExecuteActivity<SynchronizeGameStorePicturesArguments>
@@ -72,7 +72,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 var result = executeContext.Completed();
                 await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
-                await processTrackingStore.CompleteProcessAsync(processExecutionId, executeContext.CancellationToken);
+                await processTrackingStore.CompleteJobAsync(processExecutionId, executeContext.CancellationToken);
                 return result;
             }
             catch (Exception exception)

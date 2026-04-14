@@ -11,7 +11,7 @@ using SixLabors.ImageSharp;
 namespace Infrastructure.Messaging.Features.Common.Activities.Pictures
 {
     public class ResizePictureActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         IPictureService pictureService,
         ILogger<ResizePictureActivity> logger)
         : IActivity<ResizePictureLocalArguments, ResizePictureLog>

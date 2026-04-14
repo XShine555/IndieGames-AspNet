@@ -2,7 +2,7 @@ using Domain.JobTracking;
 
 namespace Application.Abstractions.Persistence
 {
-    public interface IProcessTrackingStore
+    public interface IJobTrackingStore
     {
         Task<Guid> GetOrCreateProcessAsync(
             string jobName,
@@ -21,7 +21,7 @@ namespace Application.Abstractions.Persistence
 
         Task CompensateStepAsync(Guid jobTrackingId, string stepName, CancellationToken cancellationToken);
 
-        Task CompleteProcessAsync(Guid jobTrackingId, CancellationToken cancellationToken);
+        Task CompleteJobAsync(Guid jobTrackingId, CancellationToken cancellationToken);
 
         Task FailStepAsync(Guid jobTrackingId, Guid stepExecutionId, string errorMessage, CancellationToken cancellationToken);
     }

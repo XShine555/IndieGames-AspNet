@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Users.Activities
 {
     public class SynchronizeUserProfilePicturesActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         IDatabase database,
         ILogger<SynchronizeUserProfilePicturesActivity> logger)
         : IExecuteActivity<SynchronizeUserProfilePicturesArguments>
@@ -66,7 +66,7 @@ namespace Infrastructure.Messaging.Features.Users.Activities
 
                 var result = executeContext.Completed();
                 await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
-                await processTrackingStore.CompleteProcessAsync(processExecutionId, executeContext.CancellationToken);
+                await processTrackingStore.CompleteJobAsync(processExecutionId, executeContext.CancellationToken);
                 return result;
             }
             catch (Exception exception)

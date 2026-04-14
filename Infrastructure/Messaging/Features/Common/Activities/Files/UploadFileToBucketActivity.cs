@@ -11,7 +11,7 @@ using MimeMapping;
 namespace Infrastructure.Messaging.Features.Common.Activities.Files
 {
     public class UploadFileToBucketActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         IS3Service s3Service,
         ILogger<UploadFileToBucketActivity> logger)
         : IActivity<UploadFileToBucketArguments, UploadFileToBucketLog>

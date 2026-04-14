@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Games.Consumers
 {
     public class GenerateGamesPicturesConsumer(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         GameStorePictureWorkflowRoutingSlipBuilder gameStorePictureWorkflowRoutingSlipBuilder,
         ILogger<GenerateGamesPicturesConsumer> logger)
         : IConsumer<GenerateGamesPicturesEvent>

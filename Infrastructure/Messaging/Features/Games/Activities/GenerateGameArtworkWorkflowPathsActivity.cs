@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class GenerateGameArtworkWorkflowPathsActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         ILogger<GenerateGameArtworkWorkflowPathsActivity> logger)
         : IExecuteActivity<GenerateGameArtworkWorkflowPathsArguments>
     {

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Common.Activities.Files
 {
     public class DownloadFileFromBucketActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         IS3Service s3Service,
         ILogger<DownloadFileFromBucketActivity> logger)
          : IActivity<DownloadFileFromBucketArguments, DownloadFileFromBucketLog>

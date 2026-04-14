@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Persistence
 {
     public class ProcessTrackingStore(IDatabase database)
-            : IProcessTrackingStore
+            : IJobTrackingStore
     {
         public async Task<Guid> GetOrCreateProcessAsync(
             string jobName,
@@ -132,7 +132,7 @@ namespace Infrastructure.Persistence
             await database.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task CompleteProcessAsync(Guid jobTrackingId, CancellationToken cancellationToken)
+        public async Task CompleteJobAsync(Guid jobTrackingId, CancellationToken cancellationToken)
         {
             var process = await database.JobTrackings
                 .SingleAsync(currentProcess => currentProcess.Id == jobTrackingId, cancellationToken);

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Users.Consumers
 {
     public class GenerateUsersProfilePicturesConsumer(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         UserProfilePictureWorkflowRoutingSlipBuilder userProfilePictureWorkflowRoutingSlipBuilder,
         ILogger<GenerateUsersProfilePicturesConsumer> logger)
         : IConsumer<GenerateUsersProfilePicturesEvent>

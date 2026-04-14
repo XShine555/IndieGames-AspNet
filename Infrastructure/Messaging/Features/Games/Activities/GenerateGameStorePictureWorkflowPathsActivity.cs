@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Games.Activities
 {
     public class GenerateGameStorePictureWorkflowPathsActivity(
-        IProcessTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         ILogger<GenerateGameStorePictureWorkflowPathsActivity> logger)
         : IExecuteActivity<GenerateGameStorePictureWorkflowPathsArguments>
     {

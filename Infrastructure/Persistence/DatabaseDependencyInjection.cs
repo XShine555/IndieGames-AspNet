@@ -21,7 +21,7 @@ namespace Infrastructure.Persistence
 
             serviceDescriptors.AddDbContext<Database>();
             serviceDescriptors.AddScoped<IDatabase>(serviceProvider => serviceProvider.GetRequiredService<Database>());
-            serviceDescriptors.AddScoped<IProcessTrackingStore, ProcessTrackingStore>();
+            serviceDescriptors.AddScoped<IJobTrackingStore, ProcessTrackingStore>();
             serviceDescriptors.AddSingleton<SaveChangesInterceptor, UpdateTimeStampInterceptor>();
             return serviceDescriptors;
         }
