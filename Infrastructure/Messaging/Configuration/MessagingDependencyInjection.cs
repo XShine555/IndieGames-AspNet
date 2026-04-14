@@ -20,7 +20,6 @@ using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Builders;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
-using MassTransit.Courier.Contracts;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
