@@ -20,6 +20,10 @@ namespace Infrastructure.Persistence
 
         public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
 
+        public DbSet<UserGameCollection> UserGameCollections => Set<UserGameCollection>();
+
+        public DbSet<UserGameCollectionItem> UserGameCollectionItems => Set<UserGameCollectionItem>();
+
         public DbSet<GameStorePictures> GamePictures => Set<GameStorePictures>();
 
         public DbSet<UserProfilePictures> UserProfilePictures => Set<UserProfilePictures>();
@@ -49,6 +53,40 @@ namespace Infrastructure.Persistence
                 p.HasOne(x => x.User)
                     .WithOne(x => x.ProfilePicture)
                     .HasForeignKey<UserProfilePictures>(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<UserOwnedGame>(ownedGame =>
+            {
+                ownedGame.HasOne(x => x.User)
+                    .WithMany(x => x.OwnedGames)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                ownedGame.HasOne(x => x.Game)
+                    .WithMany(x => x.UserOwnedGames)
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<UserGameCollection>(collection =>
+            {
+                collection.HasOne(x => x.User)
+                    .WithMany(x => x.GamesCollections)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<UserGameCollectionItem>(collectionItem =>
+            {
+                collectionItem.HasOne(x => x.Collection)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.CollectionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                collectionItem.HasOne(x => x.Game)
+                    .WithMany(x => x.CollectionItems)
+                    .HasForeignKey(x => x.GameId)
                     .OnDelete(DeleteBehavior.Cascade);
             } );
 

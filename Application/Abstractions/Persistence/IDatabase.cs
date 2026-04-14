@@ -14,6 +14,10 @@ namespace Application.Abstractions.Persistence
 
         DbSet<UserOwnedGame> UserOwnedGames { get; }
 
+        DbSet<UserGameCollection> UserGameCollections { get; }
+
+        DbSet<UserGameCollectionItem> UserGameCollectionItems { get; }
+
         DbSet<GameStorePictures> GamePictures { get; }
 
         DbSet<UserProfilePictures> UserProfilePictures { get; }
