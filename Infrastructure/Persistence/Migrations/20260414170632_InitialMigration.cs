@@ -35,6 +35,26 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Job_Tracking",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    CorrelationId = table.Column<Guid>(type: "char(36)", nullable: true),
+                    ConversationId = table.Column<Guid>(type: "char(36)", nullable: true),
+                    MessageId = table.Column<Guid>(type: "char(36)", nullable: true),
+                    JobName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    StartedDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    FinishedDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ErrorMessage = table.Column<string>(type: "varchar(2048)", maxLength: 2048, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Job_Tracking", x => x.Id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -52,6 +72,32 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Job_Tracking_Step",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    JobTrackingId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    StepName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: false),
+                    ComponentType = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Attempt = table.Column<int>(type: "int", nullable: false),
+                    StartedDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    FinishedDateTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    ErrorMessage = table.Column<string>(type: "varchar(2048)", maxLength: 2048, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Job_Tracking_Step", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Job_Tracking_Step_Job_Tracking_JobTrackingId",
+                        column: x => x.JobTrackingId,
+                        principalTable: "Job_Tracking",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Games",
                 columns: table => new
                 {
@@ -60,7 +106,11 @@ namespace Infrastructure.Persistence.Migrations
                     Title = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
                     NormalizedTitle = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
                     Description = table.Column<string>(type: "varchar(1024)", maxLength: 1024, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Discount = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
                     OwnerId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
+                    IsPublic = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsPublished = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     StoreReadinessStatus = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -71,6 +121,30 @@ namespace Infrastructure.Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Games_Users_OwnerId",
                         column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "IdentityId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "User_Game_Collections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false),
+                    Name = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
+                    NormalizedName = table.Column<string>(type: "varchar(64)", maxLength: 64, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User_Game_Collections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Game_Collections_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
@@ -243,22 +317,48 @@ namespace Infrastructure.Persistence.Migrations
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "User_Game_Collection_Items",
+                columns: table => new
+                {
+                    CollectionId = table.Column<int>(type: "int", nullable: false),
+                    GameId = table.Column<int>(type: "int", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User_Game_Collection_Items", x => new { x.CollectionId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_User_Game_Collection_Items_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_Game_Collection_Items_User_Game_Collections_CollectionId",
+                        column: x => x.CollectionId,
+                        principalTable: "User_Game_Collections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.InsertData(
                 table: "Genres",
                 columns: new[] { "Id", "CreatedAt", "Name", "NormalizedName", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4387), "Action", "ACTION", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4388) },
-                    { 2, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4954), "Adventure", "ADVENTURE", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4954) },
-                    { 3, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4958), "RPG", "RPG", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4959) },
-                    { 4, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4960), "Strategy", "STRATEGY", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4961) },
-                    { 5, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4962), "Simulation", "SIMULATION", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4962) },
-                    { 6, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4963), "Sports", "SPORTS", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4963) },
-                    { 7, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4964), "Puzzle", "PUZZLE", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4964) },
-                    { 8, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4965), "Horror", "HORROR", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4965) },
-                    { 9, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4966), "Racing", "RACING", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4966) },
-                    { 10, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4967), "Indie", "INDIE", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4967) },
-                    { 11, new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4968), "FPS", "FPS", new DateTime(2026, 4, 13, 14, 36, 54, 871, DateTimeKind.Utc).AddTicks(4968) }
+                    { 1, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(858), "Action", "ACTION", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(859) },
+                    { 2, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1424), "Adventure", "ADVENTURE", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1424) },
+                    { 3, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1427), "RPG", "RPG", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1427) },
+                    { 4, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1428), "Strategy", "STRATEGY", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1429) },
+                    { 5, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1430), "Simulation", "SIMULATION", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1431) },
+                    { 6, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1431), "Sports", "SPORTS", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1432) },
+                    { 7, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1433), "Puzzle", "PUZZLE", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1433) },
+                    { 8, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1435), "Horror", "HORROR", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1435) },
+                    { 9, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1473), "Racing", "RACING", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1474) },
+                    { 10, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1475), "Indie", "INDIE", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1475) },
+                    { 11, new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1476), "FPS", "FPS", new DateTime(2026, 4, 14, 17, 6, 31, 877, DateTimeKind.Utc).AddTicks(1476) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -286,6 +386,22 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_Games_OwnerId",
                 table: "Games",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Job_Tracking_Step_JobTrackingId",
+                table: "Job_Tracking_Step",
+                column: "JobTrackingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Game_Collection_Items_GameId",
+                table: "User_Game_Collection_Items",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Game_Collections_UserId_NormalizedName",
+                table: "User_Game_Collections",
+                columns: new[] { "UserId", "NormalizedName" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_Owned_Games_GameId",
@@ -318,6 +434,12 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Game_Store_Pictures");
 
             migrationBuilder.DropTable(
+                name: "Job_Tracking_Step");
+
+            migrationBuilder.DropTable(
+                name: "User_Game_Collection_Items");
+
+            migrationBuilder.DropTable(
                 name: "User_Owned_Games");
 
             migrationBuilder.DropTable(
@@ -325,6 +447,12 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Genres");
+
+            migrationBuilder.DropTable(
+                name: "Job_Tracking");
+
+            migrationBuilder.DropTable(
+                name: "User_Game_Collections");
 
             migrationBuilder.DropTable(
                 name: "Games");
