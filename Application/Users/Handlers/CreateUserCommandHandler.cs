@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Persistence;
+﻿using Application.Abstractions.Common;
+using Application.Abstractions.Persistence;
 using Application.Configuration;
 using Application.Users.Commands;
 using Application.Users.Responses;
@@ -12,6 +13,7 @@ namespace Application.Users.Handlers
 {
     public class CreateUserCommandHandler(
         IDatabase database,
+        IUserMapper userMapper,
         UserConfiguration userConfiguration,
         ILogger<CreateUserCommandHandler> logger)
         : ICommandHandler<CreateUserCommand, Result<ApplicationUser>>
@@ -50,7 +52,7 @@ namespace Application.Users.Handlers
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
-            return Result.Success(ApplicationUser.FromEntity(newUser));
+            return Result.Success(userMapper.ToApplicationUser(newUser));
         }
     }
 }

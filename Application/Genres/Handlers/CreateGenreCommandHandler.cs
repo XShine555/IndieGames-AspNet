@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Genres.Commands;
 using Application.Genres.Responses;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Genres.Handlers
 {
-    public class CreateGenreCommandHandler(IDatabase database, ILogger<CreateGenreCommandHandler> logger)
+    public class CreateGenreCommandHandler(
+        IDatabase database,
+        IGenreMapper genreMapper,
+        ILogger<CreateGenreCommandHandler> logger)
         : ICommandHandler<CreateGenreCommand, Result<ApplicationGenre>>
     {
         public async ValueTask<Result<ApplicationGenre>> Handle(CreateGenreCommand command, CancellationToken cancellationToken)
@@ -30,7 +34,7 @@ namespace Application.Genres.Handlers
             await database.Genres.AddAsync(newGenre, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new genre with ID '{GenreId}' and name '{GenreName}'.", newGenre.Id, newGenre.Name);
-            return Result.Created(ApplicationGenre.FromEntity(newGenre));
+            return Result.Created(genreMapper.ToApplicationGenre(newGenre));
         }
     }
 }

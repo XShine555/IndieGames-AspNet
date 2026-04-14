@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Persistence;
+﻿using Application.Abstractions.Common;
+using Application.Abstractions.Persistence;
 using Application.Genres.Commands;
 using Application.Genres.Responses;
 using Ardalis.Result;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Genres.Handlers
 {
-    public class UpdateGenreCommandHandler(IDatabase database, ILogger<UpdateGenreCommandHandler> logger)
+    public class UpdateGenreCommandHandler(
+        IDatabase database,
+        IGenreMapper genreMapper,
+        ILogger<UpdateGenreCommandHandler> logger)
         : ICommandHandler<UpdateGenreCommand, Result<ApplicationGenre>>
     {
         public async ValueTask<Result<ApplicationGenre>> Handle(UpdateGenreCommand command, CancellationToken cancellationToken)
@@ -26,7 +30,7 @@ namespace Application.Genres.Handlers
             if (!nameResult.IsSuccess)
                 return nameResult;
 
-            return Result.Success(ApplicationGenre.FromEntity(genre));
+            return Result.Success(genreMapper.ToApplicationGenre(genre));
         }
 
         async Task<Result> UpdateName(string? name, Genre genre, CancellationToken cancellationToken)

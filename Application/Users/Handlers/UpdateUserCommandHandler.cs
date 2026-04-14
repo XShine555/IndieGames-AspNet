@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Users.Commands;
 using Application.Users.Responses;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class UpdateUserCommandHandler(IDatabase database, ILogger<UpdateUserCommandHandler> logger)
+    public class UpdateUserCommandHandler(
+        IDatabase database,
+        IUserMapper userMapper,
+        ILogger<UpdateUserCommandHandler> logger)
         : ICommandHandler<UpdateUserCommand, Result<ApplicationUser>>
     {
         public async ValueTask<Result<ApplicationUser>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
@@ -28,7 +32,7 @@ namespace Application.Users.Handlers
             database.Users.Update(user);
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(ApplicationUser.FromEntity(user));
+            return Result.Success(userMapper.ToApplicationUser(user));
         }
 
         void UpdateDisplayUsername(string newUsername, User user)

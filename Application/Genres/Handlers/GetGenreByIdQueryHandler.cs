@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Persistence;
+﻿using Application.Abstractions.Common;
+using Application.Abstractions.Persistence;
 using Application.Genres.Queries;
 using Application.Genres.Responses;
 using Ardalis.Result;
@@ -7,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Genres.Handlers
 {
-    public class GetGenreByIdQueryHandler(IDatabase database)
+    public class GetGenreByIdQueryHandler(
+        IDatabase database,
+        IGenreMapper genreMapper)
         : IQueryHandler<GetGenreByIdQuery, Result<ApplicationGenre>>
     {
         public async ValueTask<Result<ApplicationGenre>> Handle(GetGenreByIdQuery query, CancellationToken cancellationToken)
@@ -16,7 +19,7 @@ namespace Application.Genres.Handlers
                 .SingleOrDefaultAsync(g => g.Id == query.Id, cancellationToken);
             if (genre is null)
                 return Result.NotFound();
-            return Result.Success(ApplicationGenre.FromEntity(genre));
+            return Result.Success(genreMapper.ToApplicationGenre(genre));
         }
     }
 }

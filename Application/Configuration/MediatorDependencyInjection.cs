@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Common;
+using Application.Genres.Mappers;
 using Application.Games.Mappers;
+using Application.Users.Mappers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -25,6 +27,8 @@ namespace Application.Configuration
                 serviceProvider.GetRequiredService<IOptions<UserConfiguration>>().Value);
 
             serviceDescriptors.AddScoped<IGameMapper, GameMapper>();
+            serviceDescriptors.AddScoped<IGenreMapper, GenreMapper>();
+            serviceDescriptors.AddScoped<IUserMapper, UserMapper>();
             serviceDescriptors.AddMediator();
             return serviceDescriptors;
         }
