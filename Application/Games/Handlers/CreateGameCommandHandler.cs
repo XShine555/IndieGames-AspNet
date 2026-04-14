@@ -18,6 +18,7 @@ namespace Application.Games.Handlers
         IDatabase database,
         IS3Service s3Service,
         IEventBus eventBus,
+        IGameMapper gameMapper,
         GameConfiguration gameConfiguration,
         ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGame>>
@@ -136,7 +137,7 @@ namespace Application.Games.Handlers
 
             game.Artworks = artworkRecords;
 
-            return Result.Created(ApplicationGame.FromEntity(game));
+            return Result.Created(gameMapper.ToApplicationGame(game));
         }
 
         private static IReadOnlyCollection<GameArtworkInput> GetRequiredArtworks(CreateGameCommand command)

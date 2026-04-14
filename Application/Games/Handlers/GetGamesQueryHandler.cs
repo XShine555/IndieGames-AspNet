@@ -5,48 +5,84 @@ using Application.Games.Responses;
 using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList.EF;
+using X.PagedList;
 
 namespace Application.Games.Handlers
 {
-    public class GetGamesQueryHandler(IDatabase database)
+    public class GetGamesQueryHandler(
+        IDatabase database,
+        IGameMapper gameMapper)
         : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGame>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGame>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
         {
-            var normalizedTitle = query.Title.Trim().ToLower();
+            var normalizedTitle = query.Title.Trim().ToUpperInvariant();
+            var hasTitleFilter = !string.IsNullOrWhiteSpace(normalizedTitle);
+            var hasGenresFilter = query.Genres.Count > 0;
 
-            var gamesQuery = database.Games.AsNoTracking()
+            var baseQuery = database.Games
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (query.ReadyOnly)
+            {
+                baseQuery = baseQuery.Where(g => g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore);
+            }
+
+            if (hasTitleFilter || hasGenresFilter)
+            {
+                baseQuery = baseQuery.Where(g =>
+                    (hasTitleFilter && g.NormalizedTitle.Contains(normalizedTitle))
+                    || (hasGenresFilter && g.Genres.Any(gg => query.Genres.Contains(gg.Id))));
+            }
+
+            var totalCount = await baseQuery.CountAsync(cancellationToken);
+
+            var pageInfo = new StaticPagedList<int>(Array.Empty<int>(), query.PageNumber, query.PageSize, totalCount);
+
+            if (totalCount == 0)
+            {
+                return new PaginatedApplicationResponse<ApplicationGame>(
+                    Array.Empty<ApplicationGame>(),
+                    pageInfo.PageNumber,
+                    pageInfo.PageSize,
+                    pageInfo.PageCount,
+                    pageInfo.TotalItemCount,
+                    pageInfo.HasNextPage,
+                    pageInfo.HasPreviousPage);
+            }
+
+            var pagedGameIds = await baseQuery
+                .OrderByDescending(g => g.CreatedAt)
+                .Skip((query.PageNumber - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(g => g.Id)
+                .ToListAsync(cancellationToken);
+
+            var games = await database.Games
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Include(g => g.Owner)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
                 .Include(g => g.Artworks)
-                .Where(g => g.NormalizedTitle.Contains(normalizedTitle)
-                    || g.Genres.Any(gg => query.Genres.Contains(gg.Id)));
+                .Where(g => pagedGameIds.Contains(g.Id))
+                .ToListAsync(cancellationToken);
 
-            if (query.ReadyOnly)
-            {
-                gamesQuery = gamesQuery.Where(g => g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore);
-            }
-
-            var totalCount = await gamesQuery.CountAsync(cancellationToken);
-            var pagedGames = await gamesQuery
-                .ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);
-
-            var applicationGames = new List<ApplicationGame>(pagedGames.Count);
-            foreach (var game in pagedGames)
-            {
-                applicationGames.Add(ApplicationGame.FromEntity(game));
-            }
+            var gamesById = games.ToDictionary(game => game.Id);
+            var orderedGames = pagedGameIds
+                .Select(gameId => gamesById[gameId])
+                .Select(gameMapper.ToApplicationGame)
+                .ToArray();
 
             return new PaginatedApplicationResponse<ApplicationGame>(
-                applicationGames,
-                pagedGames.PageNumber,
-                pagedGames.PageSize,
-                pagedGames.PageCount,
-                pagedGames.TotalItemCount,
-                pagedGames.HasNextPage,
-                pagedGames.HasPreviousPage);
+                orderedGames,
+                pageInfo.PageNumber,
+                pageInfo.PageSize,
+                pageInfo.PageCount,
+                pageInfo.TotalItemCount,
+                pageInfo.HasNextPage,
+                pageInfo.HasPreviousPage);
         }
     }
 }

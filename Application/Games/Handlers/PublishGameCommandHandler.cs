@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Games.Commands;
 using Application.Games.Responses;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class PublishGameCommandHandler(IDatabase database, ILogger<PublishGameCommandHandler> logger)
+    public class PublishGameCommandHandler(
+        IDatabase database,
+        IGameMapper gameMapper,
+        ILogger<PublishGameCommandHandler> logger)
         : ICommandHandler<PublishGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(PublishGameCommand command, CancellationToken cancellationToken)
@@ -52,7 +56,7 @@ namespace Application.Games.Handlers
             game.IsPublished = true;
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(ApplicationGame.FromEntity(game));
+            return Result.Success(gameMapper.ToApplicationGame(game));
         }
     }
 }

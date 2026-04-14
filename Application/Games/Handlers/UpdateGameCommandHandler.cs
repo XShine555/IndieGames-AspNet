@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Games.Commands;
 using Application.Games.Responses;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Games.Handlers
 {
-    public class UpdateGameCommandHandler(IDatabase database, ILogger<UpdateGameCommandHandler> logger)
+    public class UpdateGameCommandHandler(
+        IDatabase database,
+        IGameMapper gameMapper,
+        ILogger<UpdateGameCommandHandler> logger)
         : ICommandHandler<UpdateGameCommand, Result<ApplicationGame>>
     {
         public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
@@ -49,7 +53,7 @@ namespace Application.Games.Handlers
             UpdateIsPublic(command.IsPublic, game);
 
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success(ApplicationGame.FromEntity(game));
+            return Result.Success(gameMapper.ToApplicationGame(game));
         }
 
         void UpdateIsPublic(bool? isPublic, Game game)

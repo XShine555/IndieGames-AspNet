@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Application.Abstractions.Common;
+using Application.Games.Mappers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -22,6 +24,7 @@ namespace Application.Configuration
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<UserConfiguration>>().Value);
 
+            serviceDescriptors.AddScoped<IGameMapper, GameMapper>();
             serviceDescriptors.AddMediator();
             return serviceDescriptors;
         }
