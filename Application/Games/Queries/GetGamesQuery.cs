@@ -6,7 +6,7 @@ namespace Application.Games.Queries
 {
     public record GetGamesQuery(
         string Title,
-        ICollection<int> Genres,
+        ICollection<Guid> Genres,
         int PageNumber,
         int PageSize,
         bool ReadyOnly = true)

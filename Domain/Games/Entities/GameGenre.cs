@@ -10,10 +10,10 @@ namespace Domain.Entities
     public class GameGenre
     {
         [Required]
-        public int GameId { get; set; }
+        public Guid GameId { get; set; }
 
         [Required]
-        public int GenreId { get; set; }
+        public Guid GenreId { get; set; }
 
         [Required]
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;

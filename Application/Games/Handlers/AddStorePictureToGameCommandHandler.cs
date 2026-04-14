@@ -123,7 +123,7 @@ namespace Application.Games.Handlers
             }
         }
 
-        private async Task<Result> PublishGeneratePicturesEventAsync(int gameId, int pictureId, string sourceKey, CancellationToken cancellationToken)
+        private async Task<Result> PublishGeneratePicturesEventAsync(Guid gameId, Guid pictureId, string sourceKey, CancellationToken cancellationToken)
         {
             var @event = new GenerateGamesPicturesEvent(
                 pictureId,

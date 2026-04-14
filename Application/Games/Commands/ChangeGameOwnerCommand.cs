@@ -5,8 +5,8 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record ChangeGameOwnerCommand(
-        string IdentityId,
-        int GameId,
-        string NewOwnerId)
+        Guid IdentityId,
+        Guid GameId,
+        Guid NewOwnerId)
         : ICommand<Result<ApplicationGame>>;
 }

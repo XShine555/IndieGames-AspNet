@@ -95,7 +95,7 @@ namespace Application.Users.Handlers
             return profilePicture;
         }
 
-        private async Task<Result> PublishGeneratePicturesEventAsync(string userId, int pictureId, string sourceKey, CancellationToken cancellationToken)
+        private async Task<Result> PublishGeneratePicturesEventAsync(Guid userId, Guid pictureId, string sourceKey, CancellationToken cancellationToken)
         {
             var @event = new GenerateUsersProfilePicturesEvent(
                 pictureId,

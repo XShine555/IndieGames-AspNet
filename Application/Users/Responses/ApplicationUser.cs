@@ -4,7 +4,7 @@ using Domain.Entities;
 namespace Application.Users.Responses
 {
     public record ApplicationUser(
-        string IdentityId,
+        Guid IdentityId,
         string Username,
         string DisplayUsername,
         ApplicationUserPicture? ProfilePicture,

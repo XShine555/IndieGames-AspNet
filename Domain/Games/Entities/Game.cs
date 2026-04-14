@@ -9,7 +9,7 @@ namespace Domain.Entities
     public class Game : IUpdatableEntity
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(64)]
@@ -32,8 +32,7 @@ namespace Domain.Entities
         public decimal Discount { get; set; } = 0m;
 
         [Required]
-        [MaxLength(36)]
-        public required string OwnerId { get; set; }
+        public Guid OwnerId { get; set; }
 
         [Required]
         public bool IsPublic { get; set; }

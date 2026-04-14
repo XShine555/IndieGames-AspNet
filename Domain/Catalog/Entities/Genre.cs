@@ -8,7 +8,7 @@ namespace Domain.Entities
     public class Genre : IUpdatableEntity
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(32)]

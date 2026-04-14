@@ -5,8 +5,8 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record UpdateGameCommand(
-        string IdentityId,
-        int GameId,
+        Guid IdentityId,
+        Guid GameId,
         string? Title,
         string? Description,
         decimal? Price,

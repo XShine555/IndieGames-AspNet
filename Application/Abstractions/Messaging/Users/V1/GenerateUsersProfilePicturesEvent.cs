@@ -3,7 +3,7 @@
 namespace Application.Abstractions.Messaging.Users.V1
 {
     public record GenerateUsersProfilePicturesEvent(
-        int PictureId,
+        Guid PictureId,
         string SourceKey,
         string SmallDestinationRoute,
         string MediumDestinationRoute,

@@ -3,7 +3,7 @@ using Domain.Entities;
 namespace Application.Games.Responses
 {
     public record ApplicationGameArtwork(
-        int ArtworkId,
+        Guid ArtworkId,
         GameArtworkType Type,
         string OriginalArtworkKey,
         string? SmallArtworkKey,

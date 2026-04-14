@@ -106,8 +106,8 @@ namespace Infrastructure.Persistence
                             x.ToTable("Game_Genres");
                             x.HasKey(y => new { y.GameId, y.GenreId });
                             x.Property(y => y.AddedAt).IsRequired();
-                        });
-            });
+                        } );
+            } );
 
             modelBuilder.Entity<GameArtwork>(a =>
             {
@@ -133,16 +133,6 @@ namespace Infrastructure.Persistence
                 CreateGenre(10, "Indie"),
                 CreateGenre(11, "FPS")
             );*/
-        }
-
-        Genre CreateGenre(int id, string name)
-        {
-            return new Genre
-            {
-                Id = id,
-                Name = name,
-                NormalizedName = name.Trim().ToUpperInvariant()
-            };
         }
     }
 }

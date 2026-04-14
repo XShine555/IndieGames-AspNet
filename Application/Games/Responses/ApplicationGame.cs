@@ -5,7 +5,7 @@ using Domain.Entities;
 namespace Application.Games.Responses
 {
     public record ApplicationGame(
-        int Id,
+        Guid Id,
         string Title,
         string Description,
         decimal Price,

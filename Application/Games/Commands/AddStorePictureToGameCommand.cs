@@ -6,8 +6,8 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record AddStorePictureToGameCommand(
-        string IdentityId,
-        int GameId,
+        Guid IdentityId,
+        Guid GameId,
         IFileData fileData)
         : ICommand<Result<ApplicationGamePicture>>;
 }

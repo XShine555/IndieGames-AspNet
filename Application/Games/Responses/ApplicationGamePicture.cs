@@ -3,7 +3,7 @@
 namespace Application.Games.Responses
 {
     public record ApplicationGamePicture(
-        int PictureId,
+        Guid PictureId,
         string OriginalPictureKey,
         string? SmallPictureKey,
         string? MediumPictureKey,

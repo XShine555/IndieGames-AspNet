@@ -9,8 +9,7 @@ namespace Domain.Entities
     public class User : IUpdatableEntity
     {
         [Key]
-        [MaxLength(36)]
-        public required string IdentityId { get; set; }
+        public Guid IdentityId { get; set; }
 
         [Required]
         [MaxLength(24)]

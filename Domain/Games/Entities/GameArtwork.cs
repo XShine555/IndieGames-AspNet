@@ -11,10 +11,10 @@ namespace Domain.Entities
     public class GameArtwork
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        public int GameId { get; set; }
+        public Guid GameId { get; set; }
 
         [Required]
         public GameArtworkType Type { get; set; }

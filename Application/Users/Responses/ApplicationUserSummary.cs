@@ -3,7 +3,7 @@
 namespace Application.Users.Responses
 {
     public record ApplicationUserSummary(
-        string IdentityId,
+        Guid IdentityId,
         string Username)
     {
         public static ApplicationUserSummary FromEntity(User user)

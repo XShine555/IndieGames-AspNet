@@ -10,11 +10,10 @@ namespace Domain.Entities
     public class UserOwnedGame
     {
         [Required]
-        [MaxLength(36)]
-        public required string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
-        public required int GameId { get; set; }
+        public Guid GameId { get; set; }
 
         public User User { get; set; }
 

@@ -6,9 +6,9 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record UpdateGameArtworkCommand(
-        string IdentityId,
-        int GameId,
-        int ArtworkId,
+        Guid IdentityId,
+        Guid GameId,
+        Guid ArtworkId,
         IFileData FileData)
         : ICommand<Result<ApplicationGameArtwork>>;
 }

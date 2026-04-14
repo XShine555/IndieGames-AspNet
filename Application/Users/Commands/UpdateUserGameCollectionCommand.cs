@@ -4,8 +4,8 @@ using Mediator;
 namespace Application.Users.Commands
 {
     public record UpdateUserGameCollectionCommand(
-        string UserId,
-        int CollectionId,
+        Guid UserId,
+        Guid CollectionId,
         string Name)
         : ICommand<Result>;
 }

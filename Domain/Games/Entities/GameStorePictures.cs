@@ -8,10 +8,10 @@ namespace Domain.Entities
     public class GameStorePictures
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        public int GameId { get; set; }
+        public Guid GameId { get; set; }
 
         [Required]
         [MaxLength(128)]
@@ -41,7 +41,7 @@ namespace Domain.Entities
         public string? MediumName { get; set; }
 
         [MaxLength(16)]
-        public string? MediumContentType { get; set; }
+        public string? MediumFileContentType { get; set; }
 
         [MaxLength(128)]
         public string? LargeRelativePath { get; set; }

@@ -34,10 +34,10 @@ namespace Application.Games.Handlers
                 return Result.Invalid(new ValidationError("Capsule, Header and Main artworks are required."));
 
             var owner = await database.Users
-                .SingleOrDefaultAsync(u => u.IdentityId == command.identityId, cancellationToken);
+                .SingleOrDefaultAsync(u => u.IdentityId == command.IdentityId, cancellationToken);
             if (owner is null)
             {
-                logger.LogWarning("User with ID '{identityId}' not found.", command.identityId);
+                logger.LogWarning("User with ID '{identityId}' not found.", command.IdentityId);
                 return Result.NotFound();
             }
 

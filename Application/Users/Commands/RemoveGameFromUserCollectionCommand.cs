@@ -4,8 +4,8 @@ using Mediator;
 namespace Application.Users.Commands
 {
     public record RemoveGameFromUserCollectionCommand(
-        string UserId,
-        int CollectionId,
-        int GameId)
+        Guid UserId,
+        Guid CollectionId,
+        Guid GameId)
         : ICommand<Result>;
 }

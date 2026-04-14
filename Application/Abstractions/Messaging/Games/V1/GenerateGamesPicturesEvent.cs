@@ -3,7 +3,7 @@ using Application.Abstractions.Common;
 namespace Application.Abstractions.Messaging.Games.V1
 {
     public record GenerateGamesPicturesEvent(
-        int PictureId,
+        Guid PictureId,
         string SourceKey,
         string SmallDestinationRoute,
         string MediumDestinationRoute,

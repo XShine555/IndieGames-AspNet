@@ -5,7 +5,7 @@ using Mediator;
 namespace Application.Genres.Commands
 {
     public record UpdateGenreCommand(
-        int Id,
+        Guid Id,
         string? Name)
         : ICommand<Result<ApplicationGenre>>;
 }

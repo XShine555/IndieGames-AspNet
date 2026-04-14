@@ -3,7 +3,7 @@
 namespace Application.Users.Responses
 {
     public record ApplicationUserPicture(
-        int PictureId,
+        Guid PictureId,
         string? OriginalPictureKey,
         string? SmallPictureKey,
         string? MediumPictureKey,

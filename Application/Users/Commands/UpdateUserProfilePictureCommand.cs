@@ -6,7 +6,7 @@ using Mediator;
 namespace Application.Users.Commands
 {
     public record UpdateUserProfilePictureCommand(
-        string UserId,
+        Guid UserId,
         IFileData NewPicture)
         : ICommand<Result<ApplicationUser>>;
 }

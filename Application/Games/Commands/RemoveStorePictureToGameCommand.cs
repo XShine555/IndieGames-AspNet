@@ -4,7 +4,7 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record RemoveStorePictureToGameCommand(
-        string IdentityId,
-        int PictureId)
+        Guid IdentityId,
+        Guid PictureId)
         : ICommand<Result>;
 }

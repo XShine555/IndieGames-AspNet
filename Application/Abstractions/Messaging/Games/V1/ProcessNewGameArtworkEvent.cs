@@ -3,7 +3,7 @@ using Application.Abstractions.Common;
 namespace Application.Abstractions.Messaging.Games.V1
 {
     public record ProcessNewGameArtworkEvent(
-        int ArtworkId,
+        Guid ArtworkId,
         string SourceKey,
         string SmallDestinationRoute,
         string MediumDestinationRoute,

@@ -4,8 +4,8 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record RetryGameStorePictureCommand(
-        string IdentityId,
-        int GameId,
-        int PictureId)
+        Guid IdentityId,
+        Guid GameId,
+        Guid PictureId)
         : ICommand<Result>;
 }

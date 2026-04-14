@@ -4,7 +4,7 @@ using Mediator;
 namespace Application.Users.Commands
 {
     public record DeleteUserGameCollectionCommand(
-        string UserId,
-        int CollectionId)
+        Guid UserId,
+        Guid CollectionId)
         : ICommand<Result>;
 }

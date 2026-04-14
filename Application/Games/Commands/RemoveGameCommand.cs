@@ -4,7 +4,7 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record RemoveGameCommand(
-        string IdentityId,
-        int Id)
+        Guid IdentityId,
+        Guid Id)
         : ICommand<Result>;
 }

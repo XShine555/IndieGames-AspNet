@@ -10,10 +10,10 @@ namespace Domain.Entities
     public class UserGameCollectionItem
     {
         [Required]
-        public int CollectionId { get; set; }
+        public Guid CollectionId { get; set; }
 
         [Required]
-        public int GameId { get; set; }
+        public Guid GameId { get; set; }
 
         [Required]
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;

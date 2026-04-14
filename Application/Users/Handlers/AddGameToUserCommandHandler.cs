@@ -67,7 +67,7 @@ namespace Application.Users.Handlers
                         .ThenInclude(g => g.StorePictures)
                 .SingleAsync(u => u.IdentityId == command.UserId, cancellationToken);
 
-            return Result.Success(ApplicationUser.FromEntity(user));
+            return Result.Success(ApplicationUser.FromEntity(refreshedUser));
         }
     }
 }

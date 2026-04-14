@@ -11,9 +11,9 @@ namespace Application.Users.Handlers
     public class CreateUserGameCollectionCommandHandler(
         IDatabase database,
         ILogger<CreateUserGameCollectionCommandHandler> logger)
-        : ICommandHandler<CreateUserGameCollectionCommand, Result<int>>
+        : ICommandHandler<CreateUserGameCollectionCommand, Result<Guid>>
     {
-        public async ValueTask<Result<int>> Handle(CreateUserGameCollectionCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<Guid>> Handle(CreateUserGameCollectionCommand command, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(command.Name))
                 return Result.Invalid(new ValidationError("Collection name is required."));

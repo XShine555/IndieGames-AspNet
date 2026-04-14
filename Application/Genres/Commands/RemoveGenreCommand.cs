@@ -3,6 +3,6 @@ using Mediator;
 
 namespace Application.Genres.Commands
 {
-    public record RemoveGenreCommand(int Id)
+    public record RemoveGenreCommand(Guid Id)
         : ICommand<Result>;
 }

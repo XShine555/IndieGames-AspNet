@@ -10,11 +10,10 @@ namespace Domain.Entities
     public class UserGameCollection
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(36)]
-        public required string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         [MaxLength(64)]

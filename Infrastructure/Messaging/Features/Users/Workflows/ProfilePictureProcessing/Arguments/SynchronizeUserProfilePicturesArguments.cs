@@ -1,7 +1,7 @@
 namespace Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Arguments
 {
     public record SynchronizeUserProfilePicturesArguments(
-        int PictureId,
+        Guid PictureId,
         string SmallPictureVariable,
         string MediumPictureVariable,
         string LargePictureVariable,

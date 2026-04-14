@@ -21,22 +21,22 @@
 
         public string LargeProfilePicturesFolder { get; set; } = "LargeProfilePictures";
 
-        public string GetProfilePicturesFolderPath(string identityId)
+        public string GetProfilePicturesFolderPath(Guid identityId)
         {
             return $"{ParentFolder}/{identityId}/{ProfilePicturesFolder}";
         }
 
-        public string GetSmallProfilePicturesFolderPath(string identityId)
+        public string GetSmallProfilePicturesFolderPath(Guid identityId)
         {
             return $"{ParentFolder}/{identityId}/{SmallProfilePicturesFolder}";
         }
 
-        public string GetMediumProfilePicturesFolderPath(string identityId)
+        public string GetMediumProfilePicturesFolderPath(Guid identityId)
         {
             return $"{ParentFolder}/{identityId}/{MediumProfilePicturesFolder}";
         }
 
-        public string GetLargeProfilePicturesFolderPath(string identityId)
+        public string GetLargeProfilePicturesFolderPath(Guid identityId)
         {
             return $"{ParentFolder}/{identityId}/{LargeProfilePicturesFolder}";
         }

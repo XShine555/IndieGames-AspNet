@@ -7,17 +7,17 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record CreateGameCommand(
-        string identityId,
+        Guid IdentityId,
         string Title,
         string Description,
         decimal Price,
-        ICollection<int> Genres,
+        ICollection<Guid> Genres,
         IFileData CapsulePicture,
         IFileData HeaderPicture,
         IFileData MainPicture)
         : ICommand<Result<ApplicationGame>>
     {
-        public static Game ToEntity(CreateGameCommand command, ICollection<Genre> Genres)
+        public static Game ToEntity(CreateGameCommand command, ICollection<Genre> genres)
         {
             return new Game()
             {
@@ -26,9 +26,9 @@ namespace Application.Games.Commands
                 Description = command.Description,
                 Price = command.Price,
                 Discount = 0m,
-                OwnerId = command.identityId,
+                OwnerId = command.IdentityId,
                 StoreReadinessStatus = GameStoreReadinessStatus.NotReadyForStore,
-                Genres = Genres
+                Genres = genres
             };
         }
     }

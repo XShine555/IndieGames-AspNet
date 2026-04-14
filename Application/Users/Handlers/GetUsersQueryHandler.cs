@@ -28,7 +28,7 @@ namespace Application.Users.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-            var pageInfo = new StaticPagedList<string>(Array.Empty<string>(), query.PageNumber, query.PageSize, totalCount);
+            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
 
             if (totalCount == 0)
             {

@@ -8,11 +8,10 @@ namespace Domain.Entities
     public class UserProfilePictures
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(36)]
-        public required string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [MaxLength(128)]
         public string? OriginalName { get; set; }

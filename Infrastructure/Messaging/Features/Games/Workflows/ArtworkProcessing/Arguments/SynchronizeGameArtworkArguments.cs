@@ -1,7 +1,7 @@
 namespace Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Arguments
 {
     public record SynchronizeGameArtworkArguments(
-        int ArtworkId,
+        Guid ArtworkId,
         string SmallPictureVariable,
         string MediumPictureVariable,
         string LargePictureVariable,
