@@ -21,7 +21,7 @@ namespace Infrastructure.Persistence
                 ?? throw new InvalidOperationException($"{DatabaseConfiguration.SectionName} configuration section not found.");
 
             var optionsBuilder = new DbContextOptionsBuilder<Database>();
-            optionsBuilder.UseMySQL(databaseConfiguration.ConnectionString);
+            optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString);
 
             return new Database(databaseConfiguration, new UpdateTimeStampInterceptor());
         }

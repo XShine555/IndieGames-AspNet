@@ -120,7 +120,7 @@ namespace Infrastructure.Persistence
                     .HasMaxLength(512);
             } );
 
-            modelBuilder.Entity<Genre>().HasData(
+            /*modelBuilder.Entity<Genre>().HasData(
                 CreateGenre(1, "Action"),
                 CreateGenre(2, "Adventure"),
                 CreateGenre(3, "RPG"),
@@ -132,7 +132,7 @@ namespace Infrastructure.Persistence
                 CreateGenre(9, "Racing"),
                 CreateGenre(10, "Indie"),
                 CreateGenre(11, "FPS")
-            );
+            );*/
         }
 
         Genre CreateGenre(int id, string name)
