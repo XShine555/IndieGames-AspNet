@@ -18,10 +18,10 @@ namespace Domain.Entities
         [Required]
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(CollectionId))]
+        [ForeignKey(nameof(CollectionId)) ]
         public UserGameCollection Collection { get; set; }
 
-        [ForeignKey(nameof(GameId))]
+        [ForeignKey(nameof(GameId)) ]
         public Game Game { get; set; }
     }
 }

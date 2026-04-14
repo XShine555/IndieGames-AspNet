@@ -29,7 +29,7 @@ namespace Domain.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(UserId)) ]
         public User User { get; set; }
 
         public ICollection<UserGameCollectionItem> Items { get; set; } = new List<UserGameCollectionItem>();

@@ -61,7 +61,7 @@ namespace Domain.Entities
         [Required]
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(UserId)) ]
         public User User { get; set; }
     }
 }
