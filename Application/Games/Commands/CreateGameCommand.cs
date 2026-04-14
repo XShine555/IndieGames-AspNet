@@ -10,6 +10,7 @@ namespace Application.Games.Commands
         string identityId,
         string Title,
         string Description,
+        decimal Price,
         ICollection<int> Genres,
         IFileData CapsulePicture,
         IFileData HeaderPicture,
@@ -23,6 +24,8 @@ namespace Application.Games.Commands
                 Title = command.Title,
                 NormalizedTitle = command.Title.Trim().ToUpperInvariant(),
                 Description = command.Description,
+                Price = command.Price,
+                Discount = 0m,
                 OwnerId = command.identityId,
                 StoreReadinessStatus = GameStoreReadinessStatus.NotReadyForStore,
                 Genres = Genres

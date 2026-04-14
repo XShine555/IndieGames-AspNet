@@ -24,6 +24,14 @@ namespace Domain.Entities
         public required string Description { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Price { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal Discount { get; set; } = 0m;
+
+        [Required]
         [MaxLength(36)]
         public required string OwnerId { get; set; }
 

@@ -9,6 +9,8 @@ namespace Application.Games.Commands
         int GameId,
         string? Title,
         string? Description,
+        decimal? Price,
+        decimal? Discount,
         bool? IsPublic)
         : ICommand<Result<ApplicationGame>>;
 }

@@ -27,6 +27,9 @@ namespace Application.Games.Handlers
 
         public async ValueTask<Result<ApplicationGame>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
         {
+            if (command.Price < 0)
+                return Result.Invalid(new ValidationError("Price cannot be negative."));
+
             if (command.CapsulePicture is null || command.HeaderPicture is null || command.MainPicture is null)
                 return Result.Invalid(new ValidationError("Capsule, Header and Main artworks are required."));
 

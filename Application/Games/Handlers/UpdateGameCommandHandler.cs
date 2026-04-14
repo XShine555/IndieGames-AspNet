@@ -40,6 +40,14 @@ namespace Application.Games.Handlers
             if (!titleResult.IsSuccess)
                 return titleResult;
 
+            var priceResult = UpdatePrice(command.Price, game);
+            if (!priceResult.IsSuccess)
+                return priceResult;
+
+            var discountResult = UpdateDiscount(command.Discount, game);
+            if (!discountResult.IsSuccess)
+                return discountResult;
+
             UpdateDescription(command.Description, game);
             UpdateIsPublic(command.IsPublic, game);
 
@@ -53,6 +61,30 @@ namespace Application.Games.Handlers
                 return;
 
             game.IsPublic = isPublic.Value;
+        }
+
+        private Result UpdatePrice(decimal? newPrice, Game game)
+        {
+            if (!newPrice.HasValue)
+                return Result.Success();
+
+            if (newPrice.Value < 0)
+                return Result.Invalid(new ValidationError("Price cannot be negative."));
+
+            game.Price = newPrice.Value;
+            return Result.Success();
+        }
+
+        private Result UpdateDiscount(decimal? newDiscount, Game game)
+        {
+            if (!newDiscount.HasValue)
+                return Result.Success();
+
+            if (newDiscount.Value is < 0 or > 100)
+                return Result.Invalid(new ValidationError("Discount must be between 0 and 100."));
+
+            game.Discount = newDiscount.Value;
+            return Result.Success();
         }
 
         private async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)

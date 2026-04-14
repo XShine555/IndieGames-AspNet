@@ -14,6 +14,8 @@ namespace Application.Games.Mappers
                 game.Id,
                 game.Title,
                 game.Description,
+                game.Price,
+                game.Discount,
                 game.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
                 game.IsPublic,
                 game.IsPublished,
