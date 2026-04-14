@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.ProcessExecutions
+namespace Domain.JobTracking
 {
 #pragma warning disable CS8618
-    [Table("Process_Execution")]
-    public class ProcessExecution
+    [Table("Job_Tracking")]
+    public class JobTracking
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -18,10 +18,10 @@ namespace Domain.ProcessExecutions
 
         [Required]
         [MaxLength(256)]
-        public required string ProcessName { get; set; }
+        public required string JobName { get; set; }
 
         [Required]
-        public ProcessExecutionStatus Status { get; set; } = ProcessExecutionStatus.Running;
+        public JobTrackingStatus Status { get; set; } = JobTrackingStatus.Running;
 
         [Required]
         public DateTime StartedDateTime { get; set; } = DateTime.UtcNow;
@@ -31,6 +31,6 @@ namespace Domain.ProcessExecutions
         [MaxLength(2048)]
         public string? ErrorMessage { get; set; }
 
-        public ICollection<ProcessStepExecution> Steps { get; set; } = new List<ProcessStepExecution>();
+        public ICollection<JobTrackingStep> Steps { get; set; } = new List<JobTrackingStep>();
     }
 }

@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Persistence;
-using Domain.ProcessExecutions;
+using Application.Abstractions.Persistence;
+using Domain.JobTracking;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
@@ -8,28 +8,28 @@ namespace Infrastructure.Persistence
             : IProcessTrackingStore
     {
         public async Task<Guid> GetOrCreateProcessAsync(
-            string processName,
+            string jobName,
             Guid? correlationId,
             Guid? conversationId,
             Guid? messageId,
             CancellationToken cancellationToken)
         {
-            ProcessExecution? existingProcess = null;
+            JobTracking? existingProcess = null;
 
             if (correlationId.HasValue)
             {
-                existingProcess = await database.ProcessExecutions
-                    .OrderByDescending(process => process.StartedDateTime)
+                existingProcess = await database.JobTrackings
+                    .OrderByDescending(jobTracking => jobTracking.StartedDateTime)
                     .FirstOrDefaultAsync(
-                        process => process.CorrelationId == correlationId && process.ProcessName == processName,
+                        jobTracking => jobTracking.CorrelationId == correlationId && jobTracking.JobName == jobName,
                         cancellationToken);
             }
 
             if (existingProcess is not null)
             {
-                if (existingProcess.Status is ProcessExecutionStatus.Failed or ProcessExecutionStatus.Compensated)
+                if (existingProcess.Status is JobTrackingStatus.Failed or JobTrackingStatus.Compensated)
                 {
-                    existingProcess.Status = ProcessExecutionStatus.Running;
+                    existingProcess.Status = JobTrackingStatus.Running;
                     existingProcess.StartedDateTime = DateTime.UtcNow;
                     existingProcess.FinishedDateTime = null;
                     existingProcess.ErrorMessage = null;
@@ -40,64 +40,64 @@ namespace Infrastructure.Persistence
                 return existingProcess.Id;
             }
 
-            var newProcess = new ProcessExecution
+            var newProcess = new JobTracking
             {
-                ProcessName = processName,
+                JobName = jobName,
                 CorrelationId = correlationId,
                 ConversationId = conversationId,
                 MessageId = messageId,
-                Status = ProcessExecutionStatus.Running,
+                Status = JobTrackingStatus.Running,
                 StartedDateTime = DateTime.UtcNow,
             };
 
-            await database.ProcessExecutions.AddAsync(newProcess, cancellationToken);
+            await database.JobTrackings.AddAsync(newProcess, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             return newProcess.Id;
         }
 
         public async Task<Guid> StartStepAsync(
-            Guid processExecutionId,
+            Guid jobTrackingId,
             string stepName,
-            ProcessStepComponentType componentType,
+            JobTrackingType componentType,
             CancellationToken cancellationToken)
         {
-            var attempt = (await database.ProcessStepExecutions
-                    .Where(step => step.ProcessExecutionId == processExecutionId && step.StepName == stepName)
+            var attempt = (await database.JobTrackingSteps
+                    .Where(step => step.JobTrackingId == jobTrackingId && step.StepName == stepName)
                     .Select(step => (int?)step.Attempt)
                     .MaxAsync(cancellationToken) ?? 0) + 1;
 
-            var step = new ProcessStepExecution
+            var step = new JobTrackingStep
             {
-                ProcessExecutionId = processExecutionId,
+                JobTrackingId = jobTrackingId,
                 StepName = stepName,
                 ComponentType = componentType,
                 Attempt = attempt,
-                Status = ProcessExecutionStatus.Running,
+                Status = JobTrackingStatus.Running,
                 StartedDateTime = DateTime.UtcNow,
             };
 
-            await database.ProcessStepExecutions.AddAsync(step, cancellationToken);
+            await database.JobTrackingSteps.AddAsync(step, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             return step.Id;
         }
 
-        public async Task CompleteStepAsync(Guid processExecutionId, Guid stepExecutionId, CancellationToken cancellationToken)
+        public async Task CompleteStepAsync(Guid jobTrackingId, Guid stepExecutionId, CancellationToken cancellationToken)
         {
-            var step = await database.ProcessStepExecutions
+            var step = await database.JobTrackingSteps
                 .SingleAsync(currentStep => currentStep.Id == stepExecutionId, cancellationToken);
 
-            step.Status = ProcessExecutionStatus.Succeeded;
+            step.Status = JobTrackingStatus.Succeeded;
             step.FinishedDateTime = DateTime.UtcNow;
 
             await database.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task CompensateStepAsync(Guid processExecutionId, string stepName, CancellationToken cancellationToken)
+        public async Task CompensateStepAsync(Guid jobTrackingId, string stepName, CancellationToken cancellationToken)
         {
-            var step = await database.ProcessStepExecutions
-                .Where(currentStep => currentStep.ProcessExecutionId == processExecutionId
+            var step = await database.JobTrackingSteps
+                .Where(currentStep => currentStep.JobTrackingId == jobTrackingId
                                       && currentStep.StepName == stepName
-                                      && currentStep.Status == ProcessExecutionStatus.Succeeded)
+                                      && currentStep.Status == JobTrackingStatus.Succeeded)
                 .OrderByDescending(currentStep => currentStep.StartedDateTime)
                 .ThenByDescending(currentStep => currentStep.Attempt)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -107,24 +107,24 @@ namespace Infrastructure.Persistence
                 return;
             }
 
-            step.Status = ProcessExecutionStatus.Compensated;
+            step.Status = JobTrackingStatus.Compensated;
             step.FinishedDateTime = DateTime.UtcNow;
 
-            var hasRunningOrSucceededSteps = await database.ProcessStepExecutions
+            var hasRunningOrSucceededSteps = await database.JobTrackingSteps
                 .AnyAsync(
-                    currentStep => currentStep.ProcessExecutionId == processExecutionId
-                                   && (currentStep.Status == ProcessExecutionStatus.Running
-                                       || currentStep.Status == ProcessExecutionStatus.Succeeded),
+                    currentStep => currentStep.JobTrackingId == jobTrackingId
+                                   && (currentStep.Status == JobTrackingStatus.Running
+                                       || currentStep.Status == JobTrackingStatus.Succeeded),
                     cancellationToken);
 
             if (!hasRunningOrSucceededSteps)
             {
-                var process = await database.ProcessExecutions
-                    .SingleAsync(currentProcess => currentProcess.Id == processExecutionId, cancellationToken);
+                var process = await database.JobTrackings
+                    .SingleAsync(currentProcess => currentProcess.Id == jobTrackingId, cancellationToken);
 
-                if (process.Status != ProcessExecutionStatus.Failed)
+                if (process.Status != JobTrackingStatus.Failed)
                 {
-                    process.Status = ProcessExecutionStatus.Compensated;
+                    process.Status = JobTrackingStatus.Compensated;
                     process.FinishedDateTime = DateTime.UtcNow;
                 }
             }
@@ -132,31 +132,31 @@ namespace Infrastructure.Persistence
             await database.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task CompleteProcessAsync(Guid processExecutionId, CancellationToken cancellationToken)
+        public async Task CompleteProcessAsync(Guid jobTrackingId, CancellationToken cancellationToken)
         {
-            var process = await database.ProcessExecutions
-                .SingleAsync(currentProcess => currentProcess.Id == processExecutionId, cancellationToken);
+            var process = await database.JobTrackings
+                .SingleAsync(currentProcess => currentProcess.Id == jobTrackingId, cancellationToken);
 
-            process.Status = ProcessExecutionStatus.Succeeded;
+            process.Status = JobTrackingStatus.Succeeded;
             process.FinishedDateTime = DateTime.UtcNow;
             process.ErrorMessage = null;
 
             await database.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task FailStepAsync(Guid processExecutionId, Guid stepExecutionId, string errorMessage, CancellationToken cancellationToken)
+        public async Task FailStepAsync(Guid jobTrackingId, Guid stepExecutionId, string errorMessage, CancellationToken cancellationToken)
         {
-            var step = await database.ProcessStepExecutions
+            var step = await database.JobTrackingSteps
                 .SingleAsync(currentStep => currentStep.Id == stepExecutionId, cancellationToken);
 
-            step.Status = ProcessExecutionStatus.Failed;
+            step.Status = JobTrackingStatus.Failed;
             step.FinishedDateTime = DateTime.UtcNow;
             step.ErrorMessage = errorMessage;
 
-            var process = await database.ProcessExecutions
-                .SingleAsync(currentProcess => currentProcess.Id == processExecutionId, cancellationToken);
+            var process = await database.JobTrackings
+                .SingleAsync(currentProcess => currentProcess.Id == jobTrackingId, cancellationToken);
 
-            process.Status = ProcessExecutionStatus.Failed;
+            process.Status = JobTrackingStatus.Failed;
             process.FinishedDateTime = DateTime.UtcNow;
             process.ErrorMessage = errorMessage;
 

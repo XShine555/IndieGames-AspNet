@@ -1,6 +1,6 @@
 using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
-using Domain.ProcessExecutions;
+using Domain.JobTracking;
 using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
@@ -49,7 +49,7 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
             var stepExecutionId = await processTrackingStore.StartStepAsync(
                 processExecutionId,
                 ExecuteEndpointName,
-                ProcessStepComponentType.Activity,
+                JobTrackingType.Activity,
                 executeContext.CancellationToken);
 
             var destinationPath = executeContext.GetVariable<string>(executeContext.Arguments.DestinationFilePathVariable);
@@ -91,3 +91,4 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
         }
     }
 }
+

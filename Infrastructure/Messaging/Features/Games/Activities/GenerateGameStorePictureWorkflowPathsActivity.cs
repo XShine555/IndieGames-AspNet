@@ -1,5 +1,5 @@
 using Application.Abstractions.Persistence;
-using Domain.ProcessExecutions;
+using Domain.JobTracking;
 using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
@@ -26,7 +26,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
             var stepExecutionId = await processTrackingStore.StartStepAsync(
                 processExecutionId,
                 ExecuteEndpointName,
-                ProcessStepComponentType.Activity,
+                JobTrackingType.Activity,
                 executeContext.CancellationToken);
 
             try
@@ -76,3 +76,4 @@ namespace Infrastructure.Messaging.Features.Games.Activities
         }
     }
 }
+

@@ -1,27 +1,27 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.ProcessExecutions
+namespace Domain.JobTracking
 {
 #pragma warning disable CS8618
-    [Table("Process_Step_Execution")]
-    public class ProcessStepExecution
+    [Table("Job_Tracking_Step")]
+    public class JobTrackingStep
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid ProcessExecutionId { get; set; }
+        public Guid JobTrackingId { get; set; }
 
         [Required]
         [MaxLength(256)]
         public required string StepName { get; set; }
 
         [Required]
-        public ProcessStepComponentType ComponentType { get; set; }
+        public JobTrackingType ComponentType { get; set; }
 
         [Required]
-        public ProcessExecutionStatus Status { get; set; } = ProcessExecutionStatus.Running;
+        public JobTrackingStatus Status { get; set; } = JobTrackingStatus.Running;
 
         [Required]
         public int Attempt { get; set; }
@@ -34,7 +34,7 @@ namespace Domain.ProcessExecutions
         [MaxLength(2048)]
         public string? ErrorMessage { get; set; }
 
-        [ForeignKey(nameof(ProcessExecutionId)) ]
-        public ProcessExecution ProcessExecution { get; set; }
+        [ForeignKey(nameof(JobTrackingId))]
+        public JobTracking JobTracking { get; set; }
     }
 }

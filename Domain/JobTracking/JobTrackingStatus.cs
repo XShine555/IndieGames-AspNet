@@ -1,6 +1,6 @@
-﻿namespace Domain.ProcessExecutions
+﻿namespace Domain.JobTracking
 {
-    public enum ProcessExecutionStatus
+    public enum JobTrackingStatus
     {
         Running,
         Succeeded,
