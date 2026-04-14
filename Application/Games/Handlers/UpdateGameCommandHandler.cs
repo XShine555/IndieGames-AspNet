@@ -41,22 +41,13 @@ namespace Application.Games.Handlers
                 return titleResult;
 
             UpdateDescription(command.Description, game);
-
-            var ownerResult = await UpdateOwnerId(command.OwnerId, game, cancellationToken);
-            if (!ownerResult.IsSuccess)
-                return ownerResult;
-
-            var genresResult = await UpdateGenres(command.Genres, game, cancellationToken);
-            if (!genresResult.IsSuccess)
-                return genresResult;
-
             UpdateIsPublic(command.IsPublic, game);
 
             await database.SaveChangesAsync(cancellationToken);
             return Result.Success(gameMapper.ToApplicationGame(game));
         }
 
-        void UpdateIsPublic(bool? isPublic, Game game)
+        private void UpdateIsPublic(bool? isPublic, Game game)
         {
             if (!isPublic.HasValue)
                 return;
@@ -64,7 +55,7 @@ namespace Application.Games.Handlers
             game.IsPublic = isPublic.Value;
         }
 
-        async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)
+        private async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(newTitle))
                 return Result.Success();
@@ -86,46 +77,13 @@ namespace Application.Games.Handlers
             return Result.Success();
         }
 
-        void UpdateDescription(string? newDescription, Game game)
+        private void UpdateDescription(string? newDescription, Game game)
         {
             if (string.IsNullOrWhiteSpace(newDescription))
                 return;
 
             logger.LogInformation("Updating game description for game with id {GameId}", game.Id);
             game.Description = newDescription;
-        }
-
-        async Task<Result> UpdateOwnerId(string? ownerId, Game game, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(ownerId))
-                return Result.Success();
-
-            var newOwner = await database.Users.SingleOrDefaultAsync(u => u.IdentityId == ownerId, cancellationToken);
-            if (newOwner is null)
-            {
-                logger.LogWarning("User with id {OwnerId} not found for game with id {GameId}", ownerId, game.Id);
-                return Result.NotFound($"User with id {ownerId} not found");
-            }
-
-            game.OwnerId = newOwner.IdentityId;
-            return Result.Success();
-        }
-
-        async Task<Result> UpdateGenres(ICollection<int> genres, Game game, CancellationToken cancellationToken)
-        {
-            var existingGenres = await database.Genres.AsNoTracking()
-                .Where(g => genres.Contains(g.Id))
-                .ToListAsync(cancellationToken);
-            var notExistingGenres = genres.Except(existingGenres.Select(g => g.Id)).ToList();
-            if (notExistingGenres.Count > 0)
-            {
-                logger.LogWarning("Genres with ids {GenreIds} not found for game with id {GameId}", notExistingGenres, game.Id);
-                return Result.NotFound($"Genres with ids {string.Join(", ", notExistingGenres) } not found");
-            }
-
-            logger.LogInformation("Updating game genres for game with id {GameId}", game.Id);
-            game.Genres = existingGenres;
-            return Result.Success();
         }
     }
 }

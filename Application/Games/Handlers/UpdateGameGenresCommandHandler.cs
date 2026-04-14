@@ -1,0 +1,56 @@
+using Application.Abstractions.Common;
+using Application.Abstractions.Persistence;
+using Application.Games.Commands;
+using Application.Games.Responses;
+using Ardalis.Result;
+using Mediator;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace Application.Games.Handlers
+{
+    public class UpdateGameGenresCommandHandler(
+        IDatabase database,
+        IGameMapper gameMapper,
+        ILogger<UpdateGameGenresCommandHandler> logger)
+        : ICommandHandler<UpdateGameGenresCommand, Result<ApplicationGame>>
+    {
+        public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameGenresCommand command, CancellationToken cancellationToken)
+        {
+            var game = await database.Games
+                .Include(g => g.Owner)
+                .Include(g => g.Genres)
+                .Include(g => g.StorePictures)
+                .Include(g => g.Artworks)
+                .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
+            if (game is null)
+            {
+                logger.LogWarning("Game with id {GameId} not found for genres update", command.GameId);
+                return Result.NotFound();
+            }
+
+            if (game.OwnerId != command.IdentityId)
+            {
+                logger.LogWarning("User with id {IdentityId} is not the owner of game with id {GameId} and cannot update genres", command.IdentityId, command.GameId);
+                return Result.Forbidden();
+            }
+
+            var existingGenres = await database.Genres
+                .AsNoTracking()
+                .Where(g => command.Genres.Contains(g.Id))
+                .ToListAsync(cancellationToken);
+
+            var notExistingGenres = command.Genres.Except(existingGenres.Select(g => g.Id)).ToList();
+            if (notExistingGenres.Count > 0)
+            {
+                logger.LogWarning("Genres with ids {GenreIds} not found for game with id {GameId}", string.Join(", ", notExistingGenres), game.Id);
+                return Result.NotFound($"Genres with ids {string.Join(", ", notExistingGenres)} not found");
+            }
+
+            game.Genres = existingGenres;
+            await database.SaveChangesAsync(cancellationToken);
+
+            return Result.Success(gameMapper.ToApplicationGame(game));
+        }
+    }
+}

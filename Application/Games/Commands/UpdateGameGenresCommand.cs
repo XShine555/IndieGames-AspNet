@@ -1,14 +1,12 @@
-﻿using Application.Games.Responses;
+using Application.Games.Responses;
 using Ardalis.Result;
 using Mediator;
 
 namespace Application.Games.Commands
 {
-    public record UpdateGameCommand(
+    public record UpdateGameGenresCommand(
         string IdentityId,
         int GameId,
-        string? Title,
-        string? Description,
-        bool? IsPublic)
+        ICollection<int> Genres)
         : ICommand<Result<ApplicationGame>>;
 }

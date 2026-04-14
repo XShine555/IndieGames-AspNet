@@ -15,7 +15,7 @@ namespace Application.Genres.Handlers
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGenre>> Handle(GetGenresQuery query, CancellationToken cancellationToken)
         {
-            var normalizedName = query.Name.Trim().ToUpperInvariant();
+            var normalizedName = query.Name?.Trim().ToUpperInvariant();
             var hasNameFilter = !string.IsNullOrWhiteSpace(normalizedName);
 
             var baseQuery = database.Genres
@@ -24,7 +24,7 @@ namespace Application.Genres.Handlers
 
             if (hasNameFilter)
             {
-                baseQuery = baseQuery.Where(genre => genre.NormalizedName.Contains(normalizedName));
+                baseQuery = baseQuery.Where(genre => genre.NormalizedName.Contains(normalizedName!));
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
