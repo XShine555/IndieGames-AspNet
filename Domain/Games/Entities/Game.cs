@@ -60,7 +60,7 @@ namespace Domain.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey(nameof(OwnerId))]
+        [ForeignKey(nameof(OwnerId)) ]
         public User Owner { get; set; }
     }
 }
