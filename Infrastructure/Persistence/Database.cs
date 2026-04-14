@@ -4,6 +4,7 @@ using Domain.JobTracking;
 using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace Infrastructure.Persistence
 {
@@ -36,12 +37,27 @@ namespace Infrastructure.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString);
+            optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MapEnum<GameArtworkType>();
+                npgsqlOptions.MapEnum<GameArtworkProcessingStatus>();
+                npgsqlOptions.MapEnum<GamePictureProcessingStatus>();
+                npgsqlOptions.MapEnum<GameStoreReadinessStatus>();
+                npgsqlOptions.MapEnum<JobTrackingStatus>();
+                npgsqlOptions.MapEnum<JobTrackingType>();
+            } );
             optionsBuilder.AddInterceptors(saveChangesInterceptor);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasPostgresEnum<GameArtworkType>();
+            modelBuilder.HasPostgresEnum<GameArtworkProcessingStatus>();
+            modelBuilder.HasPostgresEnum<GamePictureProcessingStatus>();
+            modelBuilder.HasPostgresEnum<GameStoreReadinessStatus>();
+            modelBuilder.HasPostgresEnum<JobTrackingStatus>();
+            modelBuilder.HasPostgresEnum<JobTrackingType>();
+
             modelBuilder.Entity<User>(u =>
             {
                 u.HasIndex(x => x.IdentityId).IsUnique();
