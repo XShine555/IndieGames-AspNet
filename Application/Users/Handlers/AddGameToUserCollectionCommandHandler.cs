@@ -30,7 +30,7 @@ namespace Application.Users.Handlers
                 return Result.Forbidden();
             }
 
-            var ownedGame = await database.UserOwnedGames
+            var ownedGame = await database.UserLibrary
                 .AsNoTracking()
                 .AnyAsync(ug => ug.UserId == command.UserId && ug.GameId == command.GameId, cancellationToken);
             if (!ownedGame)

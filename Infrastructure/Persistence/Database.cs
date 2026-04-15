@@ -19,7 +19,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameGenre> GameGenres => Set<GameGenre>();
 
-        public DbSet<UserOwnedGame> UserOwnedGames => Set<UserOwnedGame>();
+        public DbSet<UserOwnedGame> UserLibrary => Set<UserOwnedGame>();
 
         public DbSet<UserGameCollection> UserGameCollections => Set<UserGameCollection>();
 

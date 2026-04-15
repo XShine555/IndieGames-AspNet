@@ -25,7 +25,7 @@ namespace Application.Users.Handlers
                 return Result.NotFound("Game not found");
             }
 
-            var ownedGame = await database.UserOwnedGames.FindAsync(
+            var ownedGame = await database.UserLibrary.FindAsync(
                 [ command.UserId, command.GameId],
                 cancellationToken);
             if (ownedGame is null)
@@ -34,7 +34,7 @@ namespace Application.Users.Handlers
                 return Result.NotFound("User does not own this game");
             }
 
-            database.UserOwnedGames.Remove(ownedGame);
+            database.UserLibrary.Remove(ownedGame);
             await database.SaveChangesAsync(cancellationToken);
             return Result.NoContent();
         }

@@ -1,5 +1,7 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Users.Commands;
+using Application.Users.Responses;
 using Ardalis.Result;
 using Domain.Entities;
 using Mediator;
@@ -10,10 +12,11 @@ namespace Application.Users.Handlers
 {
     public class AddGameToUserLibraryCommandHandler(
         IDatabase database,
+        IUserMapper userMapper,
         ILogger<AddGameToUserLibraryCommandHandler> logger)
-        : ICommandHandler<AddGameToUserLibraryCommand, Result>
+        : ICommandHandler<AddGameToUserLibraryCommand, Result<ApplicationUserOwnedGame>>
     {
-        public async ValueTask<Result> Handle(AddGameToUserLibraryCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationUserOwnedGame>> Handle(AddGameToUserLibraryCommand command, CancellationToken cancellationToken)
         {
             var userExists = await database.Users
                 .AsNoTracking()
@@ -33,7 +36,7 @@ namespace Application.Users.Handlers
                 return Result.NotFound("Game not found");
             }
 
-            var alreadyOwned = await database.UserOwnedGames
+            var alreadyOwned = await database.UserLibrary
                 .AsNoTracking()
                 .AnyAsync(ug => ug.UserId == command.UserId && ug.GameId == command.GameId, cancellationToken);
             if (alreadyOwned)
@@ -42,14 +45,16 @@ namespace Application.Users.Handlers
                 return Result.Conflict("User already owns this game");
             }
 
-            await database.UserOwnedGames.AddAsync(new UserOwnedGame
+            var relation = new UserOwnedGame
             {
                 UserId = command.UserId,
                 GameId = command.GameId
-            }, cancellationToken);
+            };
 
+            await database.UserLibrary.AddAsync(relation, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+
+            return Result.Success(userMapper.ToApplicationUserOwnedGame(relation));
         }
     }
 }

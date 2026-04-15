@@ -12,7 +12,7 @@ namespace Application.Abstractions.Persistence
 
         DbSet<Genre> Genres { get; }
 
-        DbSet<UserOwnedGame> UserOwnedGames { get; }
+        DbSet<UserOwnedGame> UserLibrary { get; }
 
         DbSet<UserGameCollection> UserGameCollections { get; }
 
