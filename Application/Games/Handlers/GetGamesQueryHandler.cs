@@ -10,7 +10,7 @@ using X.PagedList;
 
 namespace Application.Games.Handlers
 {
-    public class GetGamesQueryHandler(IDatabase database)
+    public class GetGamesQueryHandler(IDatabase database, IGameMapper gameMapper, IGenreMapper genreMapper)
         : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGameListItem>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGameListItem>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
@@ -71,6 +71,8 @@ namespace Application.Games.Handlers
                         g.Owner.Username,
                         g.Owner.DisplayUsername,
                         g.Owner.UpdatedAt),
+                    g.Genres.Select(genreMapper.ToApplicationGenre).ToList(),
+                    g.Artworks.Select(gameMapper.ToApplicationGameArtwork).ToList(),
                     g.CreatedAt,
                     g.UpdatedAt))
                 .ToArrayAsync(cancellationToken);

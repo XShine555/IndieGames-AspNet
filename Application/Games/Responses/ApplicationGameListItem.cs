@@ -1,3 +1,4 @@
+using Application.Genres.Responses;
 using Application.Users.Responses;
 
 namespace Application.Games.Responses
@@ -11,6 +12,8 @@ namespace Application.Games.Responses
         bool IsPublic,
         bool IsPublished,
         ApplicationUserMutation Owner,
+        IReadOnlyCollection<ApplicationGenre> Genres,
+        IReadOnlyCollection<ApplicationGameArtwork> Artworks,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }
