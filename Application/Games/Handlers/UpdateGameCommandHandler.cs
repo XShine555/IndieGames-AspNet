@@ -40,13 +40,8 @@ namespace Application.Games.Handlers
             if (!titleResult.IsSuccess)
                 return titleResult;
 
-            var priceResult = UpdatePrice(command.Price, game);
-            if (!priceResult.IsSuccess)
-                return priceResult;
-
-            var discountResult = UpdateDiscount(command.Discount, game);
-            if (!discountResult.IsSuccess)
-                return discountResult;
+            UpdatePrice(command.Price, game);
+            UpdateDiscount(command.Discount, game);
 
             UpdateDescription(command.Description, game);
             UpdateIsPublic(command.IsPublic, game);
@@ -55,43 +50,23 @@ namespace Application.Games.Handlers
             return Result.Success(gameMapper.ToApplicationGame(game));
         }
 
-        private void UpdateIsPublic(bool? isPublic, Game game)
+        private void UpdateIsPublic(bool isPublic, Game game)
         {
-            if (!isPublic.HasValue)
-                return;
-
-            game.IsPublic = isPublic.Value;
+            game.IsPublic = isPublic;
         }
 
-        private Result UpdatePrice(decimal? newPrice, Game game)
+        private void UpdatePrice(decimal newPrice, Game game)
         {
-            if (!newPrice.HasValue)
-                return Result.Success();
-
-            if (newPrice.Value < 0)
-                return Result.Invalid(new ValidationError("Price cannot be negative."));
-
-            game.Price = newPrice.Value;
-            return Result.Success();
+            game.Price = newPrice;
         }
 
-        private Result UpdateDiscount(decimal? newDiscount, Game game)
+        private void UpdateDiscount(decimal newDiscount, Game game)
         {
-            if (!newDiscount.HasValue)
-                return Result.Success();
-
-            if (newDiscount.Value is < 0 or > 100)
-                return Result.Invalid(new ValidationError("Discount must be between 0 and 100."));
-
-            game.Discount = newDiscount.Value;
-            return Result.Success();
+            game.Discount = newDiscount;
         }
 
-        private async Task<Result> UpdateTitle(string? newTitle, Game game, CancellationToken cancellationToken)
+        private async Task<Result> UpdateTitle(string newTitle, Game game, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(newTitle))
-                return Result.Success();
-
             var trimmedTitle = newTitle.Trim();
             var normalizedTitle = trimmedTitle.ToUpperInvariant();
             var existingGame = await database.Games
@@ -109,11 +84,8 @@ namespace Application.Games.Handlers
             return Result.Success();
         }
 
-        private void UpdateDescription(string? newDescription, Game game)
+        private void UpdateDescription(string newDescription, Game game)
         {
-            if (string.IsNullOrWhiteSpace(newDescription))
-                return;
-
             logger.LogInformation("Updating game description for game with id {GameId}", game.Id);
             game.Description = newDescription;
         }
