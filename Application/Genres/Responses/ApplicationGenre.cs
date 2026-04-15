@@ -4,5 +4,7 @@ namespace Application.Genres.Responses
 {
     public record ApplicationGenre(
         Guid Id,
-        string Name);
+        string Name,
+        DateTime CreatedAt,
+        DateTime UpdatedAt);
 }

@@ -20,9 +20,11 @@ namespace Application.Games.Mappers
                 game.IsPublic,
                 game.IsPublished,
                 ToOwnerMutation(game.Owner),
-                game.Genres.Select(genre => new ApplicationGenre(genre.Id, genre.Name)).ToArray(),
+                game.Genres.Select(genre => new ApplicationGenre(genre.Id, genre.Name, genre.CreatedAt, genre.UpdatedAt)).ToArray(),
                 game.StorePictures.Select(ToApplicationGamePicture).ToArray(),
-                game.Artworks.Select(ToApplicationGameArtwork).ToArray());
+                game.Artworks.Select(ToApplicationGameArtwork).ToArray(),
+                game.CreatedAt,
+                game.UpdatedAt);
         }
 
         public ApplicationGamePicture ToApplicationGamePicture(GameStorePictures gamePicture)
@@ -47,7 +49,8 @@ namespace Application.Games.Mappers
                 BuildKey(artwork.MediumRelativePath, artwork.MediumFileName),
                 BuildKey(artwork.LargeRelativePath, artwork.LargeFileName),
                 artwork.ProcessingStatus,
-                artwork.CreatedAt);
+                artwork.CreatedAt,
+                artwork.UpdatedAt);
         }
 
         public ApplicationGameMutation ToApplicationGameMutation(Game game)

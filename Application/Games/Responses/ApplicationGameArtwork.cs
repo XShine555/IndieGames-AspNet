@@ -10,5 +10,6 @@ namespace Application.Games.Responses
         string? MediumArtworkKey,
         string? LargeArtworkKey,
         GameArtworkProcessingStatus ProcessingStatus,
-        DateTime AddedAt);
+        DateTime CreatedAt,
+        DateTime UpdatedAt);
 }

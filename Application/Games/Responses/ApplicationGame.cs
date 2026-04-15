@@ -15,5 +15,7 @@ namespace Application.Games.Responses
         ApplicationUserMutation Owner,
         IReadOnlyCollection<ApplicationGenre> Genres,
         IReadOnlyCollection<ApplicationGamePicture> Pictures,
-        IReadOnlyCollection<ApplicationGameArtwork> Artworks);
+        IReadOnlyCollection<ApplicationGameArtwork> Artworks,
+        DateTime CreatedAt,
+        DateTime UpdatedAt);
 }
