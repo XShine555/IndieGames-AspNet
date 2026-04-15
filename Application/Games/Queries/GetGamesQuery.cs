@@ -9,6 +9,7 @@ namespace Application.Games.Queries
         ICollection<Guid> Genres,
         int PageNumber,
         int PageSize,
-        bool ReadyOnly = true)
+        bool ReadyOnly = true,
+        bool OnlyPublished = true)
         : IQuery<PaginatedApplicationResponse<ApplicationGame>>;
 }

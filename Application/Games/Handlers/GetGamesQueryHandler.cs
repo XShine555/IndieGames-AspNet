@@ -28,6 +28,10 @@ namespace Application.Games.Handlers
             {
                 baseQuery = baseQuery.Where(g => g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore);
             }
+            if (query.OnlyPublished)
+            {
+                baseQuery = baseQuery.Where(g => g.IsPublished);
+            }
 
             if (hasTitleFilter || hasGenresFilter)
             {
