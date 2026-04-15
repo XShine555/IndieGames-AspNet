@@ -15,7 +15,7 @@ namespace Application.Games.Commands
         IFileData CapsulePicture,
         IFileData HeaderPicture,
         IFileData MainPicture)
-        : ICommand<Result<ApplicationGame>>
+        : ICommand<Result<ApplicationGameMutation>>
     {
         public static Game ToEntity(CreateGameCommand command, ICollection<Genre> genres)
         {

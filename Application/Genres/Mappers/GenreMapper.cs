@@ -8,5 +8,8 @@ namespace Application.Genres.Mappers
     {
         public ApplicationGenre ToApplicationGenre(Genre genre)
             => new(genre.Id, genre.Name);
+
+        public ApplicationGenreMutation ToApplicationGenreMutation(Genre genre)
+            => new(genre.Id, genre.Name, genre.UpdatedAt);
     }
 }

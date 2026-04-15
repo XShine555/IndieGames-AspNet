@@ -8,12 +8,10 @@ using X.PagedList;
 
 namespace Application.Genres.Handlers
 {
-    public class GetGenresQueryHandler(
-        IDatabase database,
-        IGenreMapper genreMapper)
-        : IQueryHandler<GetGenresQuery, PaginatedApplicationResponse<ApplicationGenre>>
+    public class GetGenresQueryHandler(IDatabase database)
+        : IQueryHandler<GetGenresQuery, PaginatedApplicationResponse<ApplicationGenreListItem>>
     {
-        public async ValueTask<PaginatedApplicationResponse<ApplicationGenre>> Handle(GetGenresQuery query, CancellationToken cancellationToken)
+        public async ValueTask<PaginatedApplicationResponse<ApplicationGenreListItem>> Handle(GetGenresQuery query, CancellationToken cancellationToken)
         {
             var normalizedName = query.Name?.Trim().ToUpperInvariant();
             var hasNameFilter = !string.IsNullOrWhiteSpace(normalizedName);
@@ -32,8 +30,8 @@ namespace Application.Genres.Handlers
 
             if (totalCount == 0)
             {
-                return new PaginatedApplicationResponse<ApplicationGenre>(
-                    Array.Empty<ApplicationGenre>(),
+                return new PaginatedApplicationResponse<ApplicationGenreListItem>(
+                    Array.Empty<ApplicationGenreListItem>(),
                     pageInfo.PageNumber,
                     pageInfo.PageSize,
                     pageInfo.PageCount,
@@ -46,14 +44,16 @@ namespace Application.Genres.Handlers
                 .OrderBy(genre => genre.Name)
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .ToListAsync(cancellationToken);
+                .Select(genre => new ApplicationGenreListItem(
+                    genre.Id,
+                    genre.Name,
+                    genre.Games.Count,
+                    genre.CreatedAt,
+                    genre.UpdatedAt))
+                .ToArrayAsync(cancellationToken);
 
-            var applicationGenres = genres
-                .Select(genreMapper.ToApplicationGenre)
-                .ToArray();
-
-            return new PaginatedApplicationResponse<ApplicationGenre>(
-                applicationGenres,
+            return new PaginatedApplicationResponse<ApplicationGenreListItem>(
+                genres,
                 pageInfo.PageNumber,
                 pageInfo.PageSize,
                 pageInfo.PageCount,

@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Users.Commands;
 using Application.Users.Responses;
@@ -11,10 +12,11 @@ namespace Application.Users.Handlers
 {
     public class CreateUserGameCollectionCommandHandler(
         IDatabase database,
+        IUserMapper userMapper,
         ILogger<CreateUserGameCollectionCommandHandler> logger)
-        : ICommandHandler<CreateUserGameCollectionCommand, Result<ApplicationUserCollection>>
+        : ICommandHandler<CreateUserGameCollectionCommand, Result<ApplicationUserCollectionListItem>>
     {
-        public async ValueTask<Result<ApplicationUserCollection>> Handle(CreateUserGameCollectionCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationUserCollectionListItem>> Handle(CreateUserGameCollectionCommand command, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(command.Name))
                 return Result.Invalid(new ValidationError("Collection name is required."));
@@ -48,7 +50,7 @@ namespace Application.Users.Handlers
             await database.UserGameCollections.AddAsync(collection, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Created(ApplicationUserCollection.FromEntity(collection));
+            return Result.Created(userMapper.ToApplicationUserCollectionListItem(collection, 0));
         }
     }
 }

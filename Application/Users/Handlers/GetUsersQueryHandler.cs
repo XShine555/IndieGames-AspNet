@@ -8,12 +8,10 @@ using X.PagedList;
 
 namespace Application.Users.Handlers
 {
-    public class GetUsersQueryHandler(
-        IDatabase database,
-        IUserMapper userMapper)
-        : IQueryHandler<GetUsersQuery, PaginatedApplicationResponse<ApplicationUser>>
+    public class GetUsersQueryHandler(IDatabase database)
+        : IQueryHandler<GetUsersQuery, PaginatedApplicationResponse<ApplicationUserListItem>>
     {
-        public async ValueTask<PaginatedApplicationResponse<ApplicationUser>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
+        public async ValueTask<PaginatedApplicationResponse<ApplicationUserListItem>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
         {
             var normalizedDisplayName = query.DisplayName?.Trim().ToUpperInvariant();
             var hasDisplayNameFilter = !string.IsNullOrWhiteSpace(normalizedDisplayName);
@@ -32,8 +30,8 @@ namespace Application.Users.Handlers
 
             if (totalCount == 0)
             {
-                return new PaginatedApplicationResponse<ApplicationUser>(
-                    Array.Empty<ApplicationUser>(),
+                return new PaginatedApplicationResponse<ApplicationUserListItem>(
+                    Array.Empty<ApplicationUserListItem>(),
                     pageInfo.PageNumber,
                     pageInfo.PageSize,
                     pageInfo.PageCount,
@@ -42,48 +40,39 @@ namespace Application.Users.Handlers
                     pageInfo.HasPreviousPage);
             }
 
-            var pagedUserIds = await baseQuery
+            var users = await baseQuery
                 .OrderBy(u => u.DisplayUsername)
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(u => u.IdentityId)
-                .ToListAsync(cancellationToken);
+                .Select(u => new ApplicationUserListItem(
+                    u.IdentityId,
+                    u.Username,
+                    u.DisplayUsername,
+                    u.ProfilePicture == null
+                        ? null
+                        : new ApplicationUserPicture(
+                            u.ProfilePicture.Id,
+                            (string.IsNullOrWhiteSpace(u.ProfilePicture.OriginalRelativePath) || string.IsNullOrWhiteSpace(u.ProfilePicture.OriginalName))
+                                ? string.Empty
+                                : $"{u.ProfilePicture.OriginalRelativePath}/{u.ProfilePicture.OriginalName}",
+                            (string.IsNullOrWhiteSpace(u.ProfilePicture.SmallRelativePath) || string.IsNullOrWhiteSpace(u.ProfilePicture.SmallName))
+                                ? string.Empty
+                                : $"{u.ProfilePicture.SmallRelativePath}/{u.ProfilePicture.SmallName}",
+                            (string.IsNullOrWhiteSpace(u.ProfilePicture.MediumRelativePath) || string.IsNullOrWhiteSpace(u.ProfilePicture.MediumName))
+                                ? string.Empty
+                                : $"{u.ProfilePicture.MediumRelativePath}/{u.ProfilePicture.MediumName}",
+                            (string.IsNullOrWhiteSpace(u.ProfilePicture.LargeRelativePath) || string.IsNullOrWhiteSpace(u.ProfilePicture.LargeName))
+                                ? string.Empty
+                                : $"{u.ProfilePicture.LargeRelativePath}/{u.ProfilePicture.LargeName}",
+                            u.ProfilePicture.AddedAt),
+                    u.CreatedGames.Count,
+                    u.OwnedGames.Count,
+                    u.CreatedAt,
+                    u.UpdatedAt))
+                .ToArrayAsync(cancellationToken);
 
-            var users = await database.Users
-                .AsNoTracking()
-                .AsSplitQuery()
-                .Include(u => u.ProfilePicture)
-                .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.Owner)
-                .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.Genres)
-                .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.StorePictures)
-                .Include(u => u.CreatedGames)
-                    .ThenInclude(g => g.Artworks)
-                .Include(u => u.OwnedGames)
-                    .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.Owner)
-                .Include(u => u.OwnedGames)
-                    .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.Genres)
-                .Include(u => u.OwnedGames)
-                    .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.StorePictures)
-                .Include(u => u.OwnedGames)
-                    .ThenInclude(ug => ug.Game)
-                        .ThenInclude(g => g.Artworks)
-                .Where(u => pagedUserIds.Contains(u.IdentityId))
-                .ToListAsync(cancellationToken);
-
-            var usersById = users.ToDictionary(user => user.IdentityId);
-            var orderedUsers = pagedUserIds
-                .Select(userId => usersById[userId])
-                .Select(userMapper.ToApplicationUser)
-                .ToArray();
-
-            return new PaginatedApplicationResponse<ApplicationUser>(
-                orderedUsers,
+            return new PaginatedApplicationResponse<ApplicationUserListItem>(
+                users,
                 pageInfo.PageNumber,
                 pageInfo.PageSize,
                 pageInfo.PageCount,

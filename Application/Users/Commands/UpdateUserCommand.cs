@@ -7,5 +7,5 @@ namespace Application.Users.Commands
     public record UpdateUserCommand(
         Guid IdentityId,
         string NewDisplayUsername)
-        : ICommand<Result<ApplicationUser>>;
+        : ICommand<Result<ApplicationUserMutation>>;
 }

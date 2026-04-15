@@ -8,5 +8,5 @@ namespace Application.Games.Commands
         Guid IdentityId,
         Guid GameId,
         ICollection<Guid> Genres)
-        : ICommand<Result<ApplicationGame>>;
+        : ICommand<Result<ApplicationGameGenresMutation>>;
 }

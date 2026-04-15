@@ -14,9 +14,9 @@ namespace Application.Genres.Handlers
         IDatabase database,
         IGenreMapper genreMapper,
         ILogger<CreateGenreCommandHandler> logger)
-        : ICommandHandler<CreateGenreCommand, Result<ApplicationGenre>>
+        : ICommandHandler<CreateGenreCommand, Result<ApplicationGenreMutation>>
     {
-        public async ValueTask<Result<ApplicationGenre>> Handle(CreateGenreCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationGenreMutation>> Handle(CreateGenreCommand command, CancellationToken cancellationToken)
         {
             var normalizedName = command.Name.Trim().ToUpperInvariant();
             var existingGenre = await database.Genres.AsNoTracking().AnyAsync(g => g.NormalizedName == normalizedName, cancellationToken);
@@ -34,7 +34,8 @@ namespace Application.Genres.Handlers
             await database.Genres.AddAsync(newGenre, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new genre with ID '{GenreId}' and name '{GenreName}'.", newGenre.Id, newGenre.Name);
-            return Result.Created(genreMapper.ToApplicationGenre(newGenre));
+
+            return Result.Created(genreMapper.ToApplicationGenreMutation(newGenre));
         }
     }
 }

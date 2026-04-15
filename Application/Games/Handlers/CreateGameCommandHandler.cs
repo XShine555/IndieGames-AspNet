@@ -21,11 +21,11 @@ namespace Application.Games.Handlers
         IGameMapper gameMapper,
         GameConfiguration gameConfiguration,
         ILogger<CreateGameCommandHandler> logger)
-        : ICommandHandler<CreateGameCommand, Result<ApplicationGame>>
+        : ICommandHandler<CreateGameCommand, Result<ApplicationGameMutation>>
     {
         private record GameArtworkInput(GameArtworkType Type, IFileData FileData);
 
-        public async ValueTask<Result<ApplicationGame>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationGameMutation>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
         {
             if (command.Price < 0)
                 return Result.Invalid(new ValidationError("Price cannot be negative."));
@@ -91,7 +91,7 @@ namespace Application.Games.Handlers
                         OriginalExtension = inputArtwork.FileData.FileExtension,
                         ProcessingStatus = GameArtworkProcessingStatus.Pending,
                         ProcessingError = string.Empty
-                    } );
+                    });
                 }
 
                 await database.GameArtworks.AddRangeAsync(artworkRecords, cancellationToken);
@@ -138,9 +138,7 @@ namespace Application.Games.Handlers
             if (anyPublishError)
                 await database.SaveChangesAsync(cancellationToken);
 
-            game.Artworks = artworkRecords;
-
-            return Result.Created(gameMapper.ToApplicationGame(game));
+            return Result.Created(gameMapper.ToApplicationGameMutation(game));
         }
 
         private static IReadOnlyCollection<GameArtworkInput> GetRequiredArtworks(CreateGameCommand command)

@@ -1,14 +1,12 @@
-﻿using Application.Games.Responses;
-
 namespace Application.Users.Responses
 {
-    public record ApplicationUser(
+    public record ApplicationUserListItem(
         Guid IdentityId,
         string Username,
         string DisplayUsername,
         ApplicationUserPicture? ProfilePicture,
-        ICollection<ApplicationGame> CreatedGames,
-        ICollection<ApplicationGame> OwnedGames,
+        int CreatedGamesCount,
+        int OwnedGamesCount,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

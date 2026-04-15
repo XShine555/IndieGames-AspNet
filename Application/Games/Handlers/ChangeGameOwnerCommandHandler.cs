@@ -13,15 +13,11 @@ namespace Application.Games.Handlers
         IDatabase database,
         IGameMapper gameMapper,
         ILogger<ChangeGameOwnerCommandHandler> logger)
-        : ICommandHandler<ChangeGameOwnerCommand, Result<ApplicationGame>>
+        : ICommandHandler<ChangeGameOwnerCommand, Result<ApplicationGameMutation>>
     {
-        public async ValueTask<Result<ApplicationGame>> Handle(ChangeGameOwnerCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationGameMutation>> Handle(ChangeGameOwnerCommand command, CancellationToken cancellationToken)
         {
             var game = await database.Games
-                .Include(g => g.Owner)
-                .Include(g => g.Genres)
-                .Include(g => g.StorePictures)
-                .Include(g => g.Artworks)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
@@ -48,8 +44,7 @@ namespace Application.Games.Handlers
             game.OwnerId = newOwner.IdentityId;
             await database.SaveChangesAsync(cancellationToken);
 
-            game.Owner = newOwner;
-            return Result.Success(gameMapper.ToApplicationGame(game));
+            return Result.Success(gameMapper.ToApplicationGameMutation(game));
         }
     }
 }
