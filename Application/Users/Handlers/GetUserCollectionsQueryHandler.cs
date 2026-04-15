@@ -3,6 +3,7 @@ using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
 using Application.Users.Queries;
 using Application.Users.Responses;
+using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
@@ -46,6 +47,7 @@ namespace Application.Users.Handlers
                         .Where(i => i.Game.IsPublished)
                         .Take(4)
                         .Select(i => i.Game.Artworks
+                            .Where(a => a.Type == GameArtworkType.Main)
                             .Select(p => p.SmallRelativePath)
                             .First())
                         .ToArray()
