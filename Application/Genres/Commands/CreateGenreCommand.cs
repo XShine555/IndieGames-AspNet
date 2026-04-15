@@ -6,5 +6,5 @@ namespace Application.Genres.Commands
 {
     public record CreateGenreCommand(
         string Name)
-        : ICommand<Result<ApplicationGenre>>;
+        : ICommand<Result<ApplicationGenreMutation>>;
 }

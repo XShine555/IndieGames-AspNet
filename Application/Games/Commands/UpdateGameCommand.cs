@@ -12,5 +12,5 @@ namespace Application.Games.Commands
         decimal Price,
         decimal Discount,
         bool IsPublic)
-        : ICommand<Result<ApplicationGame>>;
+        : ICommand<Result<ApplicationGameMutation>>;
 }

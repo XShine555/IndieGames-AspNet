@@ -8,5 +8,5 @@ namespace Application.Games.Commands
         Guid IdentityId,
         Guid GameId,
         Guid NewOwnerId)
-        : ICommand<Result<ApplicationGame>>;
+        : ICommand<Result<ApplicationGameMutation>>;
 }

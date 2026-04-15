@@ -12,13 +12,12 @@ namespace Application.Genres.Handlers
 {
     public class UpdateGenreCommandHandler(
         IDatabase database,
-        IGenreMapper genreMapper,
         ILogger<UpdateGenreCommandHandler> logger)
-        : ICommandHandler<UpdateGenreCommand, Result<ApplicationGenre>>
+        : ICommandHandler<UpdateGenreCommand, Result<ApplicationGenreMutation>>
     {
-        public async ValueTask<Result<ApplicationGenre>> Handle(UpdateGenreCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationGenreMutation>> Handle(UpdateGenreCommand command, CancellationToken cancellationToken)
         {
-            var genre = await database.Genres.AsNoTracking()
+            var genre = await database.Genres
                 .SingleOrDefaultAsync(g => g.Id == command.Id, cancellationToken);
             if (genre is null)
             {
@@ -28,9 +27,14 @@ namespace Application.Genres.Handlers
 
             var nameResult = await UpdateName(command.Name, genre, cancellationToken);
             if (!nameResult.IsSuccess)
-                return nameResult;
+                return Result.Conflict(nameResult.Errors.FirstOrDefault());
 
-            return Result.Success(genreMapper.ToApplicationGenre(genre));
+            await database.SaveChangesAsync(cancellationToken);
+
+            return Result.Success(new ApplicationGenreMutation(
+                genre.Id,
+                genre.Name,
+                genre.UpdatedAt));
         }
 
         async Task<Result> UpdateName(string? name, Genre genre, CancellationToken cancellationToken)
@@ -40,13 +44,14 @@ namespace Application.Genres.Handlers
 
             var normalizedName = name.Trim().ToUpperInvariant();
             var existingGenre = await database.Genres.AsNoTracking()
-                .AnyAsync(g => g.NormalizedName == normalizedName, cancellationToken);
+                .AnyAsync(g => g.NormalizedName == normalizedName && g.Id != genre.Id, cancellationToken);
             if (existingGenre)
             {
                 logger.LogWarning("Genre with name {Name} already exists", name);
-                return Result.Conflict();
+                return Result.Conflict("Another genre with the same name already exists");
             }
-            genre.Name = name;
+
+            genre.Name = name.Trim();
             genre.NormalizedName = normalizedName;
             return Result.Success();
         }

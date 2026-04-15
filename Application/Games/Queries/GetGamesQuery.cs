@@ -11,5 +11,5 @@ namespace Application.Games.Queries
         int PageSize,
         bool ReadyOnly = true,
         bool OnlyPublished = true)
-        : IQuery<PaginatedApplicationResponse<ApplicationGame>>;
+        : IQuery<PaginatedApplicationResponse<ApplicationGameListItem>>;
 }

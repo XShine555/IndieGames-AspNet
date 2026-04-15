@@ -12,17 +12,12 @@ namespace Application.Games.Handlers
 {
     public class UpdateGameCommandHandler(
         IDatabase database,
-        IGameMapper gameMapper,
         ILogger<UpdateGameCommandHandler> logger)
-        : ICommandHandler<UpdateGameCommand, Result<ApplicationGame>>
+        : ICommandHandler<UpdateGameCommand, Result<ApplicationGameMutation>>
     {
-        public async ValueTask<Result<ApplicationGame>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationGameMutation>> Handle(UpdateGameCommand command, CancellationToken cancellationToken)
         {
             var game = await database.Games
-                .Include(g => g.Owner)
-                .Include(g => g.Genres)
-                .Include(g => g.StorePictures)
-                .Include(g => g.Artworks)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
             if (game is null)
             {
@@ -38,7 +33,7 @@ namespace Application.Games.Handlers
 
             var titleResult = await UpdateTitle(command.Title, game, cancellationToken);
             if (!titleResult.IsSuccess)
-                return titleResult;
+                return Result.Conflict(titleResult.Errors.FirstOrDefault());
 
             UpdatePrice(command.Price, game);
             UpdateDiscount(command.Discount, game);
@@ -47,7 +42,15 @@ namespace Application.Games.Handlers
             UpdateIsPublic(command.IsPublic, game);
 
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success(gameMapper.ToApplicationGame(game));
+            return Result.Success(new ApplicationGameMutation(
+                game.Id,
+                game.OwnerId,
+                game.Title,
+                game.Price,
+                game.Discount,
+                game.IsPublic,
+                game.IsPublished,
+                game.UpdatedAt));
         }
 
         private void UpdateIsPublic(bool isPublic, Game game)
@@ -70,6 +73,7 @@ namespace Application.Games.Handlers
             var trimmedTitle = newTitle.Trim();
             var normalizedTitle = trimmedTitle.ToUpperInvariant();
             var existingGame = await database.Games
+                .AsNoTracking()
                 .SingleOrDefaultAsync(g => g.NormalizedTitle == normalizedTitle && g.Id != game.Id, cancellationToken);
             if (existingGame is not null)
             {

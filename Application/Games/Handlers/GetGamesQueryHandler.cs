@@ -2,6 +2,7 @@
 using Application.Abstractions.Persistence;
 using Application.Games.Queries;
 using Application.Games.Responses;
+using Application.Users.Responses;
 using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +10,10 @@ using X.PagedList;
 
 namespace Application.Games.Handlers
 {
-    public class GetGamesQueryHandler(
-        IDatabase database,
-        IGameMapper gameMapper)
-        : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGame>>
+    public class GetGamesQueryHandler(IDatabase database)
+        : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGameListItem>>
     {
-        public async ValueTask<PaginatedApplicationResponse<ApplicationGame>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
+        public async ValueTask<PaginatedApplicationResponse<ApplicationGameListItem>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
         {
             var normalizedTitle = query.Title.Trim().ToUpperInvariant();
             var hasTitleFilter = !string.IsNullOrWhiteSpace(normalizedTitle);
@@ -41,13 +40,12 @@ namespace Application.Games.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-
-            var pageInfo = new StaticPagedList<int>(Array.Empty<int>(), query.PageNumber, query.PageSize, totalCount);
+            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
 
             if (totalCount == 0)
             {
-                return new PaginatedApplicationResponse<ApplicationGame>(
-                    Array.Empty<ApplicationGame>(),
+                return new PaginatedApplicationResponse<ApplicationGameListItem>(
+                    Array.Empty<ApplicationGameListItem>(),
                     pageInfo.PageNumber,
                     pageInfo.PageSize,
                     pageInfo.PageCount,
@@ -56,31 +54,25 @@ namespace Application.Games.Handlers
                     pageInfo.HasPreviousPage);
             }
 
-            var pagedGameIds = await baseQuery
+            var games = await baseQuery
                 .OrderByDescending(g => g.CreatedAt)
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(g => g.Id)
-                .ToListAsync(cancellationToken);
+                .Select(g => new ApplicationGameListItem(
+                    g.Id,
+                    g.Title,
+                    g.Price,
+                    g.Discount,
+                    g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
+                    g.IsPublic,
+                    g.IsPublished,
+                    new ApplicationUserSummary(g.Owner.IdentityId, g.Owner.Username),
+                    g.CreatedAt,
+                    g.UpdatedAt))
+                .ToArrayAsync(cancellationToken);
 
-            var games = await database.Games
-                .AsNoTracking()
-                .AsSplitQuery()
-                .Include(g => g.Owner)
-                .Include(g => g.Genres)
-                .Include(g => g.StorePictures)
-                .Include(g => g.Artworks)
-                .Where(g => pagedGameIds.Contains(g.Id))
-                .ToListAsync(cancellationToken);
-
-            var gamesById = games.ToDictionary(game => game.Id);
-            var orderedGames = pagedGameIds
-                .Select(gameId => gamesById[gameId])
-                .Select(gameMapper.ToApplicationGame)
-                .ToArray();
-
-            return new PaginatedApplicationResponse<ApplicationGame>(
-                orderedGames,
+            return new PaginatedApplicationResponse<ApplicationGameListItem>(
+                games,
                 pageInfo.PageNumber,
                 pageInfo.PageSize,
                 pageInfo.PageCount,

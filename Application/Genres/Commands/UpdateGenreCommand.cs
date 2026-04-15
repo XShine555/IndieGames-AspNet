@@ -7,5 +7,5 @@ namespace Application.Genres.Commands
     public record UpdateGenreCommand(
         Guid Id,
         string? Name)
-        : ICommand<Result<ApplicationGenre>>;
+        : ICommand<Result<ApplicationGenreMutation>>;
 }
