@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class DeleteUserGameCollectionCommandHandler(
+    public class RemoveUserGameCollectionCommandHandler(
         IDatabase database,
-        ILogger<DeleteUserGameCollectionCommandHandler> logger)
-        : ICommandHandler<DeleteUserGameCollectionCommand, Result>
+        ILogger<RemoveUserGameCollectionCommandHandler> logger)
+        : ICommandHandler<RemoveUserGameCollectionCommand, Result>
     {
-        public async ValueTask<Result> Handle(DeleteUserGameCollectionCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(RemoveUserGameCollectionCommand command, CancellationToken cancellationToken)
         {
             var collection = await database.UserGameCollections
                 .SingleOrDefaultAsync(c => c.Id == command.CollectionId, cancellationToken);
