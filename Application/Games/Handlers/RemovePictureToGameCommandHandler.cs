@@ -1,5 +1,4 @@
-﻿using Application.Configuration;
-using Application.Abstractions.Persistence;
+﻿using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
 using Application.Games.Commands;
 using Ardalis.Result;
