@@ -38,11 +38,10 @@ namespace Application.Users.Handlers
                 .OrderBy(c => c.Name)
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(c => new
-                {
-                    Collection = c,
-                    GamesCount = c.Items.Count,
-                    PreviewSmallKeys = c.Items
+                .Select(c => new CollectionRow(
+                    c,
+                    c.Items.Count,
+                    c.Items
                         .OrderBy(i => i.AddedAt)
                         .Where(i => i.Game.IsPublished)
                         .Take(4)
@@ -50,8 +49,7 @@ namespace Application.Users.Handlers
                             .Where(a => a.Type == GameArtworkType.Main)
                             .Select(p => p.SmallRelativePath)
                             .First())
-                        .ToArray()
-                } )
+                        .ToArray()))
                 .ToArrayAsync(cancellationToken);
 
             var collections = new ApplicationUserCollectionListItem[collectionRows.Length];
@@ -77,5 +75,10 @@ namespace Application.Users.Handlers
                 pageInfo.HasNextPage,
                 pageInfo.HasPreviousPage);
         }
+
+        private record CollectionRow(
+            UserGameCollection Collection,
+            int GamesCount,
+            string[] PreviewSmallKeys);
     }
 }
