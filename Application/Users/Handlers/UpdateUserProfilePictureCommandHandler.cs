@@ -5,7 +5,6 @@ using Application.Abstractions.Messaging.Users.V1;
 using Application.Abstractions.Storage;
 using Application.Configuration;
 using Application.Users.Commands;
-using Application.Users.Responses;
 using Ardalis.Result;
 using Domain.Entities;
 using Mediator;
@@ -20,9 +19,9 @@ namespace Application.Users.Handlers
         IEventBus eventBus,
         UserConfiguration userConfiguration,
         ILogger<UpdateUserProfilePictureCommandHandler> logger)
-        : ICommandHandler<UpdateUserProfilePictureCommand, Result<ApplicationUser>>
+        : ICommandHandler<UpdateUserProfilePictureCommand, Result>
     {
-        public async ValueTask<Result<ApplicationUser>> Handle(UpdateUserProfilePictureCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(UpdateUserProfilePictureCommand command, CancellationToken cancellationToken)
         {
             var user = await database.Users
                 .Include(u => u.ProfilePicture)
@@ -68,7 +67,7 @@ namespace Application.Users.Handlers
                 return Result.Error("Error scheduling profile picture processing");
             }
 
-            return Result.Success(ApplicationUser.FromEntity(user));
+            return Result.Success();
         }
 
         private async Task<Result> UploadOriginalPictureAsync(UpdateUserProfilePictureCommand command, string pictureKey, CancellationToken cancellationToken)
