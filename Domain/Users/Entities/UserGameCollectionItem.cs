@@ -6,7 +6,7 @@ namespace Domain.Entities
 {
 #pragma warning disable CS8618
     [Table("User_Game_Collection_Items")]
-    [PrimaryKey(nameof(CollectionId), nameof(GameId))]
+    [PrimaryKey(nameof(CollectionId), nameof(GameId)) ]
     public class UserGameCollectionItem
     {
         [Required]

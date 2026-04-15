@@ -1,5 +1,6 @@
 using Application.Abstractions.Persistence;
 using Application.Users.Commands;
+using Application.Users.Responses;
 using Ardalis.Result;
 using Domain.Entities;
 using Mediator;
@@ -11,9 +12,9 @@ namespace Application.Users.Handlers
     public class CreateUserGameCollectionCommandHandler(
         IDatabase database,
         ILogger<CreateUserGameCollectionCommandHandler> logger)
-        : ICommandHandler<CreateUserGameCollectionCommand, Result<Guid>>
+        : ICommandHandler<CreateUserGameCollectionCommand, Result<ApplicationUserCollection>>
     {
-        public async ValueTask<Result<Guid>> Handle(CreateUserGameCollectionCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationUserCollection>> Handle(CreateUserGameCollectionCommand command, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(command.Name))
                 return Result.Invalid(new ValidationError("Collection name is required."));
@@ -47,7 +48,7 @@ namespace Application.Users.Handlers
             await database.UserGameCollections.AddAsync(collection, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(collection.Id);
+            return Result.Created(ApplicationUserCollection.FromEntity(collection));
         }
     }
 }
