@@ -20,11 +20,60 @@ namespace Application.Users.Mappers
                 user.IdentityId,
                 user.Username,
                 user.DisplayUsername,
-                ApplicationUserPicture.FromEntity(user.ProfilePicture),
+                ToApplicationUserPicture(user.ProfilePicture),
                 createdGames,
                 ownedGames,
                 user.CreatedAt,
                 user.UpdatedAt);
+        }
+
+        public ApplicationUserPicture? ToApplicationUserPicture(UserProfilePictures? profilePicture)
+        {
+            if (profilePicture is null)
+                return null;
+
+            return new ApplicationUserPicture(
+                profilePicture.Id,
+                BuildKey(profilePicture.OriginalRelativePath, profilePicture.OriginalName),
+                BuildKey(profilePicture.SmallRelativePath, profilePicture.SmallName),
+                BuildKey(profilePicture.MediumRelativePath, profilePicture.MediumName),
+                BuildKey(profilePicture.LargeRelativePath, profilePicture.LargeName),
+                profilePicture.AddedAt);
+        }
+
+        public ApplicationUserMutation ToApplicationUserMutation(User user)
+        {
+            return new ApplicationUserMutation(
+                user.IdentityId,
+                user.Username,
+                user.DisplayUsername,
+                user.UpdatedAt);
+        }
+
+        public ApplicationUserOwnedGame ToApplicationUserOwnedGame(UserOwnedGame relation)
+        {
+            return new ApplicationUserOwnedGame(
+                relation.UserId,
+                relation.GameId,
+                relation.purchasedAt);
+        }
+
+        public ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(UserGameCollection collection, int gamesCount)
+        {
+            return new ApplicationUserCollectionListItem(
+                collection.Id,
+                collection.Name,
+                gamesCount,
+                collection.CreatedAt,
+                collection.UpdatedAt);
+        }
+
+        private static string BuildKey(string? relativePath, string? name)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath) || string.IsNullOrWhiteSpace(name))
+                return string.Empty;
+
+            return $"{relativePath}/{name}";
         }
     }
 }

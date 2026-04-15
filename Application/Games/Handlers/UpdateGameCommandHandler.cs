@@ -12,6 +12,7 @@ namespace Application.Games.Handlers
 {
     public class UpdateGameCommandHandler(
         IDatabase database,
+        IGameMapper gameMapper,
         ILogger<UpdateGameCommandHandler> logger)
         : ICommandHandler<UpdateGameCommand, Result<ApplicationGameMutation>>
     {
@@ -42,15 +43,7 @@ namespace Application.Games.Handlers
             UpdateIsPublic(command.IsPublic, game);
 
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success(new ApplicationGameMutation(
-                game.Id,
-                game.OwnerId,
-                game.Title,
-                game.Price,
-                game.Discount,
-                game.IsPublic,
-                game.IsPublished,
-                game.UpdatedAt));
+            return Result.Success(gameMapper.ToApplicationGameMutation(game));
         }
 
         private void UpdateIsPublic(bool isPublic, Game game)

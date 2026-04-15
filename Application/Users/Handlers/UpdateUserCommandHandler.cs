@@ -12,6 +12,7 @@ namespace Application.Users.Handlers
 {
     public class UpdateUserCommandHandler(
         IDatabase database,
+        IUserMapper userMapper,
         ILogger<UpdateUserCommandHandler> logger)
         : ICommandHandler<UpdateUserCommand, Result<ApplicationUserMutation>>
     {
@@ -29,11 +30,7 @@ namespace Application.Users.Handlers
 
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(new ApplicationUserMutation(
-                user.IdentityId,
-                user.Username,
-                user.DisplayUsername,
-                user.UpdatedAt));
+            return Result.Success(userMapper.ToApplicationUserMutation(user));
         }
 
         void UpdateDisplayUsername(string newUsername, User user)

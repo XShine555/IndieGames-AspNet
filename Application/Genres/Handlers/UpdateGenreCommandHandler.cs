@@ -12,6 +12,7 @@ namespace Application.Genres.Handlers
 {
     public class UpdateGenreCommandHandler(
         IDatabase database,
+        IGenreMapper genreMapper,
         ILogger<UpdateGenreCommandHandler> logger)
         : ICommandHandler<UpdateGenreCommand, Result<ApplicationGenreMutation>>
     {
@@ -31,10 +32,7 @@ namespace Application.Genres.Handlers
 
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(new ApplicationGenreMutation(
-                genre.Id,
-                genre.Name,
-                genre.UpdatedAt));
+            return Result.Success(genreMapper.ToApplicationGenreMutation(genre));
         }
 
         async Task<Result> UpdateName(string? name, Genre genre, CancellationToken cancellationToken)

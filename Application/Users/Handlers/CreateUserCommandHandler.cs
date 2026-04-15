@@ -13,6 +13,7 @@ namespace Application.Users.Handlers
 {
     public class CreateUserCommandHandler(
         IDatabase database,
+        IUserMapper userMapper,
         UserConfiguration userConfiguration,
         ILogger<CreateUserCommandHandler> logger)
         : ICommandHandler<CreateUserCommand, Result<ApplicationUserMutation>>
@@ -51,11 +52,7 @@ namespace Application.Users.Handlers
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
-            return Result.Success(new ApplicationUserMutation(
-                newUser.IdentityId,
-                newUser.Username,
-                newUser.DisplayUsername,
-                newUser.UpdatedAt));
+            return Result.Success(userMapper.ToApplicationUserMutation(newUser));
         }
     }
 }

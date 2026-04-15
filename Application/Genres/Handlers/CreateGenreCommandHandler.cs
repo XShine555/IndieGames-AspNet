@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Genres.Commands;
 using Application.Genres.Responses;
@@ -11,6 +12,7 @@ namespace Application.Genres.Handlers
 {
     public class CreateGenreCommandHandler(
         IDatabase database,
+        IGenreMapper genreMapper,
         ILogger<CreateGenreCommandHandler> logger)
         : ICommandHandler<CreateGenreCommand, Result<ApplicationGenreMutation>>
     {
@@ -33,10 +35,7 @@ namespace Application.Genres.Handlers
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new genre with ID '{GenreId}' and name '{GenreName}'.", newGenre.Id, newGenre.Name);
 
-            return Result.Created(new ApplicationGenreMutation(
-                newGenre.Id,
-                newGenre.Name,
-                newGenre.UpdatedAt));
+            return Result.Created(genreMapper.ToApplicationGenreMutation(newGenre));
         }
     }
 }

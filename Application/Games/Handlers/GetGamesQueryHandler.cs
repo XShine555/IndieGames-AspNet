@@ -66,7 +66,11 @@ namespace Application.Games.Handlers
                     g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
                     g.IsPublic,
                     g.IsPublished,
-                    new ApplicationUserSummary(g.Owner.IdentityId, g.Owner.Username),
+                    new ApplicationUserMutation(
+                        g.Owner.IdentityId,
+                        g.Owner.Username,
+                        g.Owner.DisplayUsername,
+                        g.Owner.UpdatedAt),
                     g.CreatedAt,
                     g.UpdatedAt))
                 .ToArrayAsync(cancellationToken);

@@ -10,7 +10,7 @@ namespace Application.Games.Responses
         bool IsReadyForStore,
         bool IsPublic,
         bool IsPublished,
-        ApplicationUserSummary Owner,
+        ApplicationUserMutation Owner,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

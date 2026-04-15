@@ -7,5 +7,5 @@ namespace Application.Users.Commands
     public record CreateUserGameCollectionCommand(
         Guid UserId,
         string Name)
-        : ICommand<Result<ApplicationUserCollection>>;
+        : ICommand<Result<ApplicationUserCollectionListItem>>;
 }

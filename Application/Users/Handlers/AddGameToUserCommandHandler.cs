@@ -1,3 +1,4 @@
+using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Users.Commands;
 using Application.Users.Responses;
@@ -9,7 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Users.Handlers
 {
-    public class AddGameToUserCommandHandler(IDatabase database, ILogger<AddGameToUserCommandHandler> logger)
+    public class AddGameToUserCommandHandler(
+        IDatabase database,
+        IUserMapper userMapper,
+        ILogger<AddGameToUserCommandHandler> logger)
          : ICommandHandler<AddGameToUserCommand, Result<ApplicationUserOwnedGame>>
     {
         public async ValueTask<Result<ApplicationUserOwnedGame>> Handle(AddGameToUserCommand command, CancellationToken cancellationToken)
@@ -50,10 +54,7 @@ namespace Application.Users.Handlers
             await database.UserOwnedGames.AddAsync(relation, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(new ApplicationUserOwnedGame(
-                relation.UserId,
-                relation.GameId,
-                relation.purchasedAt));
+            return Result.Success(userMapper.ToApplicationUserOwnedGame(relation));
         }
     }
 }

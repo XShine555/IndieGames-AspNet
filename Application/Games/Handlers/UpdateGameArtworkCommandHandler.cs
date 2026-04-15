@@ -18,6 +18,7 @@ namespace Application.Games.Handlers
         IDatabase database,
         IS3Service s3Service,
         IEventBus eventBus,
+        IGameMapper gameMapper,
         GameConfiguration gameConfiguration,
         ILogger<UpdateGameArtworkCommandHandler> logger)
         : ICommandHandler<UpdateGameArtworkCommand, Result<ApplicationGameArtwork>>
@@ -76,7 +77,7 @@ namespace Application.Games.Handlers
             try
             {
                 await eventBus.PublishAsync(@event, cancellationToken);
-                return Result.Success(ApplicationGameArtwork.FromEntity(artwork));
+                return Result.Success(gameMapper.ToApplicationGameArtwork(artwork));
             }
             catch (Exception exception)
             {

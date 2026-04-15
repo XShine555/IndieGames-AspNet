@@ -18,6 +18,7 @@ namespace Application.Games.Handlers
         IDatabase database,
         IS3Service s3Service,
         IEventBus eventBus,
+        IGameMapper gameMapper,
         GameConfiguration gameConfiguration,
         ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGameMutation>>
@@ -90,7 +91,7 @@ namespace Application.Games.Handlers
                         OriginalExtension = inputArtwork.FileData.FileExtension,
                         ProcessingStatus = GameArtworkProcessingStatus.Pending,
                         ProcessingError = string.Empty
-                    } );
+                    });
                 }
 
                 await database.GameArtworks.AddRangeAsync(artworkRecords, cancellationToken);
@@ -137,15 +138,7 @@ namespace Application.Games.Handlers
             if (anyPublishError)
                 await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Created(new ApplicationGameMutation(
-                game.Id,
-                game.OwnerId,
-                game.Title,
-                game.Price,
-                game.Discount,
-                game.IsPublic,
-                game.IsPublished,
-                game.UpdatedAt));
+            return Result.Created(gameMapper.ToApplicationGameMutation(game));
         }
 
         private static IReadOnlyCollection<GameArtworkInput> GetRequiredArtworks(CreateGameCommand command)

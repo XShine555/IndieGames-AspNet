@@ -11,6 +11,7 @@ namespace Application.Games.Handlers
 {
     public class UpdateGameGenresCommandHandler(
         IDatabase database,
+        IGameMapper gameMapper,
         ILogger<UpdateGameGenresCommandHandler> logger)
         : ICommandHandler<UpdateGameGenresCommand, Result<ApplicationGameGenresMutation>>
     {
@@ -46,10 +47,7 @@ namespace Application.Games.Handlers
             game.Genres = existingGenres;
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(new ApplicationGameGenresMutation(
-                game.Id,
-                game.Genres.Select(g => g.Id).ToArray(),
-                game.UpdatedAt));
+            return Result.Success(gameMapper.ToApplicationGameGenresMutation(game));
         }
     }
 }

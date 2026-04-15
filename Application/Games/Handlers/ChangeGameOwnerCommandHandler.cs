@@ -11,6 +11,7 @@ namespace Application.Games.Handlers
 {
     public class ChangeGameOwnerCommandHandler(
         IDatabase database,
+        IGameMapper gameMapper,
         ILogger<ChangeGameOwnerCommandHandler> logger)
         : ICommandHandler<ChangeGameOwnerCommand, Result<ApplicationGameMutation>>
     {
@@ -43,15 +44,7 @@ namespace Application.Games.Handlers
             game.OwnerId = newOwner.IdentityId;
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(new ApplicationGameMutation(
-                game.Id,
-                game.OwnerId,
-                game.Title,
-                game.Price,
-                game.Discount,
-                game.IsPublic,
-                game.IsPublished,
-                game.UpdatedAt));
+            return Result.Success(gameMapper.ToApplicationGameMutation(game));
         }
     }
 }
