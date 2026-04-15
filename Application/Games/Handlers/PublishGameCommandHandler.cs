@@ -1,6 +1,5 @@
 using Application.Abstractions.Persistence;
 using Application.Games.Commands;
-using Application.Games.Responses;
 using Ardalis.Result;
 using Domain.Entities;
 using Mediator;
@@ -12,9 +11,9 @@ namespace Application.Games.Handlers
     public class PublishGameCommandHandler(
         IDatabase database,
         ILogger<PublishGameCommandHandler> logger)
-        : ICommandHandler<PublishGameCommand, Result<ApplicationGame>>
+        : ICommandHandler<PublishGameCommand, Result>
     {
-        public async ValueTask<Result<ApplicationGame>> Handle(PublishGameCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(PublishGameCommand command, CancellationToken cancellationToken)
         {
             var game = await database.Games
                 .Include(g => g.Owner)
