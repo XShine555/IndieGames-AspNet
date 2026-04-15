@@ -16,6 +16,6 @@ namespace Application.Abstractions.Common
         ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(
             UserGameCollection collection,
             int gamesCount,
-            string[]? previewSmallPictureUrls = null);
+            string[]? previewSmallPictureKeys);
     }
 }

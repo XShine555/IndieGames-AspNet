@@ -50,7 +50,7 @@ namespace Application.Users.Handlers
             await database.UserGameCollections.AddAsync(collection, cancellationToken);
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Created(userMapper.ToApplicationUserCollectionListItem(collection, 0));
+            return Result.Created(userMapper.ToApplicationUserCollectionListItem(collection, 0, [] ));
         }
     }
 }

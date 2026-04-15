@@ -1,6 +1,5 @@
 using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
-using Application.Abstractions.Storage;
 using Application.Users.Queries;
 using Application.Users.Responses;
 using Domain.Entities;
@@ -10,7 +9,7 @@ using X.PagedList;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserCollectionsQueryHandler(IDatabase database, IS3Service s3Service, IUserMapper userMapper)
+    public class GetUserCollectionsQueryHandler(IDatabase database, IUserMapper userMapper)
         : IQueryHandler<GetUserCollectionsQuery, PaginatedApplicationResponse<ApplicationUserCollectionListItem>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationUserCollectionListItem>> Handle(GetUserCollectionsQuery query, CancellationToken cancellationToken)
@@ -57,13 +56,11 @@ namespace Application.Users.Handlers
             for (var index = 0; index < collectionRows.Length; index++)
             {
                 var row = collectionRows[index];
-                var previewSmallPictureUrls = await Task.WhenAll(row.PreviewSmallKeys
-                    .Select(key => s3Service.GetSignedUrlAsync(key, TimeSpan.FromHours(1), cancellationToken)));
 
                 collections[index] = userMapper.ToApplicationUserCollectionListItem(
                     row.Collection,
                     row.GamesCount,
-                    previewSmallPictureUrls);
+                    row.PreviewSmallKeys);
             }
 
             return new PaginatedApplicationResponse<ApplicationUserCollectionListItem>(
