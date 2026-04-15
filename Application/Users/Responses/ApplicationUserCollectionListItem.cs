@@ -4,6 +4,7 @@ namespace Application.Users.Responses
         Guid Id,
         string Name,
         int GamesCount,
+        string[] PreviewSmallPictureUrls,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

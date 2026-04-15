@@ -13,6 +13,9 @@ namespace Application.Abstractions.Common
 
         ApplicationUserOwnedGame ToApplicationUserOwnedGame(UserOwnedGame relation);
 
-        ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(UserGameCollection collection, int gamesCount);
+        ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(
+            UserGameCollection collection,
+            int gamesCount,
+            string[]? previewSmallPictureUrls);
     }
 }

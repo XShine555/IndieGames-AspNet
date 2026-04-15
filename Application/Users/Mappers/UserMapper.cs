@@ -58,12 +58,16 @@ namespace Application.Users.Mappers
                 relation.purchasedAt);
         }
 
-        public ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(UserGameCollection collection, int gamesCount)
+        public ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(
+            UserGameCollection collection,
+            int gamesCount,
+            string[]? previewSmallPictureUrls = null)
         {
             return new ApplicationUserCollectionListItem(
                 collection.Id,
                 collection.Name,
                 gamesCount,
+                previewSmallPictureUrls ?? Array.Empty<string>(),
                 collection.CreatedAt,
                 collection.UpdatedAt);
         }

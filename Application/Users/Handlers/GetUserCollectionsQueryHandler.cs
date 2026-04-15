@@ -1,5 +1,6 @@
 using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
+using Application.Abstractions.Storage;
 using Application.Users.Queries;
 using Application.Users.Responses;
 using Mediator;
@@ -8,7 +9,7 @@ using X.PagedList;
 
 namespace Application.Users.Handlers
 {
-    public class GetUserCollectionsQueryHandler(IDatabase database)
+    public class GetUserCollectionsQueryHandler(IDatabase database, IS3Service s3Service, IUserMapper userMapper)
         : IQueryHandler<GetUserCollectionsQuery, PaginatedApplicationResponse<ApplicationUserCollectionListItem>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationUserCollectionListItem>> Handle(GetUserCollectionsQuery query, CancellationToken cancellationToken)
@@ -32,17 +33,38 @@ namespace Application.Users.Handlers
                     pageInfo.HasPreviousPage);
             }
 
-            var collections = await baseQuery
+            var collectionRows = await baseQuery
                 .OrderBy(c => c.Name)
                 .Skip((query.PageNumber - 1) * query.PageSize)
                 .Take(query.PageSize)
-                .Select(c => new ApplicationUserCollectionListItem(
-                    c.Id,
-                    c.Name,
-                    c.Items.Count,
-                    c.CreatedAt,
-                    c.UpdatedAt))
+                .Select(c => new
+                {
+                    Collection = c,
+                    GamesCount = c.Items.Count,
+                    PreviewSmallKeys = c.Items
+                        .OrderBy(i => i.AddedAt)
+                        .Where(i => i.Game.IsPublished)
+                        .Take(4)
+                        .Select(i => i.Game.Artworks
+                            .Select(p => p.SmallRelativePath)
+                            .First())
+                        .ToArray()
+                } )
                 .ToArrayAsync(cancellationToken);
+
+            var collections = new ApplicationUserCollectionListItem[collectionRows.Length];
+
+            for (var index = 0; index < collectionRows.Length; index++)
+            {
+                var row = collectionRows[index];
+                var previewSmallPictureUrls = await Task.WhenAll(row.PreviewSmallKeys
+                    .Select(key => s3Service.GetSignedUrlAsync(key, TimeSpan.FromHours(1), cancellationToken)));
+
+                collections[index] = userMapper.ToApplicationUserCollectionListItem(
+                    row.Collection,
+                    row.GamesCount,
+                    previewSmallPictureUrls);
+            }
 
             return new PaginatedApplicationResponse<ApplicationUserCollectionListItem>(
                 collections,
