@@ -12,14 +12,12 @@ namespace Application.Users.Handlers
 {
     public class UpdateUserCommandHandler(
         IDatabase database,
-        IUserMapper userMapper,
         ILogger<UpdateUserCommandHandler> logger)
-        : ICommandHandler<UpdateUserCommand, Result<ApplicationUser>>
+        : ICommandHandler<UpdateUserCommand, Result<ApplicationUserMutation>>
     {
-        public async ValueTask<Result<ApplicationUser>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationUserMutation>> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
         {
-            var user = await database.Users.AsNoTracking()
-                .Include(u => u.ProfilePicture)
+            var user = await database.Users
                 .SingleOrDefaultAsync(u => u.IdentityId == command.IdentityId, cancellationToken);
             if (user is null)
             {
@@ -29,10 +27,13 @@ namespace Application.Users.Handlers
 
             UpdateDisplayUsername(command.NewDisplayUsername, user);
 
-            database.Users.Update(user);
             await database.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(userMapper.ToApplicationUser(user));
+            return Result.Success(new ApplicationUserMutation(
+                user.IdentityId,
+                user.Username,
+                user.DisplayUsername,
+                user.UpdatedAt));
         }
 
         void UpdateDisplayUsername(string newUsername, User user)

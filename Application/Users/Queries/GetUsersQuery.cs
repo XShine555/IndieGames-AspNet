@@ -5,5 +5,5 @@ using Mediator;
 namespace Application.Users.Queries
 {
     public record GetUsersQuery(string? DisplayName = null, int PageNumber = 1, int PageSize = 10)
-        : IQuery<PaginatedApplicationResponse<ApplicationUser>>;
+        : IQuery<PaginatedApplicationResponse<ApplicationUserListItem>>;
 }

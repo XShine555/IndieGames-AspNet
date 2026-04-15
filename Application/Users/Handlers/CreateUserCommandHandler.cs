@@ -13,12 +13,11 @@ namespace Application.Users.Handlers
 {
     public class CreateUserCommandHandler(
         IDatabase database,
-        IUserMapper userMapper,
         UserConfiguration userConfiguration,
         ILogger<CreateUserCommandHandler> logger)
-        : ICommandHandler<CreateUserCommand, Result<ApplicationUser>>
+        : ICommandHandler<CreateUserCommand, Result<ApplicationUserMutation>>
     {
-        public async ValueTask<Result<ApplicationUser>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<ApplicationUserMutation>> Handle(CreateUserCommand command, CancellationToken cancellationToken)
         {
             var anyUser = await database.Users.AnyAsync(u => u.IdentityId == command.IdentityId, cancellationToken);
             if (anyUser)
@@ -52,7 +51,11 @@ namespace Application.Users.Handlers
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("Created new user with id {UserId} and identity id {IdentityId}", newUser.IdentityId, newUser.IdentityId);
 
-            return Result.Success(userMapper.ToApplicationUser(newUser));
+            return Result.Success(new ApplicationUserMutation(
+                newUser.IdentityId,
+                newUser.Username,
+                newUser.DisplayUsername,
+                newUser.UpdatedAt));
         }
     }
 }

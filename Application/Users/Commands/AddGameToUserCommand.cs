@@ -7,5 +7,5 @@ namespace Application.Users.Commands
     public record AddGameToUserCommand(
         Guid UserId,
         Guid GameId)
-        : ICommand<Result<ApplicationUser>>;
+        : ICommand<Result<ApplicationUserOwnedGame>>;
 }
