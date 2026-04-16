@@ -9,6 +9,7 @@ namespace Application.Users.Responses
         ApplicationUserPicture? ProfilePicture,
         ICollection<ApplicationGame> CreatedGames,
         ICollection<ApplicationGame> OwnedGames,
+        ICollection<ApplicationUserCartItem> CartItems,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

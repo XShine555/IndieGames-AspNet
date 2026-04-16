@@ -16,6 +16,10 @@ namespace Application.Users.Mappers
                 .Select(ownedGame => gameMapper.ToApplicationGame(ownedGame.Game))
                 .ToArray();
 
+            var cartItems = user.CartItems
+                .Select(ToApplicationUserCartItem)
+                .ToArray();
+
             return new ApplicationUser(
                 user.IdentityId,
                 user.Username,
@@ -23,6 +27,7 @@ namespace Application.Users.Mappers
                 ToApplicationUserPicture(user.ProfilePicture),
                 createdGames,
                 ownedGames,
+                cartItems,
                 user.CreatedAt,
                 user.UpdatedAt);
         }
@@ -56,6 +61,14 @@ namespace Application.Users.Mappers
                 relation.UserId,
                 relation.GameId,
                 relation.purchasedAt);
+        }
+
+        public ApplicationUserCartItem ToApplicationUserCartItem(UserCartItem cartItem)
+        {
+            return new ApplicationUserCartItem(
+                cartItem.GameId,
+                gameMapper.ToApplicationGame(cartItem.Game),
+                cartItem.AddedAt);
         }
 
         public ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(

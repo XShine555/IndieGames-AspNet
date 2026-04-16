@@ -14,6 +14,8 @@ namespace Application.Abstractions.Persistence
 
         DbSet<UserOwnedGame> UserLibrary { get; }
 
+        DbSet<UserCartItem> UserCartItems { get; }
+
         DbSet<UserGameCollection> UserGameCollections { get; }
 
         DbSet<UserGameCollectionItem> UserGameCollectionItems { get; }
