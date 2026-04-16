@@ -15,7 +15,7 @@ namespace Application.Users.Handlers
         public async ValueTask<Result> Handle(RemoveGameFromUserCartCommand command, CancellationToken cancellationToken)
         {
             var cartItem = await database.UserCartItems
-                .FindAsync([command.UserId, command.GameId], cancellationToken);
+                .SingleOrDefaultAsync(ci => ci.UserId == command.UserId && ci.GameId == command.GameId, cancellationToken);
             if (cartItem is null)
             {
                 logger.LogWarning("Cart item for user {UserId} and game {GameId} not found", command.UserId, command.GameId);
