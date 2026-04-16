@@ -21,6 +21,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<UserOwnedGame> UserLibrary => Set<UserOwnedGame>();
 
+        public DbSet<UserCartItem> UserCartItems => Set<UserCartItem>();
+
         public DbSet<UserGameCollection> UserGameCollections => Set<UserGameCollection>();
 
         public DbSet<UserGameCollectionItem> UserGameCollectionItems => Set<UserGameCollectionItem>();
@@ -81,6 +83,19 @@ namespace Infrastructure.Persistence
 
                 ownedGame.HasOne(x => x.Game)
                     .WithMany(x => x.UserOwnedGames)
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<UserCartItem>(cartItem =>
+            {
+                cartItem.HasOne(x => x.User)
+                    .WithMany(x => x.CartItems)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                cartItem.HasOne(x => x.Game)
+                    .WithMany(x => x.CartItems)
                     .HasForeignKey(x => x.GameId)
                     .OnDelete(DeleteBehavior.Cascade);
             } );

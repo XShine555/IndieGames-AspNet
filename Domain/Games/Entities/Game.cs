@@ -52,6 +52,8 @@ namespace Domain.Entities
 
         public ICollection<UserGameCollectionItem> CollectionItems { get; set; } = new List<UserGameCollectionItem>();
 
+        public ICollection<UserCartItem> CartItems { get; set; } = new List<UserCartItem>();
+
         [Required]
         public GameStoreReadinessStatus StoreReadinessStatus { get; set; } = GameStoreReadinessStatus.NotReadyForStore;
 

@@ -13,6 +13,8 @@ namespace Application.Abstractions.Common
 
         ApplicationUserOwnedGame ToApplicationUserOwnedGame(UserOwnedGame relation);
 
+        ApplicationUserCartItem ToApplicationUserCartItem(UserCartItem cartItem);
+
         ApplicationUserCollectionListItem ToApplicationUserCollectionListItem(
             UserGameCollection collection,
             int gamesCount,

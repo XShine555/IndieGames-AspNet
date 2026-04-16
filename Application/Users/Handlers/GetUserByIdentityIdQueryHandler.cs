@@ -39,6 +39,18 @@ namespace Application.Users.Handlers
                 .Include(u => u.OwnedGames)
                     .ThenInclude(ug => ug.Game)
                         .ThenInclude(g => g.Artworks)
+                .Include(u => u.CartItems)
+                    .ThenInclude(ci => ci.Game)
+                        .ThenInclude(g => g.Owner)
+                .Include(u => u.CartItems)
+                    .ThenInclude(ci => ci.Game)
+                        .ThenInclude(g => g.Genres)
+                .Include(u => u.CartItems)
+                    .ThenInclude(ci => ci.Game)
+                        .ThenInclude(g => g.StorePictures)
+                .Include(u => u.CartItems)
+                    .ThenInclude(ci => ci.Game)
+                        .ThenInclude(g => g.Artworks)
                 .SingleOrDefaultAsync(u => u.IdentityId == query.IdentityId, cancellationToken);
 
             if (user is null)
