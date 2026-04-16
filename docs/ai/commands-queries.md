@@ -37,8 +37,7 @@ Este archivo se genera automaticamente desde `Application` para que GitHub Copil
 | Tipo | Nombre | Namespace | Devuelve | Handler | Archivo |
 | --- | --- | --- | --- | --- | --- |
 | Command | `AddGameToUserCollectionCommand` | `Application.Users.Commands` | `Result` | `Application/Users/Handlers/AddGameToUserCollectionCommandHandler.cs` | `Application/Users/Commands/AddGameToUserCollectionCommand.cs` |
-| Command | `AddGameToUserCommand` | `Application.Users.Commands` | `Result<ApplicationUser>` | `Application/Users/Handlers/AddGameToUserCommandHandler.cs` | `Application/Users/Commands/AddGameToUserCommand.cs` |
-| Command | `AddGameToUserLibraryCommand` | `Application.Users.Commands` | `Result` | `Application/Users/Handlers/AddGameToUserLibraryCommandHandler.cs` | `Application/Users/Commands/AddGameToUserLibraryCommand.cs` |
+| Command | `AddGameToUserLibraryCommand` | `Application.Users.Commands` | `Result<ApplicationUserOwnedGame>` | `Application/Users/Handlers/AddGameToUserLibraryCommandHandler.cs` | `Application/Users/Commands/AddGameToUserLibraryCommand.cs` |
 | Command | `CreateUserCommand` | `Application.Users.Commands` | `Result<ApplicationUser>` | `Application/Users/Handlers/CreateUserCommandHandler.cs` | `Application/Users/Commands/CreateUserCommand.cs` |
 | Command | `CreateUserGameCollectionCommand` | `Application.Users.Commands` | `Result<Guid>` | `Application/Users/Handlers/CreateUserGameCollectionCommandHandler.cs` | `Application/Users/Commands/CreateUserGameCollectionCommand.cs` |
 | Command | `DeleteUserGameCollectionCommand` | `Application.Users.Commands` | `Result` | `Application/Users/Handlers/DeleteUserGameCollectionCommandHandler.cs` | `Application/Users/Commands/DeleteUserGameCollectionCommand.cs` |
