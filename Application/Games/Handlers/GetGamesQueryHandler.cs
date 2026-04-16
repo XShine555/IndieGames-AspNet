@@ -4,6 +4,7 @@ using Application.Games.Queries;
 using Application.Games.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
+using Domain.Users.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
@@ -70,6 +71,7 @@ namespace Application.Games.Handlers
                         g.Owner.IdentityId,
                         g.Owner.Username,
                         g.Owner.DisplayUsername,
+                        g.Owner.Role,
                         g.Owner.UpdatedAt),
                     g.Genres.Select(genreMapper.ToApplicationGenre).ToList(),
                     g.Artworks.Select(gameMapper.ToApplicationGameArtwork).ToList(),

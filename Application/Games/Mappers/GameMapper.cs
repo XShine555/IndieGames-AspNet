@@ -80,6 +80,7 @@ namespace Application.Games.Mappers
                 owner.IdentityId,
                 owner.Username,
                 owner.DisplayUsername,
+                owner.Role,
                 owner.UpdatedAt);
         }
 

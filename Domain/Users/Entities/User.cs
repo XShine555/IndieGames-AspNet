@@ -1,4 +1,5 @@
 using Domain.Contracts;
+using Domain.Users.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -22,6 +23,9 @@ namespace Domain.Entities
         [Required]
         [MaxLength(24)]
         public required string NormalizedDisplayUsername { get; set; }
+
+        [Required]
+        public UserRole Role { get; set; } = UserRole.User;
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
