@@ -35,7 +35,6 @@ namespace Application.Users.Handlers
 
             user.Role = UserRole.Developer;
             await database.SaveChangesAsync(cancellationToken);
-
             logger.LogInformation("User with IdentityId {IdentityId} has been promoted to developer", command.IdentityId);
 
             return Result.Success(userMapper.ToApplicationUserMutation(user));
