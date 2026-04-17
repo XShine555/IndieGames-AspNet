@@ -7,7 +7,7 @@ namespace Application.Abstractions.Common
     {
         ApplicationUser ToApplicationUser(User user);
 
-        ApplicationUserPicture? ToApplicationUserPicture(UserProfilePictures? profilePicture);
+        ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture);
 
         ApplicationUserMutation ToApplicationUserMutation(User user);
 

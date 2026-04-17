@@ -33,18 +33,15 @@ namespace Application.Users.Mappers
                 user.UpdatedAt);
         }
 
-        public ApplicationUserPicture? ToApplicationUserPicture(UserProfilePictures? profilePicture)
+        public ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture)
         {
-            if (profilePicture is null)
-                return null;
-
             return new ApplicationUserPicture(
-                profilePicture.Id,
-                BuildKey(profilePicture.OriginalRelativePath, profilePicture.OriginalName),
-                BuildKey(profilePicture.SmallRelativePath, profilePicture.SmallName),
-                BuildKey(profilePicture.MediumRelativePath, profilePicture.MediumName),
-                BuildKey(profilePicture.LargeRelativePath, profilePicture.LargeName),
-                profilePicture.AddedAt);
+                    profilePicture.Id,
+                    BuildKey(profilePicture.OriginalRelativePath, profilePicture.OriginalName),
+                    BuildKey(profilePicture.SmallRelativePath, profilePicture.SmallName),
+                    BuildKey(profilePicture.MediumRelativePath, profilePicture.MediumName),
+                    BuildKey(profilePicture.LargeRelativePath, profilePicture.LargeName),
+                    profilePicture.AddedAt);
         }
 
         public ApplicationUserMutation ToApplicationUserMutation(User user)

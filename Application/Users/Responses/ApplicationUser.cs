@@ -6,7 +6,7 @@ namespace Application.Users.Responses
         Guid IdentityId,
         string Username,
         string DisplayUsername,
-        ApplicationUserPicture? ProfilePicture,
+        ApplicationUserPicture ProfilePicture,
         ICollection<ApplicationUserGame> CreatedGames,
         ICollection<ApplicationUserGame> OwnedGames,
         ICollection<ApplicationUserCartItem> CartItems,
