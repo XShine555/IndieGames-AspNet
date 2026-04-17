@@ -89,6 +89,8 @@ namespace Application.Users.Mappers
                 game.Id,
                 game.Title,
                 game.Description,
+                game.Price,
+                game.Discount,
                 game.Genres.Select(genre => new ApplicationGenre(genre.Id, genre.Name, genre.CreatedAt, genre.UpdatedAt)).ToArray(),
                 game.StorePictures.Select(gameMapper.ToApplicationGamePicture).ToArray(),
                 game.Artworks.Select(gameMapper.ToApplicationGameArtwork).ToArray());
