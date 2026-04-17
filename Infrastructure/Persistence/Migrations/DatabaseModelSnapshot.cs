@@ -19,7 +19,7 @@ namespace Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
+                .HasAnnotation("ProductVersion", "10.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "game_artwork_processing_status", new[] { "pending", "processing", "completed", "failed" });
@@ -345,6 +345,9 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(24)
                         .HasColumnType("character varying(24)");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -359,6 +362,24 @@ namespace Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserCartItem", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "GameId");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("User_Cart_Items");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserGameCollection", b =>
@@ -637,6 +658,25 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("Game");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserCartItem", b =>
+                {
+                    b.HasOne("Domain.Entities.Game", "Game")
+                        .WithMany("CartItems")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("CartItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.UserGameCollection", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
@@ -712,6 +752,8 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     b.Navigation("Artworks");
 
+                    b.Navigation("CartItems");
+
                     b.Navigation("CollectionItems");
 
                     b.Navigation("GameGenres");
@@ -728,6 +770,8 @@ namespace Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("CreatedGames");
 
                     b.Navigation("GamesCollections");

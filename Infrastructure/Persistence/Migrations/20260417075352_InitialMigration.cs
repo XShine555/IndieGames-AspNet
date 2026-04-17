@@ -63,6 +63,7 @@ namespace Infrastructure.Persistence.Migrations
                     Username = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
                     DisplayUsername = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
                     NormalizedDisplayUsername = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -280,6 +281,31 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User_Cart_Items",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User_Cart_Items", x => new { x.UserId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_User_Cart_Items_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_Cart_Items_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "IdentityId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "User_Owned_Games",
                 columns: table => new
                 {
@@ -361,6 +387,11 @@ namespace Infrastructure.Persistence.Migrations
                 column: "JobTrackingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_User_Cart_Items_GameId",
+                table: "User_Cart_Items",
+                column: "GameId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_Game_Collection_Items_GameId",
                 table: "User_Game_Collection_Items",
                 column: "GameId");
@@ -403,6 +434,9 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Job_Tracking_Step");
+
+            migrationBuilder.DropTable(
+                name: "User_Cart_Items");
 
             migrationBuilder.DropTable(
                 name: "User_Game_Collection_Items");
