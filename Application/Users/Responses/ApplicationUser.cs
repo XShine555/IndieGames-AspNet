@@ -7,8 +7,8 @@ namespace Application.Users.Responses
         string Username,
         string DisplayUsername,
         ApplicationUserPicture? ProfilePicture,
-        ICollection<ApplicationGame> CreatedGames,
-        ICollection<ApplicationGame> OwnedGames,
+        ICollection<ApplicationUserGame> CreatedGames,
+        ICollection<ApplicationUserGame> OwnedGames,
         ICollection<ApplicationUserCartItem> CartItems,
         DateTime CreatedAt,
         DateTime UpdatedAt);

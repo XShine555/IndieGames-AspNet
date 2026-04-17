@@ -1,4 +1,5 @@
 using Application.Abstractions.Common;
+using Application.Genres.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
 
@@ -9,11 +10,11 @@ namespace Application.Users.Mappers
         public ApplicationUser ToApplicationUser(User user)
         {
             var createdGames = user.CreatedGames
-                .Select(gameMapper.ToApplicationGame)
+                .Select(ToApplicationUserGame)
                 .ToArray();
 
             var ownedGames = user.OwnedGames
-                .Select(ownedGame => gameMapper.ToApplicationGame(ownedGame.Game))
+                .Select(ownedGame => ToApplicationUserGame(ownedGame.Game))
                 .ToArray();
 
             var cartItems = user.CartItems
@@ -68,7 +69,7 @@ namespace Application.Users.Mappers
         {
             return new ApplicationUserCartItem(
                 cartItem.GameId,
-                gameMapper.ToApplicationGame(cartItem.Game),
+                ToApplicationUserGame(cartItem.Game),
                 cartItem.AddedAt);
         }
 
@@ -84,6 +85,17 @@ namespace Application.Users.Mappers
                 previewSmallPictureUrls ?? Array.Empty<string>(),
                 collection.CreatedAt,
                 collection.UpdatedAt);
+        }
+
+        private ApplicationUserGame ToApplicationUserGame(Game game)
+        {
+            return new ApplicationUserGame(
+                game.Id,
+                game.Title,
+                game.Description,
+                game.Genres.Select(genre => new ApplicationGenre(genre.Id, genre.Name, genre.CreatedAt, genre.UpdatedAt)).ToArray(),
+                game.StorePictures.Select(gameMapper.ToApplicationGamePicture).ToArray(),
+                game.Artworks.Select(gameMapper.ToApplicationGameArtwork).ToArray());
         }
 
         private static string BuildKey(string? relativePath, string? name)

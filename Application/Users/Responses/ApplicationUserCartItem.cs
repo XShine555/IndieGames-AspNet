@@ -4,6 +4,6 @@ namespace Application.Users.Responses
 {
     public record ApplicationUserCartItem(
         Guid GameId,
-        ApplicationGame Game,
+        ApplicationUserGame Game,
         DateTime AddedAt);
 }
