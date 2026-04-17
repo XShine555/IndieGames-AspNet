@@ -65,7 +65,6 @@ namespace Application.Users.Mappers
         public ApplicationUserCartItem ToApplicationUserCartItem(UserCartItem cartItem)
         {
             return new ApplicationUserCartItem(
-                cartItem.GameId,
                 ToApplicationUserGame(cartItem.Game),
                 cartItem.AddedAt);
         }
