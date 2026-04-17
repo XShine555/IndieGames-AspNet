@@ -52,6 +52,7 @@ namespace Application.Users.Mappers
                 user.IdentityId,
                 user.Username,
                 user.DisplayUsername,
+                user.Role,
                 user.UpdatedAt);
         }
 
