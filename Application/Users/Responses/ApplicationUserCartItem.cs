@@ -1,5 +1,3 @@
-using Application.Games.Responses;
-
 namespace Application.Users.Responses
 {
     public record ApplicationUserCartItem(
