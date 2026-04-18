@@ -17,7 +17,6 @@ namespace Application.Games.Handlers
             var gameBuild = await database.GameBuilds
                 .Include(gb => gb.Game)
                 .SingleOrDefaultAsync(gb => gb.Id == command.BuildId, cancellationToken);
-
             if (gameBuild is null)
             {
                 logger.LogWarning("Game build with id {BuildId} not found", command.BuildId);
