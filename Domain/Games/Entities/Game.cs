@@ -1,4 +1,5 @@
 using Domain.Contracts;
+using Domain.Games.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -53,6 +54,8 @@ namespace Domain.Entities
         public ICollection<UserGameCollectionItem> CollectionItems { get; set; } = new List<UserGameCollectionItem>();
 
         public ICollection<UserCartItem> CartItems { get; set; } = new List<UserCartItem>();
+
+        public ICollection<GameBuild> Builds { get; set; } = new List<GameBuild>();
 
         [Required]
         public GameStoreReadinessStatus StoreReadinessStatus { get; set; } = GameStoreReadinessStatus.NotReadyForStore;
