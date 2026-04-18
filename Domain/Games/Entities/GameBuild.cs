@@ -5,8 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Games.Entities
 {
 #pragma warning disable CS8618
+    [Table("Game_Builds")]
     public class GameBuild
     {
+        [Key]
         public Guid Id { get; set; }
 
         public Guid GameId { get; set; }
@@ -15,15 +17,13 @@ namespace Domain.Games.Entities
         public required string VersionName { get; set; }
 
         [Required]
-        public required string StorageKey { get; set; }
-
-        public long FileSize { get; set; }
+        public required string manifestRelativePath { get; set; }
 
         [Required]
-        public required string Hash { get; set; }
+        public required string manifestFileName { get; set; }
 
         [Required]
-        public required string HashAlgorithm { get; set; }
+        public required string manifestContentType { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
