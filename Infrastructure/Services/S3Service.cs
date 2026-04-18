@@ -50,7 +50,20 @@ namespace Infrastructure.Services
                 Key = keyName,
                 Expires = DateTime.UtcNow + expiration,
             };
-            var result = amazonS3.GetPreSignedURL(request);
+            var result = await amazonS3.GetPreSignedURLAsync(request);
+            return result;
+        }
+
+        public async Task<string> GetUploadUrlAsync(string keyName, TimeSpan expiration, CancellationToken cancellationToken)
+        {
+            var request = new GetPreSignedUrlRequest
+            {
+                BucketName = s3Configuration.BucketName,
+                Key = keyName,
+                Verb = HttpVerb.PUT,
+                Expires = DateTime.UtcNow + expiration,
+            };
+            var result = await amazonS3.GetPreSignedURLAsync(request);
             return result;
         }
 
