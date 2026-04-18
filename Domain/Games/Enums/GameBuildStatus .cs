@@ -1,6 +1,6 @@
 ﻿namespace Domain.Games.Enums
 {
-    public enum BuildStatus
+    public enum GameBuildStatus
     {
         Completed,
         InProgress,

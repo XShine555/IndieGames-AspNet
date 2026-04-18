@@ -1,10 +1,11 @@
 using Application.Abstractions.Persistence;
 using Domain.Entities;
+using Domain.Games.Entities;
+using Domain.Games.Enums;
 using Domain.JobTracking;
 using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace Infrastructure.Persistence
 {
@@ -37,6 +38,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<JobTrackingStep> JobTrackingSteps => Set<JobTrackingStep>();
 
+        public DbSet<GameBuild> GameBuilds => Set<GameBuild>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString, npgsqlOptions =>
@@ -45,6 +48,7 @@ namespace Infrastructure.Persistence
                 npgsqlOptions.MapEnum<GameArtworkProcessingStatus>();
                 npgsqlOptions.MapEnum<GamePictureProcessingStatus>();
                 npgsqlOptions.MapEnum<GameStoreReadinessStatus>();
+                npgsqlOptions.MapEnum<GameBuildStatus>();
                 npgsqlOptions.MapEnum<JobTrackingStatus>();
                 npgsqlOptions.MapEnum<JobTrackingType>();
             } );
@@ -57,6 +61,7 @@ namespace Infrastructure.Persistence
             modelBuilder.HasPostgresEnum<GameArtworkProcessingStatus>();
             modelBuilder.HasPostgresEnum<GamePictureProcessingStatus>();
             modelBuilder.HasPostgresEnum<GameStoreReadinessStatus>();
+            modelBuilder.HasPostgresEnum<GameBuildStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingType>();
 

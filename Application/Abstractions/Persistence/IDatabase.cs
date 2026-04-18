@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.Games.Entities;
 using Domain.JobTracking;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +30,8 @@ namespace Application.Abstractions.Persistence
         DbSet<JobTracking> JobTrackings { get; }
 
         DbSet<JobTrackingStep> JobTrackingSteps { get; }
+
+        DbSet<GameBuild> GameBuilds { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
