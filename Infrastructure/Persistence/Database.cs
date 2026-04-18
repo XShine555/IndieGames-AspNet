@@ -33,6 +33,12 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
 
+        public DbSet<Order> Orders => Set<Order>();
+
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+
+        public DbSet<StripeEventProcessing> StripeEventProcessings => Set<StripeEventProcessing>();
+
         public DbSet<JobTracking> JobTrackings => Set<JobTracking>();
 
         public DbSet<JobTrackingStep> JobTrackingSteps => Set<JobTrackingStep>();
@@ -45,6 +51,9 @@ namespace Infrastructure.Persistence
                 npgsqlOptions.MapEnum<GameArtworkProcessingStatus>();
                 npgsqlOptions.MapEnum<GamePictureProcessingStatus>();
                 npgsqlOptions.MapEnum<GameStoreReadinessStatus>();
+                npgsqlOptions.MapEnum<OrderStatus>();
+                npgsqlOptions.MapEnum<OrderItemStatus>();
+                npgsqlOptions.MapEnum<StripeEventProcessingStatus>();
                 npgsqlOptions.MapEnum<JobTrackingStatus>();
                 npgsqlOptions.MapEnum<JobTrackingType>();
             } );
@@ -57,6 +66,9 @@ namespace Infrastructure.Persistence
             modelBuilder.HasPostgresEnum<GameArtworkProcessingStatus>();
             modelBuilder.HasPostgresEnum<GamePictureProcessingStatus>();
             modelBuilder.HasPostgresEnum<GameStoreReadinessStatus>();
+            modelBuilder.HasPostgresEnum<OrderStatus>();
+            modelBuilder.HasPostgresEnum<OrderItemStatus>();
+            modelBuilder.HasPostgresEnum<StripeEventProcessingStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingType>();
 
@@ -149,6 +161,47 @@ namespace Infrastructure.Persistence
 
                 a.Property(x => x.ProcessingError)
                     .HasMaxLength(512);
+            } );
+
+            modelBuilder.Entity<Order>(order =>
+            {
+                order.HasOne(x => x.User)
+                    .WithMany()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                order.Property(x => x.Currency)
+                    .HasMaxLength(8)
+                    .HasDefaultValue("usd");
+
+                order.Property(x => x.RefundedAmount)
+                    .HasColumnType("decimal(18,2)")
+                    .HasDefaultValue(0m);
+
+                order.HasIndex(x => x.StripeCheckoutSessionId);
+                order.HasIndex(x => x.StripePaymentIntentId);
+            } );
+
+            modelBuilder.Entity<OrderItem>(orderItem =>
+            {
+                orderItem.HasOne(x => x.Order)
+                    .WithMany(x => x.Items)
+                    .HasForeignKey(x => x.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                orderItem.HasOne(x => x.Game)
+                    .WithMany()
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                orderItem.Property(x => x.UnitPrice)
+                    .HasColumnType("decimal(18,2)");
+            } );
+
+            modelBuilder.Entity<StripeEventProcessing>(stripeEvent =>
+            {
+                stripeEvent.HasIndex(x => x.EventId).IsUnique();
+                stripeEvent.HasIndex(x => x.Status);
             } );
         }
     }

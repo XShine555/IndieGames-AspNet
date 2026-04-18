@@ -13,6 +13,8 @@ using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Builde
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
+using Infrastructure.Messaging.Features.Payments.Consumers;
+using Infrastructure.Messaging.Features.Payments.Registrations;
 using Infrastructure.Messaging.Features.Users.Activities;
 using Infrastructure.Messaging.Features.Users.Consumers;
 using Infrastructure.Messaging.Features.Users.Registrations;
@@ -45,7 +47,7 @@ namespace Infrastructure.Messaging.Configuration
                     ConfigureAmazonSqsHost(
                         busFactoryConfigurator,
                         busRegistrationContext.GetRequiredService<MessagingConfiguration>()));
-            } );
+            });
             return serviceDescriptors;
         }
 
@@ -75,6 +77,7 @@ namespace Infrastructure.Messaging.Configuration
                 options.AddCommonMessaging();
                 options.AddGamesMessaging();
                 options.AddUsersMessaging();
+                options.AddPaymentsMessaging();
 
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
                 {
@@ -83,8 +86,9 @@ namespace Infrastructure.Messaging.Configuration
                         busRegistrationContext.GetRequiredService<MessagingConfiguration>());
 
                     ConfigurePictureWorkflowEndpoints(busRegistrationContext, busFactoryConfigurator);
-                } );
-            } );
+                    ConfigurePaymentEndpoints(busRegistrationContext, busFactoryConfigurator);
+                });
+            });
             return serviceDescriptors;
         }
 
@@ -97,28 +101,28 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<RoutingSlipCleanUpConsumer>(busRegistrationContext);
-                } );
+                });
 
             busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildConsumerEndpointName(GenerateGamesPicturesConsumer.EndpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateGamesPicturesConsumer>(busRegistrationContext);
-                } );
+                });
 
             busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildConsumerEndpointName(GenerateUsersProfilePicturesConsumer.EndpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateUsersProfilePicturesConsumer>(busRegistrationContext);
-                } );
+                });
 
             busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildConsumerEndpointName(ProcessNewGameArtworkConsumer.EndpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<ProcessNewGameArtworkConsumer>(busRegistrationContext);
-                } );
+                });
 
             ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
                 busFactoryConfigurator,
@@ -166,6 +170,20 @@ namespace Infrastructure.Messaging.Configuration
                 SynchronizeUserProfilePicturesActivity.ExecuteEndpointName);
         }
 
+        private static void ConfigurePaymentEndpoints(
+            IBusRegistrationContext busRegistrationContext,
+            IAmazonSqsBusFactoryConfigurator busFactoryConfigurator)
+        {
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(StripeCheckoutCompletedConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.UseMessageRetry(retry => retry.Interval(5, TimeSpan.FromSeconds(10)));
+                    endpointConfigurator.UseInMemoryOutbox();
+                    endpointConfigurator.ConfigureConsumer<StripeCheckoutCompletedConsumer>(busRegistrationContext);
+                });
+        }
+
         private static void ConfigureAmazonSqsHost(
             IAmazonSqsBusFactoryConfigurator busFactoryConfigurator,
             MessagingConfiguration massTransitConfiguration)
@@ -176,7 +194,7 @@ namespace Infrastructure.Messaging.Configuration
                     massTransitConfiguration.AccessKey,
                     massTransitConfiguration.SecretKey,
                     massTransitConfiguration.SessionToken));
-            } );
+            });
         }
 
         private static void ConfigureExecuteActivityEndpoint<TActivity, TArguments>(
@@ -191,7 +209,7 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ExecuteActivityHost<TActivity, TArguments>(busRegistrationContext);
-                } );
+                });
         }
 
         private static void ConfigureActivityEndpoint<TActivity, TArguments, TLog>(
@@ -209,14 +227,14 @@ namespace Infrastructure.Messaging.Configuration
                     endpointConfigurator.ExecuteActivityHost<TActivity, TArguments>(
                         EndpointHelper.BuildCompensateActivityUri(endpointName),
                         busRegistrationContext);
-                } );
+                });
 
             busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildCompensateActivityEndpointName(endpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.CompensateActivityHost<TActivity, TLog>(busRegistrationContext);
-                } );
+                });
         }
     }
 }

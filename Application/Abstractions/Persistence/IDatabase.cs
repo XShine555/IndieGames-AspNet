@@ -26,6 +26,12 @@ namespace Application.Abstractions.Persistence
 
         DbSet<GameArtwork> GameArtworks { get; }
 
+        DbSet<Order> Orders { get; }
+
+        DbSet<OrderItem> OrderItems { get; }
+
+        DbSet<StripeEventProcessing> StripeEventProcessings { get; }
+
         DbSet<JobTracking> JobTrackings { get; }
 
         DbSet<JobTrackingStep> JobTrackingSteps { get; }
