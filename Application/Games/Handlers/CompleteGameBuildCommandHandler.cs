@@ -22,17 +22,20 @@ namespace Application.Games.Handlers
         {
             var gameBuild = await database.GameBuilds
                 .Include(gb => gb.Game)
-                .SingleOrDefaultAsync(gb => gb.Id == command.BuildId && gb.GameId == command.GameId, cancellationToken);
+                .SingleOrDefaultAsync(gb => gb.Id == command.BuildId, cancellationToken);
 
             if (gameBuild is null)
             {
-                logger.LogWarning("Game build with ID {BuildId} for game {GameId} not found", command.BuildId, command.GameId);
+                logger.LogWarning("Game build with ID {BuildId} not found", command.BuildId);
                 return Result.NotFound();
             }
 
             if (gameBuild.Game.OwnerId != command.UserId)
             {
-                logger.LogWarning("User with ID {UserId} is not the owner of game with ID {GameId}", command.UserId, command.GameId);
+                logger.LogWarning("User {UserId} is not authorized to complete build {BuildId} for game {GameId}",
+                    command.UserId,
+                    command.BuildId,
+                    gameBuild.GameId);
                 return Result.Unauthorized();
             }
 
@@ -45,8 +48,8 @@ namespace Application.Games.Handlers
             gameBuild.Status = GameBuildStatus.PendingForProcessing;
             await database.SaveChangesAsync(cancellationToken);
 
-            var buildStoragePath = gameConfiguration.Routes.BuildGameBuildPath(command.GameId, command.BuildId);
-            var @event = new ProcessGameBuildFilesEvent(command.GameId, command.BuildId, buildStoragePath);
+            var buildStoragePath = gameConfiguration.Routes.BuildGameBuildPath(gameBuild.GameId, gameBuild.Id);
+            var @event = new ProcessGameBuildFilesEvent(gameBuild.GameId, command.BuildId, buildStoragePath);
 
             try
             {
@@ -60,8 +63,8 @@ namespace Application.Games.Handlers
 
                 logger.LogError(exception,
                     "Error scheduling build processing for build {BuildId} and game {GameId}",
-                    command.BuildId,
-                    command.GameId);
+                    gameBuild.Id,
+                    gameBuild.GameId);
 
                 return Result.Error("Error scheduling build processing");
             }

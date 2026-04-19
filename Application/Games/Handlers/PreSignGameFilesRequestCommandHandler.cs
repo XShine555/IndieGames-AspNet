@@ -12,9 +12,9 @@ namespace Application.Games.Handlers
 {
     public class PreSignGameFilesRequestCommandHandler(IDatabase database, IS3Service s3Service,ILogger<PreSignGameFilesRequestCommandHandler> logger,
         GameConfiguration gameConfiguration)
-        : ICommandHandler<UploadGameFilesRequestCommand, Result<IReadOnlyList<ApplicationPreSignGameFileRequestMutation> >>
+        : ICommandHandler<PreSignGameFilesRequestCommand, Result<IReadOnlyList<ApplicationPreSignGameFileRequestMutation> >>
     {
-        public async ValueTask<Result<IReadOnlyList<ApplicationPreSignGameFileRequestMutation> >> Handle(UploadGameFilesRequestCommand command, CancellationToken cancellationToken)
+        public async ValueTask<Result<IReadOnlyList<ApplicationPreSignGameFileRequestMutation> >> Handle(PreSignGameFilesRequestCommand command, CancellationToken cancellationToken)
         {
             var gameBuild = await database.GameBuilds
                 .Include(gb => gb.Game)

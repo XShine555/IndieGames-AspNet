@@ -4,7 +4,7 @@ using Mediator;
 
 namespace Application.Games.Commands
 {
-    public record UploadGameFilesRequestCommand(
+    public record PreSignGameFilesRequestCommand(
         Guid UserId,
         Guid BuildId,
         string[] FilePaths)
