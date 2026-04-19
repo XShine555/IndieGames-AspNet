@@ -4,7 +4,7 @@ using Mediator;
 namespace Application.Games.Commands
 {
     public record CompleteGameBuildCommand(
-        Guid BuildId,
-        Guid UserId)
+        Guid UserId,
+        Guid BuildId)
         : ICommand<Result>;
 }
