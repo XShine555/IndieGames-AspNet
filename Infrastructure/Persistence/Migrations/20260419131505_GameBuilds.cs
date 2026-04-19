@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Games.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -14,7 +15,7 @@ namespace Infrastructure.Persistence.Migrations
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:game_artwork_processing_status", "pending,processing,completed,failed")
                 .Annotation("Npgsql:Enum:game_artwork_type", "capsule,header,main")
-                .Annotation("Npgsql:Enum:game_build_status", "completed,in_progress,pending,failed")
+                .Annotation("Npgsql:Enum:game_build_status", "uploading_files,pending_for_processing,processing,completed,failed")
                 .Annotation("Npgsql:Enum:game_picture_processing_status", "pending,processing,completed,failed")
                 .Annotation("Npgsql:Enum:game_store_readiness_status", "not_ready_for_store,ready_for_store")
                 .Annotation("Npgsql:Enum:job_tracking_status", "running,succeeded,failed,compensated")
@@ -36,7 +37,8 @@ namespace Infrastructure.Persistence.Migrations
                     manifestRelativePath = table.Column<string>(type: "text", nullable: false),
                     manifestFileName = table.Column<string>(type: "text", nullable: false),
                     manifestContentType = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<GameBuildStatus>(type: "game_build_status", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,7 +72,7 @@ namespace Infrastructure.Persistence.Migrations
                 .Annotation("Npgsql:Enum:job_tracking_type", "consumer,activity")
                 .OldAnnotation("Npgsql:Enum:game_artwork_processing_status", "pending,processing,completed,failed")
                 .OldAnnotation("Npgsql:Enum:game_artwork_type", "capsule,header,main")
-                .OldAnnotation("Npgsql:Enum:game_build_status", "completed,in_progress,pending,failed")
+                .OldAnnotation("Npgsql:Enum:game_build_status", "uploading_files,pending_for_processing,processing,completed,failed")
                 .OldAnnotation("Npgsql:Enum:game_picture_processing_status", "pending,processing,completed,failed")
                 .OldAnnotation("Npgsql:Enum:game_store_readiness_status", "not_ready_for_store,ready_for_store")
                 .OldAnnotation("Npgsql:Enum:job_tracking_status", "running,succeeded,failed,compensated")
