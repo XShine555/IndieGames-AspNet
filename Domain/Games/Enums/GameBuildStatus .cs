@@ -2,9 +2,10 @@
 {
     public enum GameBuildStatus
     {
+        UploadingFiles,
+        PendingForProcessing,
+        Processing,
         Completed,
-        InProgress,
-        Pending,
         Failed,
     }
 }

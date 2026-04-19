@@ -7,5 +7,5 @@ namespace Application.Games.Commands
     public record UploadGameFilesRequestCommand(
         Guid UserId,
         Guid BuildId)
-        : ICommand<Result<ApplicationUploadGameFileRequestResponse>>;
+        : ICommand<Result<ApplicationUploadGameFilesRequestMutation>>;
 }

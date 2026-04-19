@@ -1,8 +1,9 @@
 using Application.Abstractions.Common;
-using Application.Genres.Responses;
 using Application.Games.Responses;
+using Application.Genres.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
+using Domain.Games.Entities;
 
 namespace Application.Games.Mappers
 {
@@ -82,6 +83,11 @@ namespace Application.Games.Mappers
                 owner.DisplayUsername,
                 owner.Role,
                 owner.UpdatedAt);
+        }
+
+        public ApplicationGameBuildMutation ToApplicationGameBuildMutation(GameBuild gameBuild)
+        {
+            return new ApplicationGameBuildMutation(gameBuild.Id, gameBuild.VersionName, gameBuild.CreatedAt);
         }
 
         private static string BuildKey(string? relativePath, string? name)

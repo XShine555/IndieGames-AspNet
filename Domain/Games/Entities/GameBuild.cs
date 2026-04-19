@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Games.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,21 +12,21 @@ namespace Domain.Games.Entities
         [Key]
         public Guid Id { get; set; }
 
-        public Guid GameId { get; set; }
+        [Required]
+        public required Guid GameId { get; set; }
 
         [Required]
         public required string VersionName { get; set; }
 
-        [Required]
-        public required string manifestRelativePath { get; set; }
+        public string manifestRelativePath { get; set; } = string.Empty;
 
-        [Required]
-        public required string manifestFileName { get; set; }
+        public string manifestFileName { get; set; } = string.Empty;
 
-        [Required]
-        public required string manifestContentType { get; set; }
+        public string manifestContentType { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public GameBuildStatus Status { get; set; } = GameBuildStatus.UploadingFiles;
 
         [ForeignKey(nameof(GameId)) ]
         public Game Game { get; set; }

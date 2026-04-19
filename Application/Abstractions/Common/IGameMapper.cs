@@ -1,5 +1,6 @@
 using Application.Games.Responses;
 using Domain.Entities;
+using Domain.Games.Entities;
 
 namespace Application.Abstractions.Common
 {
@@ -14,5 +15,7 @@ namespace Application.Abstractions.Common
         ApplicationGameMutation ToApplicationGameMutation(Game game);
 
         ApplicationGameGenresMutation ToApplicationGameGenresMutation(Game game);
+
+        ApplicationGameBuildMutation ToApplicationGameBuildMutation(GameBuild gameBuild);
     }
 }
