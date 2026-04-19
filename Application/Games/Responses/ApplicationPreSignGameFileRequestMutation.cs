@@ -1,6 +1,7 @@
 ﻿namespace Application.Games.Responses
 {
-    public record ApplicationUploadGameFilesRequestMutation(
+    public record ApplicationPreSignGameFileRequestMutation(
+        string OriginalFilePath,
         string StorageKey,
         string UploadUrl);
 }

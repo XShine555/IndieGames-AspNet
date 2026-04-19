@@ -5,6 +5,7 @@ namespace Application.Games.Commands
 {
     public record CompleteGameBuildCommand(
         Guid GameId,
+        Guid BuildId,
         Guid UserId)
         : ICommand<Result>;
 }

@@ -33,6 +33,8 @@ namespace Application.Abstractions.Persistence
 
         DbSet<GameBuild> GameBuilds { get; }
 
+        DbSet<GameBuildFile> GameBuildFiles { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

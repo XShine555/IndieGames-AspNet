@@ -67,6 +67,11 @@ namespace Application.Configuration
             return $"{ParentFolder}/{gameId}/{GameBuildsFolderName}/{buildId}";
         }
 
+        public string BuildGameBuildFilePath(Guid gameId, Guid buildId, string fileName)
+        {
+            return $"{BuildGameBuildPath(gameId, buildId) }/{fileName}";
+        }
+
         public string GetOriginalArtworkFolderPath(Guid gameId, GameArtworkType artworkType)
         {
             return BuildArtworkFolderPath(gameId, artworkType, OriginalArtworkFolderName);

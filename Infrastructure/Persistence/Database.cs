@@ -40,6 +40,8 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameBuild> GameBuilds => Set<GameBuild>();
 
+        public DbSet<GameBuildFile> GameBuildFiles => Set<GameBuildFile>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString, npgsqlOptions =>
@@ -154,6 +156,24 @@ namespace Infrastructure.Persistence
 
                 a.Property(x => x.ProcessingError)
                     .HasMaxLength(512);
+            } );
+
+            modelBuilder.Entity<GameBuild>(build =>
+            {
+                build.HasOne(x => x.Game)
+                    .WithMany(x => x.Builds)
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<GameBuildFile>(buildFile =>
+            {
+                buildFile.HasOne(x => x.GameBuild)
+                    .WithMany(x => x.Files)
+                    .HasForeignKey(x => x.GameBuildId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                buildFile.HasIndex(x => x.GameBuildId);
             } );
         }
     }

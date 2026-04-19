@@ -30,5 +30,7 @@ namespace Domain.Games.Entities
 
         [ForeignKey(nameof(GameId)) ]
         public Game Game { get; set; }
+
+        public ICollection<GameBuildFile> Files { get; set; } = new List<GameBuildFile>();
     }
 }

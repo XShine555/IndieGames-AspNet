@@ -6,6 +6,7 @@ namespace Application.Games.Commands
 {
     public record UploadGameFilesRequestCommand(
         Guid UserId,
-        Guid BuildId)
-        : ICommand<Result<ApplicationUploadGameFilesRequestMutation>>;
+        Guid BuildId,
+        string[] FilePaths)
+        : ICommand<Result<IReadOnlyList<ApplicationPreSignGameFileRequestMutation> >>;
 }
