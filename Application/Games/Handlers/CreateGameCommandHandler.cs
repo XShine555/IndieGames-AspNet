@@ -32,7 +32,7 @@ namespace Application.Games.Handlers
             if (owner is null)
             {
                 logger.LogWarning("User with ID '{identityId}' not found.", command.IdentityId);
-                return Result.NotFound();
+                return Result.NotFound("User not found.");
             }
 
             var normalizedTitle = command.Title.Trim().ToUpperInvariant();
@@ -42,7 +42,7 @@ namespace Application.Games.Handlers
             if (existingGame)
             {
                 logger.LogWarning("A game with the title '{Title}' already exists.", command.Title);
-                return Result.Conflict();
+                return Result.Conflict("A game with the same title already exists.");
             }
 
             var genres = await database.Genres
@@ -85,7 +85,7 @@ namespace Application.Games.Handlers
                         OriginalExtension = inputArtwork.FileData.FileExtension,
                         ProcessingStatus = GameArtworkProcessingStatus.Pending,
                         ProcessingError = string.Empty
-                    });
+                    } );
                 }
 
                 await database.GameArtworks.AddRangeAsync(artworkRecords, cancellationToken);
