@@ -1,4 +1,4 @@
-﻿using Application.Games.Responses;
+﻿using Application.Users.Responses;
 
 namespace Application.Users.Responses
 {

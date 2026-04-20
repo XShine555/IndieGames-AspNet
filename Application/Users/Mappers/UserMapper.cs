@@ -5,7 +5,7 @@ using Domain.Entities;
 
 namespace Application.Users.Mappers
 {
-    public class UserMapper(IGameMapper gameMapper) : IUserMapper
+    public class UserMapper(IGameMediaMapper gameMediaMapper) : IUserMapper
     {
         public ApplicationUser ToApplicationUser(User user)
         {
@@ -90,8 +90,8 @@ namespace Application.Users.Mappers
                 game.Title,
                 game.Description,
                 game.Genres.Select(genre => new ApplicationGenre(genre.Id, genre.Name, genre.CreatedAt, genre.UpdatedAt)).ToArray(),
-                game.StorePictures.Select(gameMapper.ToApplicationGamePicture).ToArray(),
-                game.Artworks.Select(gameMapper.ToApplicationGameArtwork).ToArray());
+                game.StorePictures.Select(gameMediaMapper.ToApplicationGamePicture).ToArray(),
+                game.Artworks.Select(gameMediaMapper.ToApplicationGameArtwork).ToArray());
         }
 
         private static string BuildKey(string? relativePath, string? name)
