@@ -20,7 +20,7 @@ namespace Application.Games.Handlers
             var gameProjection = await database.Games
                 .AsNoTracking()
                 .Where(g => g.Id == query.GameId)
-                .Select(g => new { g.Id, g.ReleaseGameBuildId })
+                .Select(g => new { g.Id, g.OwnerId, g.ReleaseGameBuildId } )
                 .SingleOrDefaultAsync(cancellationToken);
             if (gameProjection is null)
             {
@@ -31,7 +31,8 @@ namespace Application.Games.Handlers
             var hasInLibrary = await database.UserLibrary
                 .AsNoTracking()
                 .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == query.GameId, cancellationToken);
-            if (!hasInLibrary)
+            var isOwner = gameProjection.OwnerId == query.UserId;
+            if (!hasInLibrary && !isOwner)
             {
                 logger.LogWarning("User {UserId} is not authorized to list builds for game {GameId}", query.UserId, query.GameId);
                 return Result.Unauthorized();
