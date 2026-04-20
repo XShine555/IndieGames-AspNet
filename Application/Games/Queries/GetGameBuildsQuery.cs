@@ -7,5 +7,5 @@ namespace Application.Games.Queries
     public record GetGameBuildsQuery(
         Guid UserId,
         Guid GameId)
-        : IQuery<Result<IReadOnlyCollection<ApplicationGameBuild>>>;
+        : IQuery<Result<IReadOnlyCollection<ApplicationGameBuild> >>;
 }
