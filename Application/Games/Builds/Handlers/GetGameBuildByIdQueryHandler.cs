@@ -24,9 +24,9 @@ namespace Application.Games.Builds.Handlers
                 {
                     Build = build,
                     build.GameId,
-                    OwnerId = build.Game.OwnerId,
+                    build.Game.OwnerId,
                     build.Game.ReleaseGameBuildId,
-                })
+                } )
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (buildProjection is null)
