@@ -17,5 +17,7 @@ namespace Application.Abstractions.Common
         ApplicationGameGenresMutation ToApplicationGameGenresMutation(Game game);
 
         ApplicationGameBuildMutation ToApplicationGameBuildMutation(GameBuild gameBuild);
+
+        ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild);
     }
 }

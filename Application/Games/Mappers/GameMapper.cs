@@ -90,6 +90,16 @@ namespace Application.Games.Mappers
             return new ApplicationGameBuildMutation(gameBuild.Id, gameBuild.VersionName, gameBuild.CreatedAt);
         }
 
+        public ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild)
+        {
+            return new ApplicationGameBuild(
+                gameBuild.Id,
+                gameBuild.VersionName,
+                gameBuild.Status,
+                isReleaseBuild,
+                gameBuild.CreatedAt);
+        }
+
         private static string BuildKey(string? relativePath, string? name)
         {
             if (string.IsNullOrWhiteSpace(relativePath) || string.IsNullOrWhiteSpace(name))
