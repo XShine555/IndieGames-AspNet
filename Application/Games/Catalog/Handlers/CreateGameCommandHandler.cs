@@ -8,6 +8,7 @@ using Application.Games.Catalog.Commands;
 using Application.Games.Catalog.Responses;
 using Ardalis.Result;
 using Domain.Entities;
+using Domain.Users.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -33,6 +34,12 @@ namespace Application.Games.Catalog.Handlers
             {
                 logger.LogWarning("User with ID '{identityId}' not found.", command.IdentityId);
                 return Result.NotFound("User not found.");
+            }
+
+            if (owner.Role != UserRole.Developer)
+            {
+                logger.LogWarning("User with ID '{identityId}' does not have permission to create games.", command.IdentityId);
+                return Result.Unauthorized("User does not have permission to create games.");
             }
 
             var normalizedTitle = command.Title.Trim().ToUpperInvariant();
