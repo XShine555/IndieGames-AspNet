@@ -27,12 +27,6 @@ namespace Application.Games.Handlers
 
         public async ValueTask<Result<ApplicationGameMutation>> Handle(CreateGameCommand command, CancellationToken cancellationToken)
         {
-            if (command.Price < 0)
-                return Result.Invalid(new ValidationError("Price cannot be negative."));
-
-            if (command.CapsulePicture is null || command.HeaderPicture is null || command.MainPicture is null)
-                return Result.Invalid(new ValidationError("Capsule, Header and Main artworks are required."));
-
             var owner = await database.Users
                 .SingleOrDefaultAsync(u => u.IdentityId == command.IdentityId, cancellationToken);
             if (owner is null)
@@ -44,7 +38,7 @@ namespace Application.Games.Handlers
             var normalizedTitle = command.Title.Trim().ToUpperInvariant();
             var existingGame = await database.Games
                 .AsNoTracking()
-                .AnyAsync(g => g.Title.ToUpper() == normalizedTitle, cancellationToken);
+                .AnyAsync(g => g.NormalizedTitle == normalizedTitle, cancellationToken);
             if (existingGame)
             {
                 logger.LogWarning("A game with the title '{Title}' already exists.", command.Title);
