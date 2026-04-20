@@ -43,11 +43,12 @@ namespace Application.Games.Handlers
                 && game.Artworks.All(a => a.ProcessingStatus == GameArtworkProcessingStatus.Completed);
             var storePicturesReady = game.StorePictures.Count > 0
                 && game.StorePictures.All(p => p.ProcessingStatus == GamePictureProcessingStatus.Completed);
+            var hasReleaseBuild = game.ReleaseGameBuildId.HasValue;
 
-            if (!artworksReady || !storePicturesReady)
+            if (!artworksReady || !storePicturesReady || !hasReleaseBuild)
             {
-                logger.LogWarning("Game with id {GameId} cannot be published because not all artworks or store pictures are completed", game.Id);
-                return Result.Invalid(new ValidationError("Game cannot be published until all artworks and store pictures are completed."));
+                logger.LogWarning("Game with id {GameId} cannot be published because not all artworks, store pictures, or release build are completed", game.Id);
+                return Result.Invalid(new ValidationError("Game cannot be published until all artworks, store pictures, and release build are completed."));
             }
 
             game.IsPublished = true;

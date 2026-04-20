@@ -41,6 +41,8 @@ namespace Domain.Entities
         [Required]
         public bool IsPublished { get; set; }
 
+        public Guid? ReleaseGameBuildId { get; set; }
+
         public ICollection<GameStorePictures> StorePictures { get; set; } = new List<GameStorePictures>();
 
         public ICollection<GameArtwork> Artworks { get; set; } = new List<GameArtwork>();
@@ -68,5 +70,8 @@ namespace Domain.Entities
 
         [ForeignKey(nameof(OwnerId)) ]
         public User Owner { get; set; }
+
+        [ForeignKey(nameof(ReleaseGameBuildId)) ]
+        public GameBuild? ReleaseGameBuild { get; set; }
     }
 }
