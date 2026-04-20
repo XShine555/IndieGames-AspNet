@@ -4,7 +4,6 @@ using Application.Games.Catalog.Queries;
 using Application.Games.Catalog.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
-using Domain.Users.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
@@ -19,10 +18,6 @@ namespace Application.Games.Catalog.Handlers
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGameListItem>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
         {
-            var normalizedTitle = query.Title.Trim().ToUpperInvariant();
-            var hasTitleFilter = !string.IsNullOrWhiteSpace(normalizedTitle);
-            var hasGenresFilter = query.Genres.Count > 0;
-
             var baseQuery = database.Games
                 .AsNoTracking()
                 .AsQueryable();
@@ -35,12 +30,14 @@ namespace Application.Games.Catalog.Handlers
             {
                 baseQuery = baseQuery.Where(g => g.IsPublished);
             }
-
-            if (hasTitleFilter || hasGenresFilter)
+            if (!string.IsNullOrWhiteSpace(query.Title))
             {
-                baseQuery = baseQuery.Where(g =>
-                    (hasTitleFilter && g.NormalizedTitle.Contains(normalizedTitle))
-                    || (hasGenresFilter && g.Genres.Any(gg => query.Genres.Contains(gg.Id))));
+                var normalizedTitle = query.Title.Trim().ToUpperInvariant();
+                baseQuery = baseQuery.Where(g => g.NormalizedTitle.Contains(normalizedTitle));
+            }
+            if (query.Genres?.Count > 0)
+            {
+                baseQuery = baseQuery.Where(g => g.Genres.Any(gg => query.Genres.Contains(gg.Id)));
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);

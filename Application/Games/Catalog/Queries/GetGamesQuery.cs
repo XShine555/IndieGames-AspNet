@@ -5,8 +5,8 @@ using Mediator;
 namespace Application.Games.Catalog.Queries
 {
     public record GetGamesQuery(
-        string Title,
-        ICollection<Guid> Genres,
+        string? Title,
+        ICollection<Guid>? Genres,
         int PageNumber,
         int PageSize,
         bool ReadyOnly = true,
