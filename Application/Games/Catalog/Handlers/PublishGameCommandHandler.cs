@@ -5,6 +5,7 @@ using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace Application.Games.Catalog.Handlers
 {
@@ -22,6 +23,7 @@ namespace Application.Games.Catalog.Handlers
                 .Include(g => g.StorePictures)
                 .Include(g => g.Artworks)
                 .SingleOrDefaultAsync(g => g.Id == command.GameId, cancellationToken);
+
             if (game is null)
             {
                 logger.LogWarning("Game with id {GameId} not found for publish", command.GameId);
@@ -40,28 +42,54 @@ namespace Application.Games.Catalog.Handlers
                 return Result.Conflict("Game is already published");
             }
 
-            var artworksReady = game.Artworks.Count > 0
-                && game.Artworks.All(a => a.ProcessingStatus == GameArtworkProcessingStatus.Completed);
-            var storePicturesReady = game.StorePictures.Count > 0
-                && game.StorePictures.All(p => p.ProcessingStatus == GamePictureProcessingStatus.Completed);
-            var hasReleaseBuild = game.ReleaseGameBuildId.HasValue;
-
-            if (!artworksReady || !storePicturesReady || !hasReleaseBuild)
+            var publicationPendingItems = GetPublicationPendingItems(game);
+            if (publicationPendingItems.Count > 0)
             {
-                logger.LogWarning("Game with id {GameId} cannot be published because not all artworks, store pictures, or release build are completed", game.Id);
-                return Result.Invalid(new ValidationError("Game cannot be published until all artworks, store pictures, and release build are completed."));
+                logger.LogWarning("Game with id {GameId} cannot be published because there are pending requirements", game.Id);
+                return Result.Invalid(publicationPendingItems.Select(item => new ValidationError(item)).ToList());
             }
 
             game.Owner.OwnedGames.Add(new UserOwnedGame
             {
                 UserId = game.Id,
                 GameId = game.Id,
-            } );
+            });
             game.IsPublished = true;
+
             await database.SaveChangesAsync(cancellationToken);
             logger.LogInformation("User with id {IdentityId} is publishing game with id {GameId}", command.IdentityId, command.GameId);
 
             return Result.Success();
+        }
+
+        private static List<string> GetPublicationPendingItems(Game game)
+        {
+            var pendingItems = new List<string>();
+
+            if (game.Artworks.Count == 0)
+            {
+                pendingItems.Add("Add at least one artwork.");
+            }
+            else if (game.Artworks.Any(a => a.ProcessingStatus != GameArtworkProcessingStatus.Completed))
+            {
+                pendingItems.Add("Complete processing for all artworks.");
+            }
+
+            if (game.StorePictures.Count == 0)
+            {
+                pendingItems.Add("Add at least one store picture.");
+            }
+            else if (game.StorePictures.Any(p => p.ProcessingStatus != GamePictureProcessingStatus.Completed))
+            {
+                pendingItems.Add("Complete processing for all store pictures.");
+            }
+
+            if (!game.ReleaseGameBuildId.HasValue)
+            {
+                pendingItems.Add("Assign a release build.");
+            }
+
+            return pendingItems;
         }
     }
 }
