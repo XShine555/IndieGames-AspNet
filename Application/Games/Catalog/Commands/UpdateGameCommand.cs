@@ -11,6 +11,7 @@ namespace Application.Games.Catalog.Commands
         string Description,
         decimal Price,
         decimal Discount,
-        bool IsPublic)
+        bool IsPublic,
+        Guid ReleaseGameBuildId)
         : ICommand<Result<ApplicationGameMutation>>;
 }
