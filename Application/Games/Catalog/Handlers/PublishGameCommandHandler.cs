@@ -52,7 +52,7 @@ namespace Application.Games.Catalog.Handlers
             {
                 UserId = game.Id,
                 GameId = game.Id,
-            });
+            } );
             game.IsPublished = true;
 
             await database.SaveChangesAsync(cancellationToken);
