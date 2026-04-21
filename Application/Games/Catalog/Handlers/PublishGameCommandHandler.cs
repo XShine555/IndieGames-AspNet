@@ -17,6 +17,7 @@ namespace Application.Games.Catalog.Handlers
         {
             var game = await database.Games
                 .Include(g => g.Owner)
+                .ThenInclude(o => o.OwnedGames)
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
                 .Include(g => g.Artworks)
@@ -51,8 +52,14 @@ namespace Application.Games.Catalog.Handlers
                 return Result.Invalid(new ValidationError("Game cannot be published until all artworks, store pictures, and release build are completed."));
             }
 
+            game.Owner.OwnedGames.Add(new UserOwnedGame
+            {
+                UserId = game.Id,
+                GameId = game.Id,
+            } );
             game.IsPublished = true;
             await database.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("User with id {IdentityId} is publishing game with id {GameId}", command.IdentityId, command.GameId);
 
             return Result.Success();
         }

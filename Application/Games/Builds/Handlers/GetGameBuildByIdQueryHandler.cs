@@ -28,7 +28,6 @@ namespace Application.Games.Builds.Handlers
                     build.Game.ReleaseGameBuildId,
                 } )
                 .SingleOrDefaultAsync(cancellationToken);
-
             if (buildProjection is null)
             {
                 logger.LogWarning("Game build with id {BuildId} not found", query.BuildId);
@@ -38,9 +37,7 @@ namespace Application.Games.Builds.Handlers
             var hasInLibrary = await database.UserLibrary
                 .AsNoTracking()
                 .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == buildProjection.GameId, cancellationToken);
-
-            var isOwner = buildProjection.OwnerId == query.UserId;
-            if (!hasInLibrary && !isOwner)
+            if (!hasInLibrary)
             {
                 logger.LogWarning("User {UserId} is not authorized to get game build {BuildId}", query.UserId, query.BuildId);
                 return Result.Unauthorized();

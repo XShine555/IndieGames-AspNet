@@ -31,10 +31,7 @@ namespace Application.Games.Builds.Handlers
             var hasInLibrary = await database.UserLibrary
                 .AsNoTracking()
                 .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == query.GameId, cancellationToken);
-
-            var isOwner = gameProjection.OwnerId == query.UserId;
-
-            if (!hasInLibrary && !isOwner)
+            if (!hasInLibrary)
             {
                 logger.LogWarning("User {UserId} is not authorized to list builds for game {GameId}", query.UserId, query.GameId);
                 return Result.Unauthorized();
