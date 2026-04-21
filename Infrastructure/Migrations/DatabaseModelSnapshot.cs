@@ -98,14 +98,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("LargeContentType")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<string>("LargeFileName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                    b.Property<string>("LargeName")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
 
                     b.Property<long>("LargeFileSizeInBytes")
                         .HasColumnType("bigint");
@@ -122,14 +120,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("MediumContentType")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<string>("MediumFileName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                    b.Property<string>("MediumName")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
 
                     b.Property<long>("MediumFileSizeInBytes")
                         .HasColumnType("bigint");
@@ -169,14 +165,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("game_artwork_processing_status");
 
                     b.Property<string>("SmallContentType")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<string>("SmallFileName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                    b.Property<string>("SmallName")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
 
                     b.Property<long>("SmallFileSizeInBytes")
                         .HasColumnType("bigint");
