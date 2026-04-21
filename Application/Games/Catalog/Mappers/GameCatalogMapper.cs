@@ -55,7 +55,7 @@ namespace Application.Games.Catalog.Mappers
 
         private ApplicationGameReleaseBuild? ToReleaseBuild(Game game)
         {
-            var releaseBuild = game.ReleaseGameBuild;ñ
+            var releaseBuild = game.ReleaseGameBuild;
             if (releaseBuild is null)
                 return null;
 
