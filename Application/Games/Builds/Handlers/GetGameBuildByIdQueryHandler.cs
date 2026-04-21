@@ -3,6 +3,8 @@ using Application.Abstractions.Persistence;
 using Application.Games.Builds.Queries;
 using Application.Games.Builds.Responses;
 using Ardalis.Result;
+using Domain.Games.Entities;
+using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,18 +17,23 @@ namespace Application.Games.Builds.Handlers
         ILogger<GetGameBuildByIdQueryHandler> logger)
         : IQueryHandler<GetGameBuildByIdQuery, Result<ApplicationGameBuild>>
     {
+        private record BuildProjection(
+            GameBuild Build,
+            Guid GameId,
+            Guid OwnerId,
+            Guid? ReleaseGameBuildId);
+
         public async ValueTask<Result<ApplicationGameBuild>> Handle(GetGameBuildByIdQuery query, CancellationToken cancellationToken)
         {
             var buildProjection = await database.GameBuilds
                 .AsNoTracking()
-                .Where(build => build.Id == query.BuildId)
-                .Select(build => new
-                {
-                    Build = build,
+                .Include(build => build.Game)
+                .Where(build => build.Id == query.BuildId && build.Game.IsPublished && build.Status == GameBuildStatus.Completed)
+                .Select(build => new BuildProjection(
+                    build,
                     build.GameId,
                     build.Game.OwnerId,
-                    build.Game.ReleaseGameBuildId,
-                } )
+                    build.Game.ReleaseGameBuildId))
                 .SingleOrDefaultAsync(cancellationToken);
             if (buildProjection is null)
             {

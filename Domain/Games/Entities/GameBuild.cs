@@ -20,7 +20,7 @@ namespace Domain.Games.Entities
 
         public string manifestRelativePath { get; set; } = string.Empty;
 
-        public string manifestFileName { get; set; } = string.Empty;
+        public string ManifestFileName { get; set; } = string.Empty;
 
         public string manifestContentType { get; set; } = string.Empty;
 

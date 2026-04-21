@@ -67,10 +67,10 @@ namespace Application.Games.Catalog.Mappers
 
         private string BuildManifestS3Path(Guid gameId, GameBuild releaseBuild)
         {
-            if (string.IsNullOrWhiteSpace(releaseBuild.manifestFileName))
+            if (string.IsNullOrWhiteSpace(releaseBuild.ManifestFileName))
                 return string.Empty;
 
-            return gameConfiguration.Routes.BuildGameBuildFilePath(gameId, releaseBuild.Id, releaseBuild.manifestFileName);
+            return gameConfiguration.Routes.BuildGameBuildFilePath(gameId, releaseBuild.Id, releaseBuild.ManifestFileName);
         }
 
         private static ApplicationUserMutation ToOwnerMutation(User owner)

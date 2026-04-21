@@ -6,6 +6,7 @@ namespace Application.Games.Builds.Queries
 {
     public record GetGameBuildsQuery(
         Guid UserId,
-        Guid GameId)
+        Guid GameId,
+        bool IncludeUnpublished = false)
         : IQuery<Result<IReadOnlyCollection<ApplicationGameBuild>>>;
 }

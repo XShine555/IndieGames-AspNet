@@ -556,7 +556,7 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("manifestFileName")
+                    b.Property<string>("ManifestFileName")
                         .IsRequired()
                         .HasColumnType("text");
 

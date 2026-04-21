@@ -80,7 +80,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 await database.GameBuildFiles.AddRangeAsync(gameBuildFiles, executeContext.CancellationToken);
 
                 gameBuild.manifestRelativePath = manifestRelativePath;
-                gameBuild.manifestFileName = manifestFileName;
+                gameBuild.ManifestFileName = manifestFileName;
                 gameBuild.manifestContentType = manifestContentType;
                 gameBuild.Status = GameBuildStatus.Completed;
 
