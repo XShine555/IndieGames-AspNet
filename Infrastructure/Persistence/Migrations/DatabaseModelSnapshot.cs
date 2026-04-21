@@ -27,7 +27,6 @@ namespace Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "game_artwork_type", new[] { "capsule", "header", "main" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "game_build_status", new[] { "uploading_files", "pending_for_processing", "processing", "removing", "completed", "failed" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "game_picture_processing_status", new[] { "pending", "processing", "completed", "failed" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "game_store_readiness_status", new[] { "not_ready_for_store", "ready_for_store" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "job_tracking_status", new[] { "running", "succeeded", "failed", "compensated" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "job_tracking_type", new[] { "consumer", "activity" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -68,9 +67,6 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<Guid?>("ReleaseGameBuildId")
                         .HasColumnType("uuid");
-
-                    b.Property<GameStoreReadinessStatus>("StoreReadinessStatus")
-                        .HasColumnType("game_store_readiness_status");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -547,6 +543,10 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<Guid>("GameId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ManifestFileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<GameBuildStatus>("Status")
                         .HasColumnType("game_build_status");
 
@@ -555,10 +555,6 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("manifestContentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ManifestFileName")
                         .IsRequired()
                         .HasColumnType("text");
 
