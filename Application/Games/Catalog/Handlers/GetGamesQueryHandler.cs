@@ -22,19 +22,19 @@ namespace Application.Games.Catalog.Handlers
                 .AsNoTracking()
                 .AsQueryable();
 
-            if (query.ReadyOnly)
+            switch (query.Mode)
             {
-                baseQuery = baseQuery.Where(g => g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore);
+                case GameCatalogQueryMode.User:
+                    baseQuery = baseQuery.Where(g => g.IsPublished);
+                    break;
             }
-            if (query.OnlyPublished)
-            {
-                baseQuery = baseQuery.Where(g => g.IsPublished);
-            }
+
             if (!string.IsNullOrWhiteSpace(query.Title))
             {
                 var normalizedTitle = query.Title.Trim().ToUpperInvariant();
                 baseQuery = baseQuery.Where(g => g.NormalizedTitle.Contains(normalizedTitle));
             }
+
             if (query.Genres?.Count > 0)
             {
                 baseQuery = baseQuery.Where(g => g.Genres.Any(gg => query.Genres.Contains(gg.Id)));

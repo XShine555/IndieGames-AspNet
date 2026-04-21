@@ -15,7 +15,7 @@ namespace Application.Games.Catalog.Handlers
     {
         public async ValueTask<Result<ApplicationGame>> Handle(GetGameByIdQuery query, CancellationToken cancellationToken)
         {
-            var game = await database.Games
+            var gameQuery = database.Games
                 .AsNoTracking()
                 .AsSplitQuery()
                 .Include(g => g.Owner)
@@ -23,7 +23,17 @@ namespace Application.Games.Catalog.Handlers
                 .Include(g => g.StorePictures)
                 .Include(g => g.Artworks)
                 .Include(g => g.ReleaseGameBuild)
-                .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
+                .Where(g => g.Id == query.Id);
+
+            switch (query.Mode)
+            {
+                case GameCatalogQueryMode.User:
+                    gameQuery = gameQuery.Where(g =>
+                        g.IsPublished);
+                    break;
+            }
+
+            var game = await gameQuery.SingleOrDefaultAsync(cancellationToken);
 
             if (game is null)
                 return Result.NotFound();

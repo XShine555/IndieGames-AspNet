@@ -35,32 +35,33 @@ namespace Application.Games.Builds.Handlers
                 return Result.NotFound();
             }
 
-            if (query.IncludeUnpublished)
+            switch (query.Mode)
             {
-                if (gameProjection.OwnerId != query.UserId)
-                {
-                    logger.LogWarning("User {UserId} is not authorized to include unpublished builds for game {GameId}", query.UserId, query.GameId);
+                case GameBuildQueryMode.Developer when gameProjection.OwnerId != query.UserId:
+                    logger.LogWarning("User {UserId} is not authorized to list developer builds for game {GameId}", query.UserId, query.GameId);
                     return Result.Unauthorized();
-                }
-            }
-            else
-            {
-                var hasInLibrary = await database.UserLibrary
-                    .AsNoTracking()
-                    .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == query.GameId, cancellationToken);
 
-                if (!hasInLibrary)
-                {
-                    logger.LogWarning("User {UserId} is not authorized to list builds for game {GameId}", query.UserId, query.GameId);
-                    return Result.Unauthorized();
-                }
+                case GameBuildQueryMode.User:
+                    var hasInLibrary = await database.UserLibrary
+                        .AsNoTracking()
+                        .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == query.GameId, cancellationToken);
+
+                    if (!hasInLibrary)
+                    {
+                        logger.LogWarning("User {UserId} is not authorized to list builds for game {GameId}", query.UserId, query.GameId);
+                        return Result.Unauthorized();
+                    }
+                    break;
+
+                case GameBuildQueryMode.Developer:
+                    break;
             }
 
             var buildsQuery = database.GameBuilds
                 .AsNoTracking()
                 .Where(build => build.GameId == query.GameId);
 
-            if (!query.IncludeUnpublished)
+            if (query.Mode == GameBuildQueryMode.User)
             {
                 buildsQuery = buildsQuery.Where(build => build.Status == GameBuildStatus.Completed);
             }

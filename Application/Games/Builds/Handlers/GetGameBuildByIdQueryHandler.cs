@@ -21,33 +21,54 @@ namespace Application.Games.Builds.Handlers
             GameBuild Build,
             Guid GameId,
             Guid OwnerId,
-            Guid? ReleaseGameBuildId);
+            Guid? ReleaseGameBuildId,
+            bool IsGamePublished);
 
         public async ValueTask<Result<ApplicationGameBuild>> Handle(GetGameBuildByIdQuery query, CancellationToken cancellationToken)
         {
             var buildProjection = await database.GameBuilds
                 .AsNoTracking()
-                .Include(build => build.Game)
-                .Where(build => build.Id == query.BuildId && build.Game.IsPublished && build.Status == GameBuildStatus.Completed)
+                .Where(build => build.Id == query.BuildId)
                 .Select(build => new BuildProjection(
                     build,
                     build.GameId,
                     build.Game.OwnerId,
-                    build.Game.ReleaseGameBuildId))
+                    build.Game.ReleaseGameBuildId,
+                    build.Game.IsPublished))
                 .SingleOrDefaultAsync(cancellationToken);
+
             if (buildProjection is null)
             {
                 logger.LogWarning("Game build with id {BuildId} not found", query.BuildId);
                 return Result.NotFound();
             }
 
-            var hasInLibrary = await database.UserLibrary
-                .AsNoTracking()
-                .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == buildProjection.GameId, cancellationToken);
-            if (!hasInLibrary)
+            switch (query.Mode)
             {
-                logger.LogWarning("User {UserId} is not authorized to get game build {BuildId}", query.UserId, query.BuildId);
-                return Result.Unauthorized();
+                case GameBuildQueryMode.Developer when buildProjection.OwnerId != query.UserId:
+                    logger.LogWarning("User {UserId} is not authorized to get developer game build {BuildId}", query.UserId, query.BuildId);
+                    return Result.Unauthorized();
+
+                case GameBuildQueryMode.User:
+                    if (!buildProjection.IsGamePublished || buildProjection.Build.Status != GameBuildStatus.Completed)
+                    {
+                        logger.LogWarning("Game build with id {BuildId} not found for user mode", query.BuildId);
+                        return Result.NotFound();
+                    }
+
+                    var hasInLibrary = await database.UserLibrary
+                        .AsNoTracking()
+                        .AnyAsync(owned => owned.UserId == query.UserId && owned.GameId == buildProjection.GameId, cancellationToken);
+
+                    if (!hasInLibrary)
+                    {
+                        logger.LogWarning("User {UserId} is not authorized to get game build {BuildId}", query.UserId, query.BuildId);
+                        return Result.Unauthorized();
+                    }
+                    break;
+
+                case GameBuildQueryMode.Developer:
+                    break;
             }
 
             var build = gameBuildMapper.ToApplicationGameBuild(

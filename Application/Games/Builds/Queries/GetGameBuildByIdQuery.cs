@@ -6,6 +6,7 @@ namespace Application.Games.Builds.Queries
 {
     public record GetGameBuildByIdQuery(
         Guid UserId,
-        Guid BuildId)
+        Guid BuildId,
+        GameBuildQueryMode Mode = GameBuildQueryMode.User)
         : IQuery<Result<ApplicationGameBuild>>;
 }

@@ -9,7 +9,6 @@ namespace Application.Games.Catalog.Queries
         ICollection<Guid>? Genres,
         int PageNumber,
         int PageSize,
-        bool ReadyOnly = true,
-        bool OnlyPublished = true)
+        GameCatalogQueryMode Mode = GameCatalogQueryMode.User)
         : IQuery<PaginatedApplicationResponse<ApplicationGameListItem>>;
 }

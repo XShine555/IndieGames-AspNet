@@ -7,6 +7,6 @@ namespace Application.Games.Builds.Queries
     public record GetGameBuildsQuery(
         Guid UserId,
         Guid GameId,
-        bool IncludeUnpublished = false)
+        GameBuildQueryMode Mode = GameBuildQueryMode.User)
         : IQuery<Result<IReadOnlyCollection<ApplicationGameBuild>>>;
 }
