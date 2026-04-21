@@ -5,7 +5,6 @@ using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Text;
 
 namespace Application.Games.Catalog.Handlers
 {
