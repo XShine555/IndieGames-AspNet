@@ -1,12 +1,16 @@
 using Application.Abstractions.Common;
+using Application.Configuration;
 using Application.Games.Catalog.Responses;
 using Application.Genres.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
+using Domain.Games.Entities;
 
 namespace Application.Games.Catalog.Mappers
 {
-    public class GameCatalogMapper(IGameMediaMapper gameMediaMapper) : IGameCatalogMapper
+    public class GameCatalogMapper(
+        IGameMediaMapper gameMediaMapper,
+        GameConfiguration gameConfiguration) : IGameCatalogMapper
     {
         public ApplicationGame ToApplicationGame(Game game)
         {
@@ -23,6 +27,7 @@ namespace Application.Games.Catalog.Mappers
                 game.Genres.Select(genre => new ApplicationGenre(genre.Id, genre.Name, genre.CreatedAt, genre.UpdatedAt)).ToArray(),
                 game.StorePictures.Select(gameMediaMapper.ToApplicationGamePicture).ToArray(),
                 game.Artworks.Select(gameMediaMapper.ToApplicationGameArtwork).ToArray(),
+                ToReleaseBuild(game),
                 game.CreatedAt,
                 game.UpdatedAt);
         }
@@ -46,6 +51,26 @@ namespace Application.Games.Catalog.Mappers
                 game.Id,
                 game.Genres.Select(g => g.Id).ToArray(),
                 game.UpdatedAt);
+        }
+
+        private ApplicationGameReleaseBuild? ToReleaseBuild(Game game)
+        {
+            var releaseBuild = game.ReleaseGameBuild;ñ
+            if (releaseBuild is null)
+                return null;
+
+            return new ApplicationGameReleaseBuild(
+                releaseBuild.Id,
+                releaseBuild.VersionName,
+                BuildManifestS3Path(game.Id, releaseBuild));
+        }
+
+        private string BuildManifestS3Path(Guid gameId, GameBuild releaseBuild)
+        {
+            if (string.IsNullOrWhiteSpace(releaseBuild.manifestFileName))
+                return string.Empty;
+
+            return gameConfiguration.Routes.BuildGameBuildFilePath(gameId, releaseBuild.Id, releaseBuild.manifestFileName);
         }
 
         private static ApplicationUserMutation ToOwnerMutation(User owner)

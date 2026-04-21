@@ -17,6 +17,7 @@ namespace Application.Games.Catalog.Responses
         IReadOnlyCollection<ApplicationGenre> Genres,
         IReadOnlyCollection<ApplicationGamePicture> Pictures,
         IReadOnlyCollection<ApplicationGameArtwork> Artworks,
+        ApplicationGameReleaseBuild? ReleaseBuild,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

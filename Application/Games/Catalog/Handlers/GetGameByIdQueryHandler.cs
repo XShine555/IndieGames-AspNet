@@ -22,6 +22,7 @@ namespace Application.Games.Catalog.Handlers
                 .Include(g => g.Genres)
                 .Include(g => g.StorePictures)
                 .Include(g => g.Artworks)
+                .Include(g => g.ReleaseGameBuild)
                 .SingleOrDefaultAsync(q => q.Id == query.Id, cancellationToken);
 
             if (game is null)
