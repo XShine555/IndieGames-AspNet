@@ -160,6 +160,11 @@ namespace Infrastructure.Messaging.Configuration
                 busRegistrationContext,
                 GenerateGameBuildManifestActivity.ExecuteEndpointName);
 
+            ConfigureExecuteActivityEndpoint<GenerateUserProfilePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateUserProfilePictureWorkflowPathsActivity.ExecuteEndpointName);
+
             ConfigureActivityEndpoint<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments, DownloadFileFromBucketLog>(
                 busFactoryConfigurator,
                 busRegistrationContext,
