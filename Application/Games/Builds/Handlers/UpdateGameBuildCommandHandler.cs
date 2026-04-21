@@ -40,6 +40,12 @@ namespace Application.Games.Builds.Handlers
                 return Result.Conflict("Completed builds cannot be updated.");
             }
 
+            if (gameBuild.Status == GameBuildStatus.Removing)
+            {
+                logger.LogWarning("Game build {BuildId} cannot be updated because it is being removed", command.BuildId);
+                return Result.Conflict("Build is being removed.");
+            }
+
             gameBuild.VersionName = command.VersionName.Trim();
             await database.SaveChangesAsync(cancellationToken);
 

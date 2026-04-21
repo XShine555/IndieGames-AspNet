@@ -2,6 +2,7 @@ using Infrastructure.Messaging.Features.Games.Activities;
 using Infrastructure.Messaging.Features.Games.Consumers;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.BuildProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildRemoval.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using MassTransit;
 
@@ -14,6 +15,7 @@ namespace Infrastructure.Messaging.Features.Games.Registrations
             options.AddConsumer<GenerateGamesPicturesConsumer>();
             options.AddConsumer<ProcessNewGameArtworkConsumer>();
             options.AddConsumer<ProcessGameBuildFilesConsumer>();
+            options.AddConsumer<RemoveGameBuildConsumer>();
 
             options.AddExecuteActivity<GenerateGameStorePictureWorkflowPathsActivity, GenerateGameStorePictureWorkflowPathsArguments>();
             options.AddExecuteActivity<GenerateGameArtworkWorkflowPathsActivity, GenerateGameArtworkWorkflowPathsArguments>();
@@ -21,6 +23,8 @@ namespace Infrastructure.Messaging.Features.Games.Registrations
             options.AddExecuteActivity<SynchronizeGameStorePicturesActivity, SynchronizeGameStorePicturesArguments>();
             options.AddExecuteActivity<SynchronizeGameArtworkActivity, SynchronizeGameArtworkArguments>();
             options.AddExecuteActivity<SynchronizeGameBuildFilesActivity, SynchronizeGameBuildFilesArguments>();
+            options.AddExecuteActivity<RemoveGameBuildFilesFromStorageActivity, RemoveGameBuildFilesFromStorageArguments>();
+            options.AddExecuteActivity<RemoveGameBuildFromDatabaseActivity, RemoveGameBuildFromDatabaseArguments>();
         }
     }
 }

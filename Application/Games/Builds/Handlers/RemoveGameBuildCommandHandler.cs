@@ -1,6 +1,10 @@
+using Application.Abstractions.Messaging;
+using Application.Abstractions.Messaging.Games.V1;
 using Application.Abstractions.Persistence;
+using Application.Configuration;
 using Application.Games.Builds.Commands;
 using Ardalis.Result;
+using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,6 +13,8 @@ namespace Application.Games.Builds.Handlers
 {
     public class RemoveGameBuildCommandHandler(
         IDatabase database,
+        IEventBus eventBus,
+        GameConfiguration gameConfiguration,
         ILogger<RemoveGameBuildCommandHandler> logger)
         : ICommandHandler<RemoveGameBuildCommand, Result>
     {
@@ -21,7 +27,7 @@ namespace Application.Games.Builds.Handlers
             if (gameBuild is null)
             {
                 logger.LogWarning("Game build with id {BuildId} not found for deletion", command.BuildId);
-                return Result.NotFound();
+                return Result.NotFound("Game build not found");
             }
 
             if (gameBuild.Game.OwnerId != command.UserId)
@@ -36,11 +42,38 @@ namespace Application.Games.Builds.Handlers
                 return Result.Conflict("Cannot delete the current release build. Change the release build first.");
             }
 
-            database.GameBuilds.Remove(gameBuild);
+            if (gameBuild.Status == GameBuildStatus.PendingForProcessing
+                || gameBuild.Status == GameBuildStatus.Processing
+                || gameBuild.Status == GameBuildStatus.Removing)
+            {
+                logger.LogWarning("Game build {BuildId} cannot be deleted because it is in status {Status}", gameBuild.Id, gameBuild.Status);
+                return Result.Conflict("Build cannot be deleted while it is being processed.");
+            }
+
+            gameBuild.Status = GameBuildStatus.Removing;
             await database.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Game build {BuildId} deleted by user {UserId}", command.BuildId, command.UserId);
-            return Result.NoContent();
+            var buildStoragePath = gameConfiguration.Routes.BuildGameBuildPath(gameBuild.GameId, gameBuild.Id);
+            var @event = new RemoveGameBuildEvent(gameBuild.GameId, gameBuild.Id, buildStoragePath);
+
+            try
+            {
+                await eventBus.PublishAsync(@event, cancellationToken);
+                logger.LogInformation("Game build {BuildId} marked for deletion by user {UserId}", command.BuildId, command.UserId);
+                return Result.NoContent();
+            }
+            catch (Exception exception)
+            {
+                gameBuild.Status = GameBuildStatus.Failed;
+                await database.SaveChangesAsync(cancellationToken);
+
+                logger.LogError(exception,
+                    "Error scheduling build removal for build {BuildId} and game {GameId}",
+                    gameBuild.Id,
+                    gameBuild.GameId);
+
+                return Result.Error("Error scheduling build deletion");
+            }
         }
     }
 }

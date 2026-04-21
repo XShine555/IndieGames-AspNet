@@ -45,6 +45,12 @@ namespace Application.Games.Builds.Handlers
                 return Result.Conflict("Build is already being processed.");
             }
 
+            if (gameBuild.Status == GameBuildStatus.Removing)
+            {
+                logger.LogWarning("Game build {BuildId} is being removed and cannot be completed", command.BuildId);
+                return Result.Conflict("Build is being removed.");
+            }
+
             gameBuild.Status = GameBuildStatus.PendingForProcessing;
             await database.SaveChangesAsync(cancellationToken);
 

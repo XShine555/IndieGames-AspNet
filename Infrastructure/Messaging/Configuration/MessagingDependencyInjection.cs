@@ -12,6 +12,8 @@ using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Argume
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.BuildProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.BuildProcessing.Builders;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildRemoval.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildRemoval.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
@@ -72,6 +74,7 @@ namespace Infrastructure.Messaging.Configuration
             serviceDescriptors.AddScoped<GameStorePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<GameArtworkWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<GameBuildWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<GameBuildRemovalWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<UserProfilePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
@@ -130,6 +133,13 @@ namespace Infrastructure.Messaging.Configuration
                     endpointConfigurator.ConfigureConsumer<ProcessGameBuildFilesConsumer>(busRegistrationContext);
                 });
 
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(RemoveGameBuildConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<RemoveGameBuildConsumer>(busRegistrationContext);
+                });
+
             ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
                 busFactoryConfigurator,
                 busRegistrationContext,
@@ -184,6 +194,16 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 SynchronizeGameBuildFilesActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<RemoveGameBuildFilesFromStorageActivity, RemoveGameBuildFilesFromStorageArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                RemoveGameBuildFilesFromStorageActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<RemoveGameBuildFromDatabaseActivity, RemoveGameBuildFromDatabaseArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                RemoveGameBuildFromDatabaseActivity.ExecuteEndpointName);
         }
 
         private static void ConfigureAmazonSqsHost(

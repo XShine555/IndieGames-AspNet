@@ -5,6 +5,7 @@
         UploadingFiles,
         PendingForProcessing,
         Processing,
+        Removing,
         Completed,
         Failed,
     }

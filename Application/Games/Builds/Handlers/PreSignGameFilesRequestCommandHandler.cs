@@ -4,6 +4,7 @@ using Application.Configuration;
 using Application.Games.Builds.Commands;
 using Application.Games.Builds.Responses;
 using Ardalis.Result;
+using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -32,6 +33,12 @@ namespace Application.Games.Builds.Handlers
             {
                 logger.LogWarning("User {UserId} is not the owner of game build {BuildId}", command.UserId, command.BuildId);
                 return Result.Unauthorized();
+            }
+
+            if (gameBuild.Status == GameBuildStatus.Removing)
+            {
+                logger.LogWarning("Game build with id {BuildId} is being removed and cannot receive upload urls", command.BuildId);
+                return Result.Conflict("Build is being removed.");
             }
 
             var mutations = new List<ApplicationPreSignGameFileRequestMutation>();
