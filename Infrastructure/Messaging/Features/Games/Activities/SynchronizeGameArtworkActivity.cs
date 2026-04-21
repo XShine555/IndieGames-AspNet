@@ -75,24 +75,6 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 await database.SaveChangesAsync(executeContext.CancellationToken);
 
-                var hasPendingArtwork = await database.GameArtworks
-                    .AsNoTracking()
-                    .AnyAsync(
-                        x => x.GameId == artwork.GameId && x.ProcessingStatus != Domain.Entities.GameArtworkProcessingStatus.Completed,
-                        executeContext.CancellationToken);
-
-                if (!hasPendingArtwork)
-                {
-                    var game = await database.Games
-                        .SingleOrDefaultAsync(x => x.Id == artwork.GameId, executeContext.CancellationToken);
-
-                    if (game is not null && game.StoreReadinessStatus != Domain.Entities.GameStoreReadinessStatus.ReadyForStore)
-                    {
-                        game.StoreReadinessStatus = Domain.Entities.GameStoreReadinessStatus.ReadyForStore;
-                        await database.SaveChangesAsync(executeContext.CancellationToken);
-                    }
-                }
-
                 logger.LogDebug("Synchronized generated variants for artwork {ArtworkId}", artwork.Id);
                 logger.LogInformation("Synchronize game artwork activity completed for artwork {ArtworkId}", artwork.Id);
 

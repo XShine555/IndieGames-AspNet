@@ -49,7 +49,6 @@ namespace Infrastructure.Persistence
                 npgsqlOptions.MapEnum<GameArtworkType>();
                 npgsqlOptions.MapEnum<GameArtworkProcessingStatus>();
                 npgsqlOptions.MapEnum<GamePictureProcessingStatus>();
-                npgsqlOptions.MapEnum<GameStoreReadinessStatus>();
                 npgsqlOptions.MapEnum<GameBuildStatus>();
                 npgsqlOptions.MapEnum<JobTrackingStatus>();
                 npgsqlOptions.MapEnum<JobTrackingType>();
@@ -62,7 +61,6 @@ namespace Infrastructure.Persistence
             modelBuilder.HasPostgresEnum<GameArtworkType>();
             modelBuilder.HasPostgresEnum<GameArtworkProcessingStatus>();
             modelBuilder.HasPostgresEnum<GamePictureProcessingStatus>();
-            modelBuilder.HasPostgresEnum<GameStoreReadinessStatus>();
             modelBuilder.HasPostgresEnum<GameBuildStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingType>();

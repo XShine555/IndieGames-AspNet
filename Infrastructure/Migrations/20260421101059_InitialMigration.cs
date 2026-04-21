@@ -1,11 +1,12 @@
 ﻿using System;
 using Domain.Entities;
+using Domain.Games.Enums;
 using Domain.JobTracking;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Migrations
+namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -16,8 +17,8 @@ namespace Infrastructure.Persistence.Migrations
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:game_artwork_processing_status", "pending,processing,completed,failed")
                 .Annotation("Npgsql:Enum:game_artwork_type", "capsule,header,main")
+                .Annotation("Npgsql:Enum:game_build_status", "uploading_files,pending_for_processing,processing,removing,completed,failed")
                 .Annotation("Npgsql:Enum:game_picture_processing_status", "pending,processing,completed,failed")
-                .Annotation("Npgsql:Enum:game_store_readiness_status", "not_ready_for_store,ready_for_store")
                 .Annotation("Npgsql:Enum:job_tracking_status", "running,succeeded,failed,compensated")
                 .Annotation("Npgsql:Enum:job_tracking_type", "consumer,activity");
 
@@ -94,34 +95,6 @@ namespace Infrastructure.Persistence.Migrations
                         column: x => x.JobTrackingId,
                         principalTable: "Job_Tracking",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Games",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    NormalizedTitle = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
-                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    Discount = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsPublic = table.Column<bool>(type: "boolean", nullable: false),
-                    IsPublished = table.Column<bool>(type: "boolean", nullable: false),
-                    StoreReadinessStatus = table.Column<GameStoreReadinessStatus>(type: "game_store_readiness_status", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Games", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Games_Users_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Users",
-                        principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -215,11 +188,74 @@ namespace Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Game_Artworks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Game_Build_Files",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameBuildId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FileRelativePath = table.Column<string>(type: "text", nullable: false),
+                    FileName = table.Column<string>(type: "text", nullable: false),
+                    FileContentType = table.Column<string>(type: "text", nullable: false),
+                    FileSize = table.Column<long>(type: "bigint", nullable: false),
+                    Hash = table.Column<string>(type: "text", nullable: false),
+                    HashAlgorithm = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Game_Build_Files", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Game_Builds",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VersionName = table.Column<string>(type: "text", nullable: false),
+                    manifestRelativePath = table.Column<string>(type: "text", nullable: false),
+                    ManifestFileName = table.Column<string>(type: "text", nullable: false),
+                    manifestContentType = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<GameBuildStatus>(type: "game_build_status", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Game_Builds", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Games",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    NormalizedTitle = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Discount = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsPublic = table.Column<bool>(type: "boolean", nullable: false),
+                    IsPublished = table.Column<bool>(type: "boolean", nullable: false),
+                    ReleaseGameBuildId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Game_Artworks_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
-                        principalColumn: "Id",
+                        name: "FK_Games_Game_Builds_ReleaseGameBuildId",
+                        column: x => x.ReleaseGameBuildId,
+                        principalTable: "Game_Builds",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Games_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -306,31 +342,6 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User_Owned_Games",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
-                    purchasedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User_Owned_Games", x => new { x.UserId, x.GameId });
-                    table.ForeignKey(
-                        name: "FK_User_Owned_Games_Games_GameId",
-                        column: x => x.GameId,
-                        principalTable: "Games",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_User_Owned_Games_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "IdentityId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "User_Game_Collection_Items",
                 columns: table => new
                 {
@@ -355,6 +366,31 @@ namespace Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "User_Owned_Games",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
+                    purchasedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User_Owned_Games", x => new { x.UserId, x.GameId });
+                    table.ForeignKey(
+                        name: "FK_User_Owned_Games_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_Owned_Games_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "IdentityId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Game_Artworks_GameId_Type",
                 table: "Game_Artworks",
@@ -365,6 +401,16 @@ namespace Infrastructure.Persistence.Migrations
                 table: "Game_Artworks",
                 columns: new[] { "GameId", "Type", "SortOrder" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Game_Build_Files_GameBuildId",
+                table: "Game_Build_Files",
+                column: "GameBuildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Game_Builds_GameId",
+                table: "Game_Builds",
+                column: "GameId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Game_Genres_GenreId",
@@ -380,6 +426,11 @@ namespace Infrastructure.Persistence.Migrations
                 name: "IX_Games_OwnerId",
                 table: "Games",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_ReleaseGameBuildId",
+                table: "Games",
+                column: "ReleaseGameBuildId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Job_Tracking_Step_JobTrackingId",
@@ -418,13 +469,44 @@ namespace Infrastructure.Persistence.Migrations
                 table: "Users",
                 column: "IdentityId",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Game_Artworks_Games_GameId",
+                table: "Game_Artworks",
+                column: "GameId",
+                principalTable: "Games",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Game_Build_Files_Game_Builds_GameBuildId",
+                table: "Game_Build_Files",
+                column: "GameBuildId",
+                principalTable: "Game_Builds",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Game_Builds_Games_GameId",
+                table: "Game_Builds",
+                column: "GameId",
+                principalTable: "Games",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Game_Builds_Games_GameId",
+                table: "Game_Builds");
+
             migrationBuilder.DropTable(
                 name: "Game_Artworks");
+
+            migrationBuilder.DropTable(
+                name: "Game_Build_Files");
 
             migrationBuilder.DropTable(
                 name: "Game_Genres");
@@ -458,6 +540,9 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Games");
+
+            migrationBuilder.DropTable(
+                name: "Game_Builds");
 
             migrationBuilder.DropTable(
                 name: "Users");

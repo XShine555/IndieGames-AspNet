@@ -20,7 +20,6 @@ namespace Application.Games.Catalog.Mappers
                 game.Description,
                 game.Price,
                 game.Discount,
-                game.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
                 game.IsPublic,
                 game.IsPublished,
                 ToOwnerMutation(game.Owner),

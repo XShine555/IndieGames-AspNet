@@ -27,7 +27,6 @@ namespace Application.Games.Catalog.Commands
                 Price = command.Price,
                 Discount = 0m,
                 OwnerId = command.IdentityId,
-                StoreReadinessStatus = GameStoreReadinessStatus.NotReadyForStore,
                 Genres = genres
             };
         }

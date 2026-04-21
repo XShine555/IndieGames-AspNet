@@ -10,7 +10,6 @@ namespace Application.Games.Catalog.Responses
         string Description,
         decimal Price,
         decimal Discount,
-        bool IsReadyForStore,
         bool IsPublic,
         bool IsPublished,
         ApplicationUserMutation Owner,

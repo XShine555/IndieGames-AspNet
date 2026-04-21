@@ -48,7 +48,6 @@ namespace Application.Games.Media.Handlers
             }
 
             picture.ProcessingStatus = GamePictureProcessingStatus.Pending;
-            picture.Game.StoreReadinessStatus = GameStoreReadinessStatus.NotReadyForStore;
 
             await database.SaveChangesAsync(cancellationToken);
 

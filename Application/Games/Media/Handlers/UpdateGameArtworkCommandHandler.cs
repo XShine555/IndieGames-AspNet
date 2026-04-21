@@ -60,7 +60,6 @@ namespace Application.Games.Media.Handlers
             artwork.ProcessingStatus = GameArtworkProcessingStatus.Pending;
             artwork.ProcessingError = string.Empty;
             artwork.UpdatedAt = DateTime.UtcNow;
-            artwork.Game.StoreReadinessStatus = GameStoreReadinessStatus.NotReadyForStore;
 
             await database.SaveChangesAsync(cancellationToken);
 

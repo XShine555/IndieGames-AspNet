@@ -64,7 +64,6 @@ namespace Application.Games.Catalog.Handlers
                     g.Title,
                     g.Price,
                     g.Discount,
-                    g.StoreReadinessStatus == GameStoreReadinessStatus.ReadyForStore,
                     g.IsPublic,
                     g.IsPublished,
                     new ApplicationUserMutation(

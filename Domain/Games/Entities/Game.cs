@@ -60,9 +60,6 @@ namespace Domain.Entities
         public ICollection<GameBuild> Builds { get; set; } = new List<GameBuild>();
 
         [Required]
-        public GameStoreReadinessStatus StoreReadinessStatus { get; set; } = GameStoreReadinessStatus.NotReadyForStore;
-
-        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Required]
