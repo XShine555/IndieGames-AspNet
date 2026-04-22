@@ -4,7 +4,7 @@ using Application.Users.Queries;
 using Application.Users.Responses;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Application.Users.Handlers
 {
@@ -26,24 +26,9 @@ namespace Application.Users.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
-
-            if (totalCount == 0)
-            {
-                return new PaginatedApplicationResponse<ApplicationUserListItem>(
-                    Array.Empty<ApplicationUserListItem>(),
-                    pageInfo.PageNumber,
-                    pageInfo.PageSize,
-                    pageInfo.PageCount,
-                    pageInfo.TotalItemCount,
-                    pageInfo.HasNextPage,
-                    pageInfo.HasPreviousPage);
-            }
 
             var users = await baseQuery
                 .OrderBy(u => u.DisplayUsername)
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
                 .Select(u => new ApplicationUserListItem(
                     u.IdentityId,
                     u.Username,
@@ -69,16 +54,10 @@ namespace Application.Users.Handlers
                     u.OwnedGames.Count,
                     u.CreatedAt,
                     u.UpdatedAt))
-                .ToArrayAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            return new PaginatedApplicationResponse<ApplicationUserListItem>(
-                users,
-                pageInfo.PageNumber,
-                pageInfo.PageSize,
-                pageInfo.PageCount,
-                pageInfo.TotalItemCount,
-                pageInfo.HasNextPage,
-                pageInfo.HasPreviousPage);
+            var pagedList = users.ToPagedList(query.PageNumber, query.PageSize, totalCount);
+            return PaginatedApplicationResponse<ApplicationUserListItem>.FromPagedList(pagedList);
         }
     }
 }

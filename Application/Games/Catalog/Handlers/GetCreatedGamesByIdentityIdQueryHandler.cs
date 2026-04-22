@@ -13,10 +13,6 @@ namespace Application.Games.Catalog.Handlers
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGame>> Handle(GetCreatedGamesByIdentityIdQuery query, CancellationToken cancellationToken)
         {
-            var totalCount = await database.Games
-                .Where(g => g.OwnerId == query.UserId)
-                .CountAsync(cancellationToken);
-
             var games = database.Games
                 .AsNoTracking()
                 .AsQueryable()
@@ -28,9 +24,12 @@ namespace Application.Games.Catalog.Handlers
                 games = games.Where(g => g.NormalizedTitle.Contains(normalizedTitle));
             }
 
+            var totalCount = await games.CountAsync(cancellationToken);
+
             var gameList = await games.ToListAsync(cancellationToken);
             var pagedList = gameList.Select(mapper.ToApplicationGame)
                 .ToPagedList(query.PageNumber, query.PageSize, totalCount);
+
             return PaginatedApplicationResponse<ApplicationGame>.FromPagedList(pagedList);
         }
     }

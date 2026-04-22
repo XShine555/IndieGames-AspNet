@@ -40,10 +40,9 @@ namespace Application.Games.Catalog.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
+
             var games = await baseQuery
                 .OrderByDescending(g => g.CreatedAt)
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
                 .Select(g => new ApplicationGameListItem(
                     g.Id,
                     g.Title,
