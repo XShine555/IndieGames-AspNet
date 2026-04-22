@@ -41,6 +41,7 @@ namespace Application.Games.Catalog.Mappers
                 game.Discount,
                 game.IsPublic,
                 game.IsPublished,
+                game.ReleaseGameBuildId,
                 game.UpdatedAt);
         }
 
