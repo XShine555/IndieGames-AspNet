@@ -2,6 +2,7 @@ using Application.Abstractions.Common;
 using Application.Genres.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Application.Users.Mappers
 {
@@ -43,6 +44,48 @@ namespace Application.Users.Mappers
                     BuildKey(profilePicture.MediumRelativePath, profilePicture.MediumName),
                     BuildKey(profilePicture.LargeRelativePath, profilePicture.LargeName),
                     profilePicture.AddedAt);
+        }
+
+        public Expression<Func<UserProfilePictures, ApplicationUserPicture>> ToApplicationUserPictureExpression()
+        {
+            return profilePicture => new ApplicationUserPicture(
+                profilePicture.Id,
+                (string.IsNullOrWhiteSpace(profilePicture.OriginalRelativePath) || string.IsNullOrWhiteSpace(profilePicture.OriginalName))
+                    ? string.Empty
+                    : $"{profilePicture.OriginalRelativePath}/{profilePicture.OriginalName}",
+                (string.IsNullOrWhiteSpace(profilePicture.SmallRelativePath) || string.IsNullOrWhiteSpace(profilePicture.SmallName))
+                    ? string.Empty
+                    : $"{profilePicture.SmallRelativePath}/{profilePicture.SmallName}",
+                (string.IsNullOrWhiteSpace(profilePicture.MediumRelativePath) || string.IsNullOrWhiteSpace(profilePicture.MediumName))
+                    ? string.Empty
+                    : $"{profilePicture.MediumRelativePath}/{profilePicture.MediumName}",
+                (string.IsNullOrWhiteSpace(profilePicture.LargeRelativePath) || string.IsNullOrWhiteSpace(profilePicture.LargeName))
+                    ? string.Empty
+                    : $"{profilePicture.LargeRelativePath}/{profilePicture.LargeName}",
+                profilePicture.AddedAt);
+        }
+
+        public Expression<Func<User, ApplicationUserListItem>> ToApplicationUserListItemExpression()
+        {
+            var originalRelativeKey = string.Empty;
+            if (!string.IsNullOrWhiteSpace(originalRelativeKey))
+                originalRelativeKey = "{ProfilePicture.OriginalRelativePath}/{ProfilePicture.OriginalName}";
+
+            return user => new ApplicationUserListItem(
+                user.IdentityId,
+                user.Username,
+                user.DisplayUsername,
+                new ApplicationUserPicture(
+                    user.ProfilePicture.Id,
+                    originalRelativeKey,
+                    $"{user.ProfilePicture.SmallRelativePath}/{user.ProfilePicture.SmallName}",
+                    $"{user.ProfilePicture.MediumRelativePath}/{user.ProfilePicture.MediumName}",
+                    $"{user.ProfilePicture.LargeRelativePath}/{user.ProfilePicture.LargeName}",
+                    user.ProfilePicture.AddedAt),
+                user.CreatedGames.Count,
+                user.OwnedGames.Count,
+                user.CreatedAt,
+                user.UpdatedAt);
         }
 
         public ApplicationUserMutation ToApplicationUserMutation(User user)

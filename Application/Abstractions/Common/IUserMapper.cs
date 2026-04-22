@@ -1,5 +1,6 @@
 using Application.Users.Responses;
 using Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Application.Abstractions.Common
 {
@@ -8,6 +9,10 @@ namespace Application.Abstractions.Common
         ApplicationUser ToApplicationUser(User user);
 
         ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture);
+
+        Expression<Func<UserProfilePictures, ApplicationUserPicture>> ToApplicationUserPictureExpression();
+
+        Expression<Func<User, ApplicationUserListItem>> ToApplicationUserListItemExpression();
 
         ApplicationUserMutation ToApplicationUserMutation(User user);
 
