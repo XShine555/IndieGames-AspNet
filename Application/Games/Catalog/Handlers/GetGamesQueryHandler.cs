@@ -5,7 +5,7 @@ using Application.Games.Catalog.Responses;
 using Application.Users.Responses;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Application.Games.Catalog.Handlers
 {
@@ -40,20 +40,6 @@ namespace Application.Games.Catalog.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
-
-            if (totalCount == 0)
-            {
-                return new PaginatedApplicationResponse<ApplicationGameListItem>(
-                    Array.Empty<ApplicationGameListItem>(),
-                    pageInfo.PageNumber,
-                    pageInfo.PageSize,
-                    pageInfo.PageCount,
-                    pageInfo.TotalItemCount,
-                    pageInfo.HasNextPage,
-                    pageInfo.HasPreviousPage);
-            }
-
             var games = await baseQuery
                 .OrderByDescending(g => g.CreatedAt)
                 .Skip((query.PageNumber - 1) * query.PageSize)
@@ -75,16 +61,10 @@ namespace Application.Games.Catalog.Handlers
                     g.Artworks.AsQueryable().Select(gameMediaMapper.ToApplicationGameArtworkFunction).ToList(),
                     g.CreatedAt,
                     g.UpdatedAt))
-                .ToArrayAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            return new PaginatedApplicationResponse<ApplicationGameListItem>(
-                games,
-                pageInfo.PageNumber,
-                pageInfo.PageSize,
-                pageInfo.PageCount,
-                pageInfo.TotalItemCount,
-                pageInfo.HasNextPage,
-                pageInfo.HasPreviousPage);
+            var pagedList = games.ToPagedList(query.PageNumber, query.PageSize, totalCount);
+            return PaginatedApplicationResponse<ApplicationGameListItem>.FromPagedList(pagedList);
         }
     }
 }
