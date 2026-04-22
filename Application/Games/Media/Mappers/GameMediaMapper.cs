@@ -41,14 +41,16 @@ namespace Application.Games.Media.Mappers
             return $"{relativePath}/{name}";
         }
 
-        public Expression<Func<GameStorePictures, ApplicationGamePicture>> ToApplicationGamePictureExpression =>
-            gamePicture => new ApplicationGamePicture(
-                gamePicture.Id,
-                $"{gamePicture.OriginalRelativePath}/{gamePicture.OriginalName}",
-                $"{gamePicture.SmallRelativePath}/{gamePicture.SmallName}",
-                $"{gamePicture.MediumRelativePath}/{gamePicture.MediumName}",
-                $"{gamePicture.LargeRelativePath}/{gamePicture.LargeName}",
-                gamePicture.ProcessingStatus,
-                gamePicture.AddedAt);
+        public Expression<Func<GameArtwork, ApplicationGameArtwork>> ToApplicationGameArtworkFunction =>
+            artwork => new ApplicationGameArtwork(
+                artwork.Id,
+                artwork.Type,
+                $"{artwork.OriginalRelativePath}/{artwork.OriginalFileName}",
+                $"{artwork.SmallRelativePath}/{artwork.SmallFileName}",
+                $"{artwork.MediumRelativePath}/{artwork.MediumFileName}",
+                $"{artwork.LargeRelativePath}/{artwork.LargeFileName}",
+                artwork.ProcessingStatus,
+                artwork.CreatedAt,
+                artwork.UpdatedAt);
     }
 }
