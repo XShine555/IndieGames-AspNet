@@ -72,8 +72,8 @@ namespace Application.Games.Catalog.Handlers
                         g.Owner.DisplayUsername,
                         g.Owner.Role,
                         g.Owner.UpdatedAt),
-                    g.Genres.Select(genreMapper.ToApplicationGenre).ToList(),
-                    g.Artworks.Select(gameMediaMapper.ToApplicationGameArtwork).ToList(),
+                    g.Genres.AsQueryable().Select(genreMapper.ToApplicationGenreFunction).ToList(),
+                    g.Artworks.AsQueryable().Select(gameMediaMapper.ToApplicationGameArtworkFunction).ToList(),
                     g.CreatedAt,
                     g.UpdatedAt))
                 .ToArrayAsync(cancellationToken);

@@ -1,6 +1,7 @@
 using Application.Abstractions.Common;
 using Application.Games.Media.Responses;
 using Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Application.Games.Media.Mappers
 {
@@ -39,5 +40,15 @@ namespace Application.Games.Media.Mappers
 
             return $"{relativePath}/{name}";
         }
+
+        public Expression<Func<GameStorePictures, ApplicationGamePicture>> ToApplicationGamePictureExpression =>
+            gamePicture => new ApplicationGamePicture(
+                gamePicture.Id,
+                $"{gamePicture.OriginalRelativePath}/{gamePicture.OriginalName}",
+                $"{gamePicture.SmallRelativePath}/{gamePicture.SmallName}",
+                $"{gamePicture.MediumRelativePath}/{gamePicture.MediumName}",
+                $"{gamePicture.LargeRelativePath}/{gamePicture.LargeName}",
+                gamePicture.ProcessingStatus,
+                gamePicture.AddedAt);
     }
 }
