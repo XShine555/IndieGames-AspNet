@@ -25,6 +25,7 @@ namespace Application.Users.Mappers
                 user.IdentityId,
                 user.Username,
                 user.DisplayUsername,
+                user.Role,
                 ToApplicationUserPicture(user.ProfilePicture),
                 createdGames,
                 ownedGames,
