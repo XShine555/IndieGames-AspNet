@@ -17,12 +17,19 @@ namespace Application.Games.Catalog.Handlers
                 .Where(g => g.OwnerId == query.UserId)
                 .CountAsync(cancellationToken);
 
-            var games = await database.Games
+            var games = database.Games
                 .AsNoTracking()
-                .Where(g => g.OwnerId == query.UserId)
-                .ToListAsync(cancellationToken);
+                .AsQueryable()
+                .Where(g => g.OwnerId == query.UserId);
 
-            var pagedList = games.Select(mapper.ToApplicationGame)
+            if (!string.IsNullOrWhiteSpace(query.Title))
+            {
+                var normalizedTitle = query.Title.Trim().ToUpperInvariant();
+                games = games.Where(g => g.NormalizedTitle.Contains(normalizedTitle));
+            }
+
+            var gameList = await games.ToListAsync(cancellationToken);
+            var pagedList = gameList.Select(mapper.ToApplicationGame)
                 .ToPagedList(query.PageNumber, query.PageSize, totalCount);
             return PaginatedApplicationResponse<ApplicationGame>.FromPagedList(pagedList);
         }
