@@ -4,7 +4,6 @@ using Application.Games.Catalog.Commands;
 using Application.Games.Catalog.Responses;
 using Ardalis.Result;
 using Domain.Entities;
-using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
