@@ -3,7 +3,6 @@ using Application.Abstractions.Persistence;
 using Application.Games.Catalog.Queries;
 using Application.Games.Catalog.Responses;
 using Application.Users.Responses;
-using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
