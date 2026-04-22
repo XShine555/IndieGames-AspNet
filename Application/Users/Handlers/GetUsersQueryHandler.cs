@@ -15,16 +15,14 @@ namespace Application.Users.Handlers
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationUserListItem>> Handle(GetUsersQuery query, CancellationToken cancellationToken)
         {
-            var normalizedDisplayName = query.DisplayName?.Trim().ToUpperInvariant();
-            var hasDisplayNameFilter = !string.IsNullOrWhiteSpace(normalizedDisplayName);
-
             var baseQuery = database.Users
                 .AsNoTracking()
                 .AsQueryable();
 
-            if (hasDisplayNameFilter)
+            if (!string.IsNullOrWhiteSpace(query.DisplayName))
             {
-                baseQuery = baseQuery.Where(u => u.NormalizedDisplayUsername.Contains(normalizedDisplayName!));
+                var normalizedDisplayName = query.DisplayName.Trim().ToUpperInvariant();
+                baseQuery = baseQuery.Where(u => u.NormalizedDisplayUsername.Contains(normalizedDisplayName));
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
