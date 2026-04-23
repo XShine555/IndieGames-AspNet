@@ -14,6 +14,7 @@ namespace Application.Users.Handlers
         public async ValueTask<Result<ApplicationBasicUser>> Handle(GetBasicUserQuery query, CancellationToken cancellationToken)
         {
             var user = await database.Users.AsNoTracking()
+                .Include(u => u.ProfilePicture)
                 .SingleOrDefaultAsync(u => u.IdentityId == query.UserId, cancellationToken);
             if (user is null)
                 return Result.NotFound();
