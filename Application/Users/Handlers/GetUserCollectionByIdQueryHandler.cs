@@ -10,6 +10,7 @@ namespace Application.Users.Handlers
 {
     public class GetUserCollectionByIdQueryHandler(
         IDatabase database,
+        IUserMapper userMapper,
         IGameCatalogMapper gameCatalogMapper)
         : IQueryHandler<GetUserCollectionByIdQuery, Result<ApplicationUserCollectionDetails>>
     {
@@ -40,12 +41,7 @@ namespace Application.Users.Handlers
                 .Select(item => gameCatalogMapper.ToApplicationGame(item.Game))
                 .ToArray();
 
-            return Result.Success(new ApplicationUserCollectionDetails(
-                collection.Id,
-                collection.Name,
-                games,
-                collection.CreatedAt,
-                collection.UpdatedAt));
+            return Result.Success(userMapper.ToApplicationUserCollectionDetails(collection, games));
         }
     }
 }

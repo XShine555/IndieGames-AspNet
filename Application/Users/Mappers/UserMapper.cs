@@ -1,4 +1,5 @@
 using Application.Abstractions.Common;
+using Application.Games.Catalog.Responses;
 using Application.Genres.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
@@ -131,6 +132,16 @@ namespace Application.Users.Mappers
                 collection.Name,
                 gamesCount,
                 previewSmallPictureUrls ?? Array.Empty<string>(),
+                collection.CreatedAt,
+                collection.UpdatedAt);
+        }
+
+        public ApplicationUserCollectionDetails ToApplicationUserCollectionDetails(UserGameCollection collection, IReadOnlyCollection<ApplicationGame> games)
+        {
+            return new ApplicationUserCollectionDetails(
+                collection.Id,
+                collection.Name,
+                games,
                 collection.CreatedAt,
                 collection.UpdatedAt);
         }
