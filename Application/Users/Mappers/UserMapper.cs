@@ -41,7 +41,8 @@ namespace Application.Users.Mappers
             return new ApplicationBasicUser(
                 user.IdentityId,
                 user.DisplayUsername,
-                ToApplicationUserPicture(user.ProfilePicture));
+                ToApplicationUserPicture(user.ProfilePicture),
+                user.Role);
         }
 
         public ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture)
