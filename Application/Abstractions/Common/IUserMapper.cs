@@ -8,6 +8,8 @@ namespace Application.Abstractions.Common
     {
         ApplicationUser ToApplicationUser(User user);
 
+        ApplicationBasicUser ToApplicationBasicUser(User user);
+
         ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture);
 
         Expression<Func<UserProfilePictures, ApplicationUserPicture>> ToApplicationUserPictureExpression();

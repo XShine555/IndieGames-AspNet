@@ -35,6 +35,14 @@ namespace Application.Users.Mappers
                 user.UpdatedAt);
         }
 
+        public ApplicationBasicUser ToApplicationBasicUser(User user)
+        {
+            return new ApplicationBasicUser(
+                user.IdentityId,
+                user.DisplayUsername,
+                ToApplicationUserPicture(user.ProfilePicture));
+        }
+
         public ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture)
         {
             return new ApplicationUserPicture(
