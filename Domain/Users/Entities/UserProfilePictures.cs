@@ -27,7 +27,7 @@ namespace Domain.Entities
         public required string SmallRelativePath { get; set; }
 
         [Required]
-        [MaxLength(36)]
+        [MaxLength(48)]
         public required string SmallName { get; set; }
 
         [Required]
@@ -39,7 +39,7 @@ namespace Domain.Entities
         public required string MediumRelativePath { get; set; }
 
         [Required]
-        [MaxLength(36)]
+        [MaxLength(48)]
         public required string MediumName { get; set; }
 
         [Required]
@@ -51,7 +51,7 @@ namespace Domain.Entities
         public required string LargeRelativePath { get; set; }
 
         [Required]
-        [MaxLength(36)]
+        [MaxLength(48)]
         public required string LargeName { get; set; }
 
         [Required]
