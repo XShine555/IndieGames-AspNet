@@ -57,20 +57,16 @@ namespace Application.Users.Mappers
 
         public Expression<Func<UserProfilePictures, ApplicationUserPicture>> ToApplicationUserPictureExpression()
         {
+            var originalKey = string.Empty;
+            if (!string.IsNullOrWhiteSpace(originalKey) && ! string.IsNullOrWhiteSpace(originalKey))
+                originalKey = "{OriginalRelativePath}/{OriginalName}";
+
             return profilePicture => new ApplicationUserPicture(
                 profilePicture.Id,
-                (string.IsNullOrWhiteSpace(profilePicture.OriginalRelativePath) || string.IsNullOrWhiteSpace(profilePicture.OriginalName))
-                    ? string.Empty
-                    : $"{profilePicture.OriginalRelativePath}/{profilePicture.OriginalName}",
-                (string.IsNullOrWhiteSpace(profilePicture.SmallRelativePath) || string.IsNullOrWhiteSpace(profilePicture.SmallName))
-                    ? string.Empty
-                    : $"{profilePicture.SmallRelativePath}/{profilePicture.SmallName}",
-                (string.IsNullOrWhiteSpace(profilePicture.MediumRelativePath) || string.IsNullOrWhiteSpace(profilePicture.MediumName))
-                    ? string.Empty
-                    : $"{profilePicture.MediumRelativePath}/{profilePicture.MediumName}",
-                (string.IsNullOrWhiteSpace(profilePicture.LargeRelativePath) || string.IsNullOrWhiteSpace(profilePicture.LargeName))
-                    ? string.Empty
-                    : $"{profilePicture.LargeRelativePath}/{profilePicture.LargeName}",
+                originalKey,
+                $"{profilePicture.SmallRelativePath}/{profilePicture.SmallName}",
+                $"{profilePicture.MediumRelativePath}/{profilePicture.MediumName}",
+                $"{profilePicture.LargeRelativePath}/{profilePicture.LargeName}",
                 profilePicture.AddedAt);
         }
 
