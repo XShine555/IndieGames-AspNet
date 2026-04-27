@@ -5,5 +5,5 @@
         string Title,
         string Description,
         GameStatusType Status,
-        string PictureUrl);
+        string? PictureUrl);
 }

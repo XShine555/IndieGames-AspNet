@@ -46,12 +46,16 @@ namespace Application.Games.Catalog.Mappers
 
             var artworkPicture = game.Artworks.First(x => x.Type == GameArtworkType.Capsule);
 
+            string? pictureUrl = null;
+            if (!string.IsNullOrEmpty(artworkPicture.MediumRelativePath) && !string.IsNullOrEmpty(artworkPicture.MediumFileName))
+                pictureUrl = $"{artworkPicture.MediumRelativePath}/{artworkPicture.MediumFileName}";
+
             return new ApplicationCreatedGameListItem(
                 game.Id,
                 game.Title,
                 game.Description,
                 status,
-                $"{artworkPicture.MediumRelativePath}/{artworkPicture.MediumFileName}");
+                pictureUrl);
         }
 
         public ApplicationGameMutation ToApplicationGameMutation(Game game)

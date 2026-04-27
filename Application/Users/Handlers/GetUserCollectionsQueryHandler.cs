@@ -31,7 +31,7 @@ namespace Application.Users.Handlers
                         .Take(4)
                         .Select(i => i.Game.Artworks
                             .Where(a => a.Type == GameArtworkType.Main)
-                            .Select(p => p.SmallRelativePath)
+                            .Select(p => p.SmallRelativePath!)
                             .First())
                         .ToArray()))
                 .ToArrayAsync(cancellationToken);
