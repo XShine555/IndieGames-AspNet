@@ -7,6 +7,8 @@ namespace Application.Abstractions.Common
     {
         ApplicationGame ToApplicationGame(Game game);
 
+        ApplicationCreatedGameListItem ToApplicationCreatedGameListItem(Game game);
+
         ApplicationGameMutation ToApplicationGameMutation(Game game);
 
         ApplicationGameGenresMutation ToApplicationGameGenresMutation(Game game);

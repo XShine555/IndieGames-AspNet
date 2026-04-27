@@ -9,5 +9,5 @@ namespace Application.Games.Catalog.Queries
         string Title,
         int PageNumber,
         int PageSize)
-        : IQuery<PaginatedApplicationResponse<ApplicationGame>>;
+        : IQuery<PaginatedApplicationResponse<ApplicationCreatedGameListItem>>;
 }

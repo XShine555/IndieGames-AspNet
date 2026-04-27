@@ -31,6 +31,29 @@ namespace Application.Games.Catalog.Mappers
                 game.UpdatedAt);
         }
 
+        public ApplicationCreatedGameListItem ToApplicationCreatedGameListItem(Game game)
+        {
+            var status = GameStatusType.NotPublished;
+            if (game.IsPublished)
+            {
+                status= GameStatusType.Published;
+            }
+            if (game.Artworks.Any(x => x.ProcessingStatus == GameArtworkProcessingStatus.Failed)
+                || game.StorePictures.Any(x => x.ProcessingStatus == GamePictureProcessingStatus.Failed))
+            {
+                status = GameStatusType.NotPublished;
+            }
+
+            var artworkPicture = game.Artworks.First(x => x.Type == GameArtworkType.Capsule);
+
+            return new ApplicationCreatedGameListItem(
+                game.Id,
+                game.Title,
+                game.Description,
+                status,
+                $"{artworkPicture.MediumRelativePath}/{artworkPicture.MediumFileName}");
+        }
+
         public ApplicationGameMutation ToApplicationGameMutation(Game game)
         {
             return new ApplicationGameMutation(

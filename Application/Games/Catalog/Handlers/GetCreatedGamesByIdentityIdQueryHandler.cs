@@ -9,13 +9,15 @@ using X.PagedList.Extensions;
 namespace Application.Games.Catalog.Handlers
 {
     public class GetCreatedGamesByIdentityIdQueryHandler(IDatabase database, IGameCatalogMapper mapper)
-        : IQueryHandler<GetCreatedGamesByIdentityIdQuery, PaginatedApplicationResponse<ApplicationGame>>
+        : IQueryHandler<GetCreatedGamesByIdentityIdQuery, PaginatedApplicationResponse<ApplicationCreatedGameListItem>>
     {
-        public async ValueTask<PaginatedApplicationResponse<ApplicationGame>> Handle(GetCreatedGamesByIdentityIdQuery query, CancellationToken cancellationToken)
+        public async ValueTask<PaginatedApplicationResponse<ApplicationCreatedGameListItem>> Handle(GetCreatedGamesByIdentityIdQuery query, CancellationToken cancellationToken)
         {
             var games = database.Games
                 .AsNoTracking()
                 .AsQueryable()
+                .Include(x => x.Artworks)
+                .Include(x => x.StorePictures)
                 .Where(g => g.OwnerId == query.UserId);
 
             if (!string.IsNullOrWhiteSpace(query.Title))
@@ -27,10 +29,10 @@ namespace Application.Games.Catalog.Handlers
             var totalCount = await games.CountAsync(cancellationToken);
 
             var gameList = await games.ToListAsync(cancellationToken);
-            var pagedList = gameList.Select(mapper.ToApplicationGame)
+            var pagedList = gameList.Select(mapper.ToApplicationCreatedGameListItem)
                 .ToPagedList(query.PageNumber, query.PageSize, totalCount);
 
-            return PaginatedApplicationResponse<ApplicationGame>.FromPagedList(pagedList);
+            return PaginatedApplicationResponse<ApplicationCreatedGameListItem>.FromPagedList(pagedList);
         }
     }
 }
