@@ -6,6 +6,7 @@ namespace Application.Achievements.Queries
 {
     public record GetAchievementsByGameQuery(
         Guid GameId,
+        Guid? UserId = null,
         int PageNumber = 1,
         int PageSize = 10)
         : IQuery<PaginatedApplicationResponse<ApplicationAchievement>>;

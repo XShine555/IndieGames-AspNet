@@ -7,13 +7,14 @@ namespace Application.Achievements.Mappers
 {
     public class AchievementMapper : IAchievementMapper
     {
-        public ApplicationAchievement ToApplicationAchievement(AchievementEntity achievement)
+        public ApplicationAchievement ToApplicationAchievement(AchievementEntity achievement, bool isUnlocked = false)
         {
             return new ApplicationAchievement(
                 achievement.Id,
                 achievement.GameId,
                 achievement.Name,
                 achievement.Description,
+                isUnlocked,
                 achievement.CreatedAt,
                 achievement.UpdatedAt);
         }
@@ -23,6 +24,7 @@ namespace Application.Achievements.Mappers
             achievement.GameId,
             achievement.Name,
             achievement.Description,
+            false,
             achievement.CreatedAt,
             achievement.UpdatedAt);
     }

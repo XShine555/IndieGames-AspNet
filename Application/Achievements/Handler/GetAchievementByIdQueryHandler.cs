@@ -22,7 +22,15 @@ namespace Application.Achievements.Handler
             if (achievement is null)
                 return Result.NotFound();
 
-            return Result.Success(achievementMapper.ToApplicationAchievement(achievement));
+            var isUnlocked = false;
+            if (query.UserId.HasValue)
+            {
+                isUnlocked = await database.UserAchievements
+                    .AsNoTracking()
+                    .AnyAsync(ua => ua.UserId == query.UserId.Value && ua.AchievementId == achievement.Id, cancellationToken);
+            }
+
+            return Result.Success(achievementMapper.ToApplicationAchievement(achievement, isUnlocked));
         }
     }
 }

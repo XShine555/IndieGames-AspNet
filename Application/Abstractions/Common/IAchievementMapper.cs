@@ -6,7 +6,7 @@ namespace Application.Abstractions.Common
 {
     public interface IAchievementMapper
     {
-        ApplicationAchievement ToApplicationAchievement(AchievementEntity achievement);
+        ApplicationAchievement ToApplicationAchievement(AchievementEntity achievement, bool isUnlocked = false);
 
         Expression<Func<AchievementEntity, ApplicationAchievement>> ToApplicationAchievementFunction { get; }
     }
