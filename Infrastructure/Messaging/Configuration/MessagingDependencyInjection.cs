@@ -2,6 +2,10 @@ using Amazon.Runtime;
 using Application.Abstractions.Messaging;
 using Infrastructure.Messaging.Consumers;
 using Infrastructure.Messaging.EventBus;
+using Infrastructure.Messaging.Features.Achievements.Activities;
+using Infrastructure.Messaging.Features.Achievements.Consumers;
+using Infrastructure.Messaging.Features.Achievements.Registrations;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Builders;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Common.Registrations;
@@ -76,11 +80,13 @@ namespace Infrastructure.Messaging.Configuration
             serviceDescriptors.AddScoped<GameBuildWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<GameBuildRemovalWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<UserProfilePictureWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<AchievementPictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
                 options.AddCommonMessaging();
                 options.AddGamesMessaging();
                 options.AddUsersMessaging();
+                options.AddAchievementsMessaging();
 
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
                 {
@@ -117,6 +123,13 @@ namespace Infrastructure.Messaging.Configuration
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<GenerateUsersProfilePicturesConsumer>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(GenerateAchievementsPicturesConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<GenerateAchievementsPicturesConsumer>(busRegistrationContext);
                 } );
 
             busFactoryConfigurator.ReceiveEndpoint(
@@ -164,6 +177,11 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 GenerateUserProfilePictureWorkflowPathsActivity.ExecuteEndpointName);
+
+            ConfigureActivityEndpoint<ProcessAchievementPictureActivity, ProcessAchievementPictureArguments, ProcessAchievementPictureLog>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                ProcessAchievementPictureActivity.ExecuteEndpointName);
 
             ConfigureActivityEndpoint<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments, DownloadFileFromBucketLog>(
                 busFactoryConfigurator,

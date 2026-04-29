@@ -17,6 +17,7 @@ namespace Application.Games.Catalog.Responses
         IReadOnlyCollection<ApplicationGamePicture> Pictures,
         IReadOnlyCollection<ApplicationGameArtwork> Artworks,
         ApplicationGameReleaseBuild? ReleaseBuild,
+        GameStatusType GameStatus,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

@@ -31,6 +31,44 @@ namespace Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "job_tracking_type", new[] { "consumer", "activity" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.Achievements", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId", "NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("Achievements");
+                });
+
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
                     b.Property<Guid>("Id")
@@ -367,6 +405,24 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserAchievement", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AchievementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UnlockedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "AchievementId");
+
+                    b.HasIndex("AchievementId");
+
+                    b.ToTable("User_Achievements");
+                });
+
             modelBuilder.Entity("Domain.Entities.UserCartItem", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -686,6 +742,17 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Job_Tracking_Step");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Achievements", b =>
+                {
+                    b.HasOne("Domain.Entities.Game", "Game")
+                        .WithMany("Achievements")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Owner")
@@ -742,6 +809,25 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserAchievement", b =>
+                {
+                    b.HasOne("Domain.Entities.Achievements", "Achievement")
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserCartItem", b =>
@@ -856,8 +942,15 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("JobTracking");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Achievements", b =>
+                {
+                    b.Navigation("UserAchievements");
+                });
+
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
+                    b.Navigation("Achievements");
+
                     b.Navigation("Artworks");
 
                     b.Navigation("Builds");
@@ -890,6 +983,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Navigation("ProfilePicture")
                         .IsRequired();
+
+                    b.Navigation("UserAchievements");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserGameCollection", b =>

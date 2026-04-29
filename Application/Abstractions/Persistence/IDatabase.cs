@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Achievement = Domain.Entities.Achievements;
 using Domain.Games.Entities;
 using Domain.JobTracking;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,10 @@ namespace Application.Abstractions.Persistence
         DbSet<GameBuild> GameBuilds { get; }
 
         DbSet<GameBuildFile> GameBuildFiles { get; }
+
+        DbSet<Achievement> Achievements { get; }
+
+        DbSet<UserAchievement> UserAchievements { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

@@ -4,7 +4,7 @@ using Application.Genres.Queries;
 using Application.Genres.Responses;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Application.Genres.Handlers
 {
@@ -26,40 +26,19 @@ namespace Application.Genres.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
-
-            if (totalCount == 0)
-            {
-                return new PaginatedApplicationResponse<ApplicationGenreListItem>(
-                    Array.Empty<ApplicationGenreListItem>(),
-                    pageInfo.PageNumber,
-                    pageInfo.PageSize,
-                    pageInfo.PageCount,
-                    pageInfo.TotalItemCount,
-                    pageInfo.HasNextPage,
-                    pageInfo.HasPreviousPage);
-            }
 
             var genres = await baseQuery
                 .OrderBy(genre => genre.Name)
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
                 .Select(genre => new ApplicationGenreListItem(
                     genre.Id,
                     genre.Name,
                     genre.Games.Count,
                     genre.CreatedAt,
                     genre.UpdatedAt))
-                .ToArrayAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            return new PaginatedApplicationResponse<ApplicationGenreListItem>(
-                genres,
-                pageInfo.PageNumber,
-                pageInfo.PageSize,
-                pageInfo.PageCount,
-                pageInfo.TotalItemCount,
-                pageInfo.HasNextPage,
-                pageInfo.HasPreviousPage);
+            var pagedList = genres.ToPagedList(query.PageNumber, query.PageSize, totalCount);
+            return PaginatedApplicationResponse<ApplicationGenreListItem>.FromPagedList(pagedList);
         }
     }
 }

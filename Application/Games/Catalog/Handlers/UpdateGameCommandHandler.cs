@@ -4,7 +4,6 @@ using Application.Games.Catalog.Commands;
 using Application.Games.Catalog.Responses;
 using Ardalis.Result;
 using Domain.Entities;
-using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -36,10 +35,6 @@ namespace Application.Games.Catalog.Handlers
             var titleResult = await UpdateTitle(command.Title, game, cancellationToken);
             if (!titleResult.IsSuccess)
                 return Result.Conflict(titleResult.Errors.FirstOrDefault());
-
-            var releaseBuildResult = await UpdateReleaseBuildAsync(command.ReleaseGameBuildId, game, cancellationToken);
-            if (!releaseBuildResult.IsSuccess)
-                return releaseBuildResult.Map();
 
             UpdatePrice(command.Price, game);
             UpdateDiscount(command.Discount, game);
@@ -82,28 +77,6 @@ namespace Application.Games.Catalog.Handlers
             game.NormalizedTitle = normalizedTitle;
 
             logger.LogInformation("Updating game title for game with id {GameId}", game.Id);
-            return Result.Success();
-        }
-
-        private async Task<Result> UpdateReleaseBuildAsync(Guid releaseGameBuildId, Game game, CancellationToken cancellationToken)
-        {
-            var build = await database.GameBuilds
-                .AsNoTracking()
-                .SingleOrDefaultAsync(b => b.Id == releaseGameBuildId && b.GameId == game.Id, cancellationToken);
-
-            if (build is null)
-            {
-                logger.LogWarning("Build with id {BuildId} not found for game {GameId} while updating release build", releaseGameBuildId, game.Id);
-                return Result.NotFound("Build not found for this game");
-            }
-
-            if (build.Status != GameBuildStatus.Completed)
-            {
-                logger.LogWarning("Build with id {BuildId} for game {GameId} is in status {Status} and cannot be set as release", build.Id, game.Id, build.Status);
-                return Result.Conflict("Only completed builds can be selected as release build.");
-            }
-
-            game.ReleaseGameBuildId = build.Id;
             return Result.Success();
         }
 

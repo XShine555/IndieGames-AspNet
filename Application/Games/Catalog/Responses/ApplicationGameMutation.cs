@@ -8,5 +8,6 @@ namespace Application.Games.Catalog.Responses
         decimal Discount,
         bool IsPublic,
         bool IsPublished,
+        Guid? ReleaseBuildId,
         DateTime UpdatedAt);
 }

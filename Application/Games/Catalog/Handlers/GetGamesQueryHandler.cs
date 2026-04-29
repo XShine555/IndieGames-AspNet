@@ -2,18 +2,15 @@ using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Games.Catalog.Queries;
 using Application.Games.Catalog.Responses;
-using Application.Users.Responses;
-using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Application.Games.Catalog.Handlers
 {
     public class GetGamesQueryHandler(
         IDatabase database,
-        IGameMediaMapper gameMediaMapper,
-        IGenreMapper genreMapper)
+        IGameCatalogMapper gameCatalogMapper)
         : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGameListItem>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGameListItem>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
@@ -41,51 +38,14 @@ namespace Application.Games.Catalog.Handlers
             }
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
-
-            if (totalCount == 0)
-            {
-                return new PaginatedApplicationResponse<ApplicationGameListItem>(
-                    Array.Empty<ApplicationGameListItem>(),
-                    pageInfo.PageNumber,
-                    pageInfo.PageSize,
-                    pageInfo.PageCount,
-                    pageInfo.TotalItemCount,
-                    pageInfo.HasNextPage,
-                    pageInfo.HasPreviousPage);
-            }
 
             var games = await baseQuery
                 .OrderByDescending(g => g.CreatedAt)
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
-                .Select(g => new ApplicationGameListItem(
-                    g.Id,
-                    g.Title,
-                    g.Price,
-                    g.Discount,
-                    g.IsPublic,
-                    g.IsPublished,
-                    new ApplicationUserMutation(
-                        g.Owner.IdentityId,
-                        g.Owner.Username,
-                        g.Owner.DisplayUsername,
-                        g.Owner.Role,
-                        g.Owner.UpdatedAt),
-                    g.Genres.AsQueryable().Select(genreMapper.ToApplicationGenreFunction).ToList(),
-                    g.Artworks.AsQueryable().Select(gameMediaMapper.ToApplicationGameArtworkFunction).ToList(),
-                    g.CreatedAt,
-                    g.UpdatedAt))
-                .ToArrayAsync(cancellationToken);
+                .Select(gameCatalogMapper.ToApplicationGameListItemFunction)
+                .ToListAsync(cancellationToken);
 
-            return new PaginatedApplicationResponse<ApplicationGameListItem>(
-                games,
-                pageInfo.PageNumber,
-                pageInfo.PageSize,
-                pageInfo.PageCount,
-                pageInfo.TotalItemCount,
-                pageInfo.HasNextPage,
-                pageInfo.HasPreviousPage);
+            var pagedList = games.ToPagedList(query.PageNumber, query.PageSize, totalCount);
+            return PaginatedApplicationResponse<ApplicationGameListItem>.FromPagedList(pagedList);
         }
     }
 }
