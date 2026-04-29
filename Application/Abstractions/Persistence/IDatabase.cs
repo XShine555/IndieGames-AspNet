@@ -35,6 +35,10 @@ namespace Application.Abstractions.Persistence
 
         DbSet<GameBuildFile> GameBuildFiles { get; }
 
+        DbSet<Achievements> Achievements { get; }
+
+        DbSet<UserAchievement> UserAchievements { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

@@ -42,6 +42,10 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameBuildFile> GameBuildFiles => Set<GameBuildFile>();
 
+        public DbSet<Achievements> Achievements => Set<Achievements>();
+
+        public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString, npgsqlOptions =>
@@ -172,6 +176,27 @@ namespace Infrastructure.Persistence
                     .OnDelete(DeleteBehavior.Cascade);
 
                 buildFile.HasIndex(x => x.GameBuildId);
+            } );
+
+            modelBuilder.Entity<Achievements>(achievement =>
+            {
+                achievement.HasOne(x => x.Game)
+                    .WithMany(x => x.Achievements)
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<UserAchievement>(userAchievement =>
+            {
+                userAchievement.HasOne(x => x.User)
+                    .WithMany(x => x.UserAchievements)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                userAchievement.HasOne(x => x.Achievement)
+                    .WithMany(x => x.UserAchievements)
+                    .HasForeignKey(x => x.AchievementId)
+                    .OnDelete(DeleteBehavior.Cascade);
             } );
         }
     }

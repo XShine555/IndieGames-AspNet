@@ -59,6 +59,8 @@ namespace Domain.Entities
 
         public ICollection<GameBuild> Builds { get; set; } = new List<GameBuild>();
 
+        public ICollection<Achievements> Achievements { get; set; } = new List<Achievements>();
+
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

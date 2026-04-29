@@ -42,5 +42,7 @@ namespace Domain.Entities
         public ICollection<UserGameCollection> GamesCollections { get; set; } = new List<UserGameCollection>();
 
         public ICollection<UserCartItem> CartItems { get; set; } = new List<UserCartItem>();
+
+        public ICollection<UserAchievement> UserAchievements { get; set; } = new List<UserAchievement>();
     }
 }
