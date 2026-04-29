@@ -15,7 +15,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260429112222_AddAchievementsForGamesAndUsers")]
+    [Migration("20260429120438_AddAchievementsForGamesAndUsers")]
     partial class AddAchievementsForGamesAndUsers
     {
         /// <inheritdoc />
@@ -45,8 +45,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<Guid>("GameId")
                         .HasColumnType("uuid");
@@ -56,12 +56,17 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GameId", "Name")
+                    b.HasIndex("GameId", "NormalizedName")
                         .IsUnique();
 
                     b.ToTable("Achievements");
