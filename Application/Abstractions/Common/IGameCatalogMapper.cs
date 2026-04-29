@@ -1,13 +1,14 @@
 using Application.Games.Catalog.Responses;
 using Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Application.Abstractions.Common
 {
     public interface IGameCatalogMapper
     {
-        ApplicationGame ToApplicationGame(Game game);
+        Expression<Func<Game, ApplicationGameListItem>> ToApplicationGameListItemFunction { get; }
 
-        ApplicationCreatedGameListItem ToApplicationCreatedGameListItem(Game game);
+        ApplicationGame ToApplicationGame(Game game);
 
         ApplicationGameMutation ToApplicationGameMutation(Game game);
 

@@ -2,7 +2,6 @@ using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Games.Catalog.Queries;
 using Application.Games.Catalog.Responses;
-using Application.Users.Responses;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList.Extensions;
@@ -11,8 +10,7 @@ namespace Application.Games.Catalog.Handlers
 {
     public class GetGamesQueryHandler(
         IDatabase database,
-        IGameMediaMapper gameMediaMapper,
-        IGenreMapper genreMapper)
+        IGameCatalogMapper gameCatalogMapper)
         : IQueryHandler<GetGamesQuery, PaginatedApplicationResponse<ApplicationGameListItem>>
     {
         public async ValueTask<PaginatedApplicationResponse<ApplicationGameListItem>> Handle(GetGamesQuery query, CancellationToken cancellationToken)
@@ -43,23 +41,7 @@ namespace Application.Games.Catalog.Handlers
 
             var games = await baseQuery
                 .OrderByDescending(g => g.CreatedAt)
-                .Select(g => new ApplicationGameListItem(
-                    g.Id,
-                    g.Title,
-                    g.Price,
-                    g.Discount,
-                    g.IsPublic,
-                    g.IsPublished,
-                    new ApplicationUserMutation(
-                        g.Owner.IdentityId,
-                        g.Owner.Username,
-                        g.Owner.DisplayUsername,
-                        g.Owner.Role,
-                        g.Owner.UpdatedAt),
-                    g.Genres.AsQueryable().Select(genreMapper.ToApplicationGenreFunction).ToList(),
-                    g.Artworks.AsQueryable().Select(gameMediaMapper.ToApplicationGameArtworkFunction).ToList(),
-                    g.CreatedAt,
-                    g.UpdatedAt))
+                .Select(gameCatalogMapper.ToApplicationGameListItemFunction)
                 .ToListAsync(cancellationToken);
 
             var pagedList = games.ToPagedList(query.PageNumber, query.PageSize, totalCount);
