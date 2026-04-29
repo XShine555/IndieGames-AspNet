@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Common;
+using Application.Achievements.Mappers;
 using Application.Genres.Mappers;
 using Application.Games.Builds.Mappers;
 using Application.Games.Catalog.Mappers;
@@ -33,6 +34,7 @@ namespace Application.Configuration
             serviceDescriptors.AddScoped<IGameBuildMapper, GameBuildMapper>();
             serviceDescriptors.AddScoped<IGenreMapper, GenreMapper>();
             serviceDescriptors.AddScoped<IUserMapper, UserMapper>();
+            serviceDescriptors.AddScoped<IAchievementMapper, AchievementMapper>();
             serviceDescriptors.AddMediator();
             return serviceDescriptors;
         }

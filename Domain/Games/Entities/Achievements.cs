@@ -6,7 +6,7 @@ namespace Domain.Entities
 {
 #pragma warning disable CS8618
     [Table("Achievements")]
-    [Index(nameof(GameId), nameof(Name), IsUnique = true)]
+    [Index(nameof(GameId), nameof(NormalizedName), IsUnique = true)]
     public class Achievements
     {
         [Key]
@@ -20,7 +20,11 @@ namespace Domain.Entities
         public required string Name { get; set; }
 
         [Required]
-        [MaxLength(512)]
+        [MaxLength(64)]
+        public required string NormalizedName { get; set; }
+
+        [Required]
+        [MaxLength(256)]
         public required string Description { get; set; }
 
         [Required]
