@@ -15,8 +15,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260423135352_UserProfileMaxLength")]
-    partial class UserProfileMaxLength
+    [Migration("20260430122513_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,121 @@ namespace Infrastructure.Persistence.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "job_tracking_status", new[] { "running", "succeeded", "failed", "compensated" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "job_tracking_type", new[] { "consumer", "activity" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.Achievement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId", "NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("Achievements");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AchievementPicture", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AchievementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LargeContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("LargeName")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("LargeRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("MediumFileContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("MediumName")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("MediumRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("OriginalContentType")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("OriginalName")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("OriginalRelativePath")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("SmallFileContentType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("SmallName")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("SmallRelativePath")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId")
+                        .IsUnique();
+
+                    b.ToTable("Achievement_Pictures");
+                });
 
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
@@ -370,6 +485,24 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.UserAchievement", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AchievementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UnlockedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "AchievementId");
+
+                    b.HasIndex("AchievementId");
+
+                    b.ToTable("User_Achievements");
+                });
+
             modelBuilder.Entity("Domain.Entities.UserCartItem", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -457,7 +590,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("User_Owned_Games");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserProfilePictures", b =>
+            modelBuilder.Entity("Domain.Entities.UserProfilePicture", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -466,7 +599,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("LargeFileContentTye")
+                    b.Property<string>("LargeFileExtension")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
@@ -481,7 +614,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("MediumFileContentType")
+                    b.Property<string>("MediumFileExtension")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
@@ -496,7 +629,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("OriginalFileContentType")
+                    b.Property<string>("OriginalFileExtension")
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
@@ -508,7 +641,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("SmallFileContentType")
+                    b.Property<string>("SmallFileExtension")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
@@ -689,6 +822,28 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("Job_Tracking_Step");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Achievement", b =>
+                {
+                    b.HasOne("Domain.Entities.Game", "Game")
+                        .WithMany("Achievements")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AchievementPicture", b =>
+                {
+                    b.HasOne("Domain.Entities.Achievement", "Achievement")
+                        .WithOne("AchievementPicture")
+                        .HasForeignKey("Domain.Entities.AchievementPicture", "AchievementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Achievement");
+                });
+
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
                     b.HasOne("Domain.Entities.User", "Owner")
@@ -745,6 +900,25 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserAchievement", b =>
+                {
+                    b.HasOne("Domain.Entities.Achievement", "Achievement")
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("AchievementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Achievement");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserCartItem", b =>
@@ -815,11 +989,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserProfilePictures", b =>
+            modelBuilder.Entity("Domain.Entities.UserProfilePicture", b =>
                 {
                     b.HasOne("Domain.Entities.User", "User")
                         .WithOne("ProfilePicture")
-                        .HasForeignKey("Domain.Entities.UserProfilePictures", "UserId")
+                        .HasForeignKey("Domain.Entities.UserProfilePicture", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -859,8 +1033,18 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("JobTracking");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Achievement", b =>
+                {
+                    b.Navigation("AchievementPicture")
+                        .IsRequired();
+
+                    b.Navigation("UserAchievements");
+                });
+
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
+                    b.Navigation("Achievements");
+
                     b.Navigation("Artworks");
 
                     b.Navigation("Builds");
@@ -893,6 +1077,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Navigation("ProfilePicture")
                         .IsRequired();
+
+                    b.Navigation("UserAchievements");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserGameCollection", b =>

@@ -130,13 +130,13 @@ namespace Infrastructure.Persistence.Migrations
                     OriginalRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     OriginalFileExtension = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
                     SmallRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    SmallName = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    SmallName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
                     SmallFileExtension = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     MediumRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    MediumName = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    MediumName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
                     MediumFileExtension = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     LargeRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    LargeName = table.Column<string>(type: "character varying(36)", maxLength: 36, nullable: false),
+                    LargeName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
                     LargeFileExtension = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     AddedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -149,6 +149,31 @@ namespace Infrastructure.Persistence.Migrations
                         principalTable: "Users",
                         principalColumn: "IdentityId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Achievement_Pictures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AchievementId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OriginalName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    OriginalRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    OriginalContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    SmallRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    SmallName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
+                    SmallFileContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    MediumRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    MediumName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
+                    MediumFileContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    LargeRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    LargeName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
+                    LargeContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Achievement_Pictures", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -434,6 +459,12 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Achievement_Pictures_AchievementId",
+                table: "Achievement_Pictures",
+                column: "AchievementId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Achievements_GameId_NormalizedName",
                 table: "Achievements",
                 columns: new[] { "GameId", "NormalizedName" },
@@ -524,6 +555,14 @@ namespace Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_Achievement_Pictures_Achievements_AchievementId",
+                table: "Achievement_Pictures",
+                column: "AchievementId",
+                principalTable: "Achievements",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Achievements_Games_GameId",
                 table: "Achievements",
                 column: "GameId",
@@ -562,6 +601,9 @@ namespace Infrastructure.Persistence.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Game_Builds_Games_GameId",
                 table: "Game_Builds");
+
+            migrationBuilder.DropTable(
+                name: "Achievement_Pictures");
 
             migrationBuilder.DropTable(
                 name: "Game_Artworks");
