@@ -7,6 +7,7 @@ namespace Application.Games.Catalog.Responses
     public record ApplicationGameListItem(
         Guid Id,
         string Title,
+        string Description,
         decimal Price,
         decimal Discount,
         bool IsPublic,

@@ -17,6 +17,7 @@ namespace Application.Games.Catalog.Mappers
         public Expression<Func<Game, ApplicationGameListItem>> ToApplicationGameListItemFunction => g => new ApplicationGameListItem(
             g.Id,
             g.Title,
+            g.Description,
             g.Price,
             g.Discount,
             g.IsPublic,
