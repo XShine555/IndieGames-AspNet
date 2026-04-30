@@ -152,6 +152,48 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Achievements",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GameId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    NormalizedName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Achievements", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "User_Achievements",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AchievementId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UnlockedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User_Achievements", x => new { x.UserId, x.AchievementId });
+                    table.ForeignKey(
+                        name: "FK_User_Achievements_Achievements_AchievementId",
+                        column: x => x.AchievementId,
+                        principalTable: "Achievements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_Achievements_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "IdentityId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Game_Artworks",
                 columns: table => new
                 {
@@ -392,6 +434,12 @@ namespace Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Achievements_GameId_NormalizedName",
+                table: "Achievements",
+                columns: new[] { "GameId", "NormalizedName" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Game_Artworks_GameId_Type",
                 table: "Game_Artworks",
                 columns: new[] { "GameId", "Type" });
@@ -438,6 +486,11 @@ namespace Infrastructure.Persistence.Migrations
                 column: "JobTrackingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_User_Achievements_AchievementId",
+                table: "User_Achievements",
+                column: "AchievementId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_Cart_Items_GameId",
                 table: "User_Cart_Items",
                 column: "GameId");
@@ -469,6 +522,14 @@ namespace Infrastructure.Persistence.Migrations
                 table: "Users",
                 column: "IdentityId",
                 unique: true);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Achievements_Games_GameId",
+                table: "Achievements",
+                column: "GameId",
+                principalTable: "Games",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Game_Artworks_Games_GameId",
@@ -518,6 +579,9 @@ namespace Infrastructure.Persistence.Migrations
                 name: "Job_Tracking_Step");
 
             migrationBuilder.DropTable(
+                name: "User_Achievements");
+
+            migrationBuilder.DropTable(
                 name: "User_Cart_Items");
 
             migrationBuilder.DropTable(
@@ -534,6 +598,9 @@ namespace Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Job_Tracking");
+
+            migrationBuilder.DropTable(
+                name: "Achievements");
 
             migrationBuilder.DropTable(
                 name: "User_Game_Collections");
