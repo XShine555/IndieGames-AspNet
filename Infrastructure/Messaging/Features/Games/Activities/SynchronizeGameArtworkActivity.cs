@@ -51,22 +51,16 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 artwork.SmallFileName = Path.GetFileName(smallResizedVariable);
                 artwork.SmallContentType = MimeUtility.GetMimeMapping(smallResizedVariable);
                 artwork.SmallRelativePath = executeContext.Arguments.SmallRelativePath;
-                artwork.SmallWidth = executeContext.Arguments.SmallWidth;
-                artwork.SmallHeight = executeContext.Arguments.SmallHeight;
                 artwork.SmallFileSizeInBytes = new FileInfo(smallResizedVariable).Length;
 
                 artwork.MediumFileName = Path.GetFileName(mediumResizedVariable);
                 artwork.MediumContentType = MimeUtility.GetMimeMapping(mediumResizedVariable);
                 artwork.MediumRelativePath = executeContext.Arguments.MediumRelativePath;
-                artwork.MediumWidth = executeContext.Arguments.MediumWidth;
-                artwork.MediumHeight = executeContext.Arguments.MediumHeight;
                 artwork.MediumFileSizeInBytes = new FileInfo(mediumResizedVariable).Length;
 
                 artwork.LargeFileName = Path.GetFileName(largeResizedVariable);
                 artwork.LargeContentType = MimeUtility.GetMimeMapping(largeResizedVariable);
                 artwork.LargeRelativePath = executeContext.Arguments.LargeRelativePath;
-                artwork.LargeWidth = executeContext.Arguments.LargeWidth;
-                artwork.LargeHeight = executeContext.Arguments.LargeHeight;
                 artwork.LargeFileSizeInBytes = new FileInfo(largeResizedVariable).Length;
 
                 artwork.ProcessingStatus = Domain.Entities.GameArtworkProcessingStatus.Completed;

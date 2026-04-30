@@ -15,7 +15,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260430122513_InitialMigration")]
+    [Migration("20260430144230_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -216,52 +216,34 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("LargeContentType")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
                     b.Property<string>("LargeFileName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
                     b.Property<long>("LargeFileSizeInBytes")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("LargeHeight")
-                        .HasColumnType("integer");
-
                     b.Property<string>("LargeRelativePath")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<int>("LargeWidth")
-                        .HasColumnType("integer");
-
                     b.Property<string>("MediumContentType")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
                     b.Property<string>("MediumFileName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
                     b.Property<long>("MediumFileSizeInBytes")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("MediumHeight")
-                        .HasColumnType("integer");
-
                     b.Property<string>("MediumRelativePath")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
-
-                    b.Property<int>("MediumWidth")
-                        .HasColumnType("integer");
 
                     b.Property<string>("OriginalExtension")
                         .IsRequired()
@@ -287,28 +269,19 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnType("game_artwork_processing_status");
 
                     b.Property<string>("SmallContentType")
-                        .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
                     b.Property<string>("SmallFileName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
                     b.Property<long>("SmallFileSizeInBytes")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("SmallHeight")
-                        .HasColumnType("integer");
-
                     b.Property<string>("SmallRelativePath")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
-
-                    b.Property<int>("SmallWidth")
-                        .HasColumnType("integer");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
