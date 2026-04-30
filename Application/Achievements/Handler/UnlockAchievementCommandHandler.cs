@@ -56,7 +56,6 @@ namespace Application.Achievements.Handler
             {
                 UserId = user.IdentityId,
                 AchievementId = command.AchievementId,
-                UnlockedAt = DateTime.UtcNow
             };
 
             await database.UserAchievements.AddAsync(userAchievement, cancellationToken);

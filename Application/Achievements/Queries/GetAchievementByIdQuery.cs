@@ -4,6 +4,6 @@ using Mediator;
 
 namespace Application.Achievements.Queries
 {
-    public record GetAchievementByIdQuery(Guid AchievementId, Guid? UserId = null)
+    public record GetAchievementByIdQuery(Guid AchievementId)
         : IQuery<Result<ApplicationAchievement>>;
 }

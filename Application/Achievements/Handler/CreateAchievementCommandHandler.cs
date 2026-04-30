@@ -7,7 +7,7 @@ using Application.Achievements.Commands;
 using Application.Achievements.Responses;
 using Ardalis.Result;
 using Domain.Entities;
-using AchievementEntity = Domain.Entities.Achievements;
+using AchievementEntity = Domain.Entities.Achievement;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

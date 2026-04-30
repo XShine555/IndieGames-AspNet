@@ -1,5 +1,5 @@
 using Domain.Entities;
-using Achievement = Domain.Entities.Achievements;
+using Achievement = Domain.Entities.Achievement;
 using Domain.Games.Entities;
 using Domain.JobTracking;
 using Microsoft.EntityFrameworkCore;

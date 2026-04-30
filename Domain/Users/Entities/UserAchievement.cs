@@ -22,6 +22,6 @@ namespace Domain.Entities
         public User User { get; set; }
 
         [ForeignKey(nameof(AchievementId)) ]
-        public Achievements Achievement { get; set; }
+        public Achievement Achievement { get; set; }
     }
 }

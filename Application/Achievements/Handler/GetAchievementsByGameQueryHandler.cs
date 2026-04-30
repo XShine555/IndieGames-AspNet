@@ -4,6 +4,7 @@ using Application.Achievements.Queries;
 using Application.Achievements.Responses;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.EF;
 using X.PagedList.Extensions;
 
 namespace Application.Achievements.Handler
@@ -15,30 +16,17 @@ namespace Application.Achievements.Handler
             GetAchievementsByGameQuery query,
             CancellationToken cancellationToken)
         {
-            var achievements = await database.Achievements
+            var baseQuery = database.Achievements
                 .AsNoTracking()
                 .Where(a => a.GameId == query.GameId)
                 .OrderBy(a => a.Name)
-                .ToListAsync(cancellationToken);
+                .Select(achievementMapper.ToApplicationAchievement)
+                .AsQueryable();
 
-            HashSet<Guid> unlockedIds = [];
-            if (query.UserId.HasValue)
-            {
-                var achievementIds = achievements.Select(a => a.Id).ToList();
-                unlockedIds = (await database.UserAchievements
-                    .AsNoTracking()
-                    .Where(ua => ua.UserId == query.UserId.Value && achievementIds.Contains(ua.AchievementId))
-                    .Select(ua => ua.AchievementId)
-                    .ToListAsync(cancellationToken))
-                    .ToHashSet();
-            }
+            var totalCount = await baseQuery.CountAsync(cancellationToken);
+            var achievements = await baseQuery.ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);
 
-            var mapped = achievements
-                .Select(a => achievementMapper.ToApplicationAchievement(a, unlockedIds.Contains(a.Id)))
-                .ToList();
-
-            var pagedList = mapped.ToPagedList(query.PageNumber, query.PageSize, mapped.Count);
-            return PaginatedApplicationResponse<ApplicationAchievement>.FromPagedList(pagedList);
+            return PaginatedApplicationResponse<ApplicationAchievement>.FromPagedList(achievements);
         }
     }
 }

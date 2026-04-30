@@ -42,7 +42,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameBuildFile> GameBuildFiles => Set<GameBuildFile>();
 
-        public DbSet<Achievements> Achievements => Set<Achievements>();
+        public DbSet<Achievement> Achievements => Set<Achievement>();
 
         public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
 
@@ -178,7 +178,7 @@ namespace Infrastructure.Persistence
                 buildFile.HasIndex(x => x.GameBuildId);
             } );
 
-            modelBuilder.Entity<Achievements>(achievement =>
+            modelBuilder.Entity<Achievement>(achievement =>
             {
                 achievement.HasOne(x => x.Game)
                     .WithMany(x => x.Achievements)

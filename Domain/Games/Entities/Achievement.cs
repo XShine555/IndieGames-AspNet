@@ -7,7 +7,7 @@ namespace Domain.Entities
 #pragma warning disable CS8618
     [Table("Achievements")]
     [Index(nameof(GameId), nameof(NormalizedName), IsUnique = true)]
-    public class Achievements
+    public class Achievement
     {
         [Key]
         public Guid Id { get; set; }
