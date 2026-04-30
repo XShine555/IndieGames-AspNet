@@ -1,5 +1,7 @@
 using Infrastructure.Messaging.Features.Achievements.Activities;
 using Infrastructure.Messaging.Features.Achievements.Consumers;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Logs;
 using MassTransit;
 
 namespace Infrastructure.Messaging.Features.Achievements.Registrations
@@ -10,6 +12,8 @@ namespace Infrastructure.Messaging.Features.Achievements.Registrations
         {
             options.AddConsumer<GenerateAchievementsPicturesConsumer>();
             options.AddActivity<ProcessAchievementPictureActivity, ProcessAchievementPictureArguments, ProcessAchievementPictureLog>();
+            options.AddExecuteActivity<GenerateAchievementPictureWorkflowPathsActivity, GenerateAchievementPictureWorkflowPathsArguments>();
+            options.AddExecuteActivity<SynchronizeAchievementPicturesActivity, SynchronizeAchievementPicturesArguments>();
         }
     }
 }

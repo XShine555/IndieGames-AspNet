@@ -37,5 +37,7 @@ namespace Domain.Entities
         public Game Game { get; set; }
 
         public ICollection<UserAchievement> UserAchievements { get; set; } = new List<UserAchievement>();
+
+        public AchievementPicture AchievementPicture { get; set; }
     }
 }

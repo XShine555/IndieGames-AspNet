@@ -84,7 +84,7 @@ namespace Application.Users.Handlers
             }
         }
 
-        private static UserProfilePictures UpdateOriginalProfilePicture(UserProfilePictures profilePicture, string pictureName, string originalRelativePath, string fileExtension)
+        private static UserProfilePicture UpdateOriginalProfilePicture(UserProfilePicture profilePicture, string pictureName, string originalRelativePath, string fileExtension)
         {
             profilePicture.OriginalName = pictureName;
             profilePicture.OriginalRelativePath = originalRelativePath;
@@ -124,7 +124,7 @@ namespace Application.Users.Handlers
         }
 
         private async Task RestorePreviousStateAsync(
-            UserProfilePictures profilePicture,
+            UserProfilePicture profilePicture,
             UserProfilePictureSnapshot previousState,
             CancellationToken cancellationToken)
         {
@@ -132,7 +132,7 @@ namespace Application.Users.Handlers
             await database.SaveChangesAsync(cancellationToken);
         }
 
-        private static UserProfilePictureSnapshot CaptureSnapshot(UserProfilePictures profilePicture)
+        private static UserProfilePictureSnapshot CaptureSnapshot(UserProfilePicture profilePicture)
         {
             return new UserProfilePictureSnapshot(
                 profilePicture.OriginalName,
@@ -147,7 +147,7 @@ namespace Application.Users.Handlers
             string? OriginalFileExtension,
             DateTime AddedAt)
         {
-            public void Apply(UserProfilePictures profilePicture)
+            public void Apply(UserProfilePicture profilePicture)
             {
                 profilePicture.OriginalName = OriginalName;
                 profilePicture.OriginalRelativePath = OriginalRelativePath;

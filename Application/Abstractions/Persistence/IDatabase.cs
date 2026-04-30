@@ -24,7 +24,7 @@ namespace Application.Abstractions.Persistence
 
         DbSet<GameStorePictures> GamePictures { get; }
 
-        DbSet<UserProfilePictures> UserProfilePictures { get; }
+        DbSet<UserProfilePicture> UserProfilePictures { get; }
 
         DbSet<GameArtwork> GameArtworks { get; }
 
@@ -37,6 +37,8 @@ namespace Application.Abstractions.Persistence
         DbSet<GameBuildFile> GameBuildFiles { get; }
 
         DbSet<Achievement> Achievements { get; }
+
+        DbSet<AchievementPicture> AchievementPictures { get; }
 
         DbSet<UserAchievement> UserAchievements { get; }
 

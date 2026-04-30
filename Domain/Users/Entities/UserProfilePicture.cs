@@ -5,7 +5,7 @@ namespace Domain.Entities
 {
 #pragma warning disable CS8618
     [Table("User_Profile_Pictures")]
-    public class UserProfilePictures
+    public class UserProfilePicture
     {
         [Key]
         public Guid Id { get; set; }

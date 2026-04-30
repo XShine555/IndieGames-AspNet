@@ -6,6 +6,8 @@ using Infrastructure.Messaging.Features.Achievements.Activities;
 using Infrastructure.Messaging.Features.Achievements.Consumers;
 using Infrastructure.Messaging.Features.Achievements.Registrations;
 using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Builders;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Logs;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Common.Registrations;

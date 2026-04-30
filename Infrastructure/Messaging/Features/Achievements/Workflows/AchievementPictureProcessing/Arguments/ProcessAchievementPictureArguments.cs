@@ -1,6 +1,6 @@
 using Application.Abstractions.Common;
 
-namespace Infrastructure.Messaging.Features.Achievements.Activities
+namespace Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Arguments
 {
     public record ProcessAchievementPictureArguments(
         Guid AchievementId,

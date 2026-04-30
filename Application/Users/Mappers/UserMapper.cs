@@ -45,7 +45,7 @@ namespace Application.Users.Mappers
                 user.Role);
         }
 
-        public ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture)
+        public ApplicationUserPicture ToApplicationUserPicture(UserProfilePicture profilePicture)
         {
             return new ApplicationUserPicture(
                     profilePicture.Id,
@@ -56,7 +56,7 @@ namespace Application.Users.Mappers
                     profilePicture.AddedAt);
         }
 
-        public Expression<Func<UserProfilePictures, ApplicationUserPicture>> ToApplicationUserPictureExpression()
+        public Expression<Func<UserProfilePicture, ApplicationUserPicture>> ToApplicationUserPictureExpression()
         {
             var originalKey = string.Empty;
             if (!string.IsNullOrWhiteSpace(originalKey) && ! string.IsNullOrWhiteSpace(originalKey))

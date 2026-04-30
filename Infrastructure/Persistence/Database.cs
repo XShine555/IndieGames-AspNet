@@ -30,7 +30,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameStorePictures> GamePictures => Set<GameStorePictures>();
 
-        public DbSet<UserProfilePictures> UserProfilePictures => Set<UserProfilePictures>();
+        public DbSet<UserProfilePicture> UserProfilePictures => Set<UserProfilePicture>();
 
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
 
@@ -43,6 +43,8 @@ namespace Infrastructure.Persistence
         public DbSet<GameBuildFile> GameBuildFiles => Set<GameBuildFile>();
 
         public DbSet<Achievement> Achievements => Set<Achievement>();
+
+        public DbSet<AchievementPicture> AchievementPictures => Set<AchievementPicture>();
 
         public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
 
@@ -74,12 +76,12 @@ namespace Infrastructure.Persistence
                 u.HasIndex(x => x.IdentityId).IsUnique();
             } );
 
-            modelBuilder.Entity<UserProfilePictures>(p =>
+            modelBuilder.Entity<UserProfilePicture>(p =>
             {
                 p.HasIndex(x => x.UserId).IsUnique();
                 p.HasOne(x => x.User)
                     .WithOne(x => x.ProfilePicture)
-                    .HasForeignKey<UserProfilePictures>(x => x.UserId)
+                    .HasForeignKey<UserProfilePicture>(x => x.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             } );
 
@@ -183,6 +185,15 @@ namespace Infrastructure.Persistence
                 achievement.HasOne(x => x.Game)
                     .WithMany(x => x.Achievements)
                     .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<AchievementPicture>(picture =>
+            {
+                picture.HasIndex(x => x.AchievementId).IsUnique();
+                picture.HasOne(x => x.Achievement)
+                    .WithOne(x => x.AchievementPicture)
+                    .HasForeignKey<AchievementPicture>(x => x.AchievementId)
                     .OnDelete(DeleteBehavior.Cascade);
             } );
 

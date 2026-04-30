@@ -1,5 +1,7 @@
 using Application.Abstractions.Storage;
 using Application.Abstractions.Common;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Logs;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;

@@ -11,9 +11,9 @@ namespace Application.Abstractions.Common
 
         ApplicationBasicUser ToApplicationBasicUser(User user);
 
-        ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture);
+        ApplicationUserPicture ToApplicationUserPicture(UserProfilePicture profilePicture);
 
-        Expression<Func<UserProfilePictures, ApplicationUserPicture>> ToApplicationUserPictureExpression();
+        Expression<Func<UserProfilePicture, ApplicationUserPicture>> ToApplicationUserPictureExpression();
 
         Expression<Func<User, ApplicationUserListItem>> ToApplicationUserListItemExpression();
 

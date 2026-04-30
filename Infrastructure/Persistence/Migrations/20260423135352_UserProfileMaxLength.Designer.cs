@@ -466,7 +466,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("LargeFileExtension")
+                    b.Property<string>("LargeFileContentTye")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
@@ -481,7 +481,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("MediumFileExtension")
+                    b.Property<string>("MediumFileContentType")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
@@ -496,7 +496,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("OriginalFileExtension")
+                    b.Property<string>("OriginalFileContentType")
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
@@ -508,7 +508,7 @@ namespace Infrastructure.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("SmallFileExtension")
+                    b.Property<string>("SmallFileContentType")
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
