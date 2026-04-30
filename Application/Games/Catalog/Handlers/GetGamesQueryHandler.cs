@@ -4,6 +4,7 @@ using Application.Games.Catalog.Queries;
 using Application.Games.Catalog.Responses;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.EF;
 using X.PagedList.Extensions;
 
 namespace Application.Games.Catalog.Handlers
@@ -42,10 +43,9 @@ namespace Application.Games.Catalog.Handlers
             var games = await baseQuery
                 .OrderByDescending(g => g.CreatedAt)
                 .Select(gameCatalogMapper.ToApplicationGameListItemFunction)
-                .ToListAsync(cancellationToken);
+                .ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);
 
-            var pagedList = games.ToPagedList(query.PageNumber, query.PageSize, totalCount);
-            return PaginatedApplicationResponse<ApplicationGameListItem>.FromPagedList(pagedList);
+            return PaginatedApplicationResponse<ApplicationGameListItem>.FromPagedList(games);
         }
     }
 }
