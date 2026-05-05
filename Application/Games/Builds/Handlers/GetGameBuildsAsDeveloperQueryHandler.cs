@@ -20,12 +20,13 @@ namespace Application.Games.Builds.Handlers
             var game = await database.Games
                 .AsNoTracking()
                 .Where(g => g.Id == query.GameId)
+                .Include(g => g.Builds)
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (game is null)
             {
                 logger.LogWarning("Game with id {GameId} not found when listing builds", query.GameId);
-                return Result.NotFound();
+                return Result.NotFound("Game not found");
             }
 
             if (game.OwnerId != query.UserId)
@@ -34,9 +35,9 @@ namespace Application.Games.Builds.Handlers
                 return Result.Unauthorized();
             }
 
-            var buildsQuery = database.GameBuilds
-                .AsNoTracking()
-                .Where(build => build.GameId == query.GameId && build.Status == GameBuildStatus.Completed);
+            var buildsQuery = game.Builds
+                .Where(build => build.GameId == query.GameId && build.Status == GameBuildStatus.Completed)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(query.Title))
                 buildsQuery = buildsQuery.Where(build => build.VersionName.Contains(query.Title));
