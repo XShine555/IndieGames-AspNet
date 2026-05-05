@@ -2,6 +2,7 @@ using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
 using Application.Games.Media.Commands;
 using Ardalis.Result;
+using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,18 +14,26 @@ namespace Application.Games.Media.Handlers
     {
         public async ValueTask<Result> Handle(RemoveStorePictureToGameCommand command, CancellationToken cancellationToken)
         {
-            var picture = await database.GamePictures.AsNoTracking()
+            var picture = await database.GamePictures
+                .AsNoTracking()
                 .SingleOrDefaultAsync(g => g.Id == command.PictureId, cancellationToken);
             if (picture is null)
             {
                 logger.LogWarning("Picture with id {PictureId} not found", command.PictureId);
-                return Result.NotFound();
+                return Result.NotFound("Picture not found");
             }
 
             if (picture.Game.OwnerId != command.IdentityId)
             {
                 logger.LogWarning("User with id {IdentityId} is not the owner of the game with id {GameId}", command.IdentityId, picture.GameId);
                 return Result.Unauthorized();
+            }
+
+            if (picture.ProcessingStatus == GamePictureProcessingStatus.Processing
+                || picture.ProcessingStatus == GamePictureProcessingStatus.Pending)
+            {
+                logger.LogWarning("Cannot remove picture with id {PictureId} because it's still being processed", command.PictureId);
+                return Result.Error("Cannot remove a picture that is still being processed");
             }
 
             var picturesCount = await database.GamePictures.CountAsync(g => g.GameId == picture.GameId, cancellationToken);
@@ -46,7 +55,7 @@ namespace Application.Games.Media.Handlers
 
             database.GamePictures.Remove(picture);
             await database.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            return Result.NoContent();
         }
     }
 }
