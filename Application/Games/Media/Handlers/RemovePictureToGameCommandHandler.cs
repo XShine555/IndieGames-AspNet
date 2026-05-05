@@ -27,6 +27,13 @@ namespace Application.Games.Media.Handlers
                 return Result.Unauthorized();
             }
 
+            var picturesCount = await database.GamePictures.CountAsync(g => g.GameId == picture.GameId, cancellationToken);
+            if (picturesCount < 2)
+            {
+                logger.LogWarning("Cannot remove picture with id {PictureId} because it's the only picture of the game with id {GameId}", command.PictureId, picture.GameId);
+                return Result.Error("Cannot remove the only picture of the game");
+            }
+
             try
             {
                 await s3Service.RemoveFileAsync($"{picture.OriginalRelativePath}/{picture.OriginalName}", cancellationToken);
