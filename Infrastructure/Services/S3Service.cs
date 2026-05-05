@@ -71,5 +71,16 @@ namespace Infrastructure.Services
         {
             return UploadFileAsync(fileData.FileStream, keyName, fileData.ContentType, cancellationToken);
         }
+
+        public async Task<IReadOnlyList<string>> GetFileListAsync(string route, CancellationToken cancellationToken)
+        {
+            var request = new ListObjectsV2Request
+            {
+                BucketName = s3Configuration.BucketName,
+                Prefix = route,
+            };
+            var result = await amazonS3.ListObjectsV2Async(request, cancellationToken);
+            return result.S3Objects.Select(o => o.Key).ToList();
+        }
     }
 }
