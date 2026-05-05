@@ -20,7 +20,7 @@ namespace Application.Games.Builds.Handlers
             var game = await database.Games
                 .AsNoTracking()
                 .Where(g => g.Id == query.GameId)
-                .Include(g => g.Builds)
+                .Select(g => new { g.Id, g.OwnerId, g.ReleaseGameBuildId })
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (game is null)
@@ -35,17 +35,25 @@ namespace Application.Games.Builds.Handlers
                 return Result.Unauthorized();
             }
 
-            var buildsQuery = game.Builds
-                .Where(build => build.GameId == query.GameId && build.Status == GameBuildStatus.Completed)
-                .AsQueryable();
+            var buildsQuery = database.GameBuilds
+                .AsNoTracking()
+                .Where(build => build.GameId == query.GameId);
 
             if (!string.IsNullOrEmpty(query.Title))
-                buildsQuery = buildsQuery.Where(build => build.VersionName.Contains(query.Title));
+            {
+                buildsQuery = buildsQuery
+                    .Where(build => build.VersionName.Contains(query.Title));
+            }
 
             var totalCount = await buildsQuery.CountAsync(cancellationToken);
+
             var builds = await buildsQuery
                 .OrderByDescending(build => build.CreatedAt)
-                .Select(build => gameBuildMapper.ToApplicationGameBuildListItem(build, build.Id == game.ReleaseGameBuildId))
+                .Select(build =>
+                    gameBuildMapper.ToApplicationGameBuildListItem(
+                        build,
+                        build.Id == game.ReleaseGameBuildId
+                    ))
                 .ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);
 
             return Result.Success(
