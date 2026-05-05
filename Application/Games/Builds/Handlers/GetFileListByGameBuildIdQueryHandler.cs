@@ -26,7 +26,18 @@ namespace Application.Games.Builds.Handlers
                 return Result.Unauthorized();
 
             var getFileList = await s3Service.GetFileListAsync(gameConfiguration.Routes.BuildGameBuildPath(build.GameId, build.Id), cancellationToken);
-            return Result<IReadOnlyList<string>>.Success(getFileList);
+            var result = new List<string>();
+            foreach (var item in getFileList)
+            {
+                var buildIdString = build.Id.ToString();
+                var index = item.IndexOf(buildIdString);
+                if (index != -1)
+                {
+                    var pathAfterBuild = item.Substring(index + buildIdString.Length + 1);
+                    result.Add(pathAfterBuild);
+                }
+            }
+            return Result<IReadOnlyList<string>>.Success(result);
         }
     }
 }
