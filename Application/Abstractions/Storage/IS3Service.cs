@@ -10,5 +10,6 @@ namespace Application.Abstractions.Storage
         Task<Stream> GetFileStreamAsync(string keyName, CancellationToken cancellationToken);
         Task<string> GetSignedUrlAsync(string keyName, TimeSpan expiration, CancellationToken cancellationToken);
         Task<string> GetUploadUrlAsync(string keyName, TimeSpan expiration, CancellationToken cancellationToken);
+        Task<IReadOnlyList<string>> GetFileListAsync(string route, CancellationToken cancellationToken);
     }
 }

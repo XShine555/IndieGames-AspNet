@@ -1,4 +1,6 @@
 ﻿using Application.Abstractions.Persistence;
+using Application.Abstractions.Storage;
+using Application.Configuration;
 using Application.Games.Builds.Queries;
 using Ardalis.Result;
 using Mediator;
@@ -6,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Games.Builds.Handlers
 {
-    public class GetFileListByGameBuildIdQueryHandler(IDatabase database)
+    public class GetFileListByGameBuildIdQueryHandler(IDatabase database, IS3Service s3Service, GameConfiguration gameConfiguration)
         : IQueryHandler<GetFileListByGameBuildIdQuery, Result<IReadOnlyList<string> >>
     {
         public async ValueTask<Result<IReadOnlyList<string>> > Handle(GetFileListByGameBuildIdQuery query, CancellationToken cancellationToken)
@@ -23,13 +25,8 @@ namespace Application.Games.Builds.Handlers
             if (build.Game.OwnerId != query.UserId)
                 return Result.Unauthorized();
 
-            var files = await database.GameBuildFiles
-                .AsNoTracking()
-                .Where(x => x.GameBuildId == query.BuildId)
-                .Select(x => x.FileRelativePath + x.FileName)
-                .ToListAsync(cancellationToken);
-
-            return Result<IReadOnlyList<string>>.Success(files);
+            var getFileList = await s3Service.GetFileListAsync(gameConfiguration.Routes.BuildGameBuildPath(build.GameId, build.Id), cancellationToken);
+            return Result<IReadOnlyList<string>>.Success(getFileList);
         }
     }
 }
