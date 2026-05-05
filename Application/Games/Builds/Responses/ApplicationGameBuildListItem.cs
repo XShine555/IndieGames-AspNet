@@ -4,7 +4,7 @@ namespace Application.Games.Builds.Responses
 {
     public record ApplicationGameBuildListItem(
         Guid BuildId,
-        string VersioName,
+        string VersionName,
         GameBuildStatus Status,
         bool IsReleaseBuild);
 }
