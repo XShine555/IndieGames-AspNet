@@ -51,15 +51,15 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 picture.SmallName = Path.GetFileName(smallResizedVariable);
                 picture.SmallFileContentType = MimeUtility.GetMimeMapping(smallResizedVariable);
-                picture.SmallRelativePath = picture.OriginalRelativePath;
+                picture.SmallRelativePath = picture.SmallRelativePath;
 
                 picture.MediumName = Path.GetFileName(mediumResizedVariable);
                 picture.MediumFileContentType = MimeUtility.GetMimeMapping(mediumResizedVariable);
-                picture.MediumRelativePath = picture.OriginalRelativePath;
+                picture.MediumRelativePath = picture.MediumRelativePath;
 
                 picture.LargeName = Path.GetFileName(largeResizedVariable);
                 picture.LargeContentType = MimeUtility.GetMimeMapping(largeResizedVariable);
-                picture.LargeRelativePath = picture.OriginalRelativePath;
+                picture.LargeRelativePath = picture.LargeRelativePath;
 
                 picture.ProcessingStatus = GamePictureProcessingStatus.Completed;
 

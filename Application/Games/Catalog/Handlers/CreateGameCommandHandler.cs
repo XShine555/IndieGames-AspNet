@@ -92,7 +92,7 @@ namespace Application.Games.Catalog.Handlers
                         OriginalExtension = inputArtwork.FileData.FileExtension,
                         ProcessingStatus = GameArtworkProcessingStatus.Pending,
                         ProcessingError = string.Empty
-                    });
+                    } );
                 }
 
                 await database.GameArtworks.AddRangeAsync(artworkRecords, cancellationToken);
