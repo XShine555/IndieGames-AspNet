@@ -15,9 +15,9 @@ namespace Application.Games.Builds.Handlers
         IDatabase database,
         IGameBuildMapper gameBuildMapper,
         ILogger<GetGameBuildsAsUserQueryHandler> logger)
-        : IQueryHandler<GetGameBuildsAsUserQuery, Result<PaginatedApplicationResponse<ApplicationGameBuild>> >
+        : IQueryHandler<GetGameBuildsAsUserQuery, Result<PaginatedApplicationResponse<ApplicationGameBuildListItem>> >
     {
-        public async ValueTask<Result<PaginatedApplicationResponse<ApplicationGameBuild> >> Handle(GetGameBuildsAsUserQuery query, CancellationToken cancellationToken)
+        public async ValueTask<Result<PaginatedApplicationResponse<ApplicationGameBuildListItem> >> Handle(GetGameBuildsAsUserQuery query, CancellationToken cancellationToken)
         {
             var game = await database.Games
                 .AsNoTracking()
@@ -50,11 +50,11 @@ namespace Application.Games.Builds.Handlers
             var totalCount = await buildsQuery.CountAsync(cancellationToken);
             var builds = await buildsQuery
                 .OrderByDescending(build => build.CreatedAt)
-                .Select(build => gameBuildMapper.ToApplicationGameBuild(build, game.ReleaseGameBuildId == build.Id))
+                .Select(build => gameBuildMapper.ToApplicationGameBuildListItem(build, game.ReleaseGameBuildId == build.Id))
                 .ToPagedListAsync(query.PageNumber, query.PageSize, totalCount, cancellationToken);
 
             return Result.Success(
-                PaginatedApplicationResponse<ApplicationGameBuild>.FromPagedList(builds)
+                PaginatedApplicationResponse<ApplicationGameBuildListItem>.FromPagedList(builds)
             );
         }
     }

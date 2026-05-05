@@ -11,5 +11,5 @@ namespace Application.Games.Builds.Queries
         string? Title,
         int PageNumber,
         int PageSize)
-        : IQuery<Result<PaginatedApplicationResponse<ApplicationGameBuild> >>;
+        : IQuery<Result<PaginatedApplicationResponse<ApplicationGameBuildListItem> >>;
 }
