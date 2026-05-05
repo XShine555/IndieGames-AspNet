@@ -5,8 +5,8 @@ namespace Application.Games.Builds.Responses
     public record ApplicationGameBuild(
         Guid BuildId,
         string VersionName,
-        GameBuildStatus Status,
+        string? ManifestPath,
         bool IsReleaseBuild,
-        string ManifestKey,
+        GameBuildStatus Status,
         DateTime CreatedAt);
 }
