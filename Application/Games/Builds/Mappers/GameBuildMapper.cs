@@ -18,7 +18,17 @@ namespace Application.Games.Builds.Mappers
                 gameBuild.VersionName,
                 gameBuild.Status,
                 isReleaseBuild,
+                gameBuild.manifestRelativePath + gameBuild.ManifestFileName,
                 gameBuild.CreatedAt);
+        }
+
+        public ApplicationGameBuildListItem ToApplicationGameBuildListItem(GameBuild gameBuild, bool isReleaseBuild)
+        {
+            return new ApplicationGameBuildListItem(
+                gameBuild.Id,
+                gameBuild.VersionName,
+                gameBuild.Status,
+                isReleaseBuild);
         }
     }
 }

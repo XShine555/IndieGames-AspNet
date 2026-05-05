@@ -7,5 +7,6 @@ namespace Application.Games.Builds.Responses
         string VersionName,
         GameBuildStatus Status,
         bool IsReleaseBuild,
+        string ManifestKey,
         DateTime CreatedAt);
 }

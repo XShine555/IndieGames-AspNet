@@ -8,5 +8,7 @@ namespace Application.Abstractions.Common
         ApplicationGameBuildMutation ToApplicationGameBuildMutation(GameBuild gameBuild);
 
         ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild);
+
+        ApplicationGameBuildListItem ToApplicationGameBuildListItem(GameBuild gameBuild, bool isReleaseBuild);
     }
 }
