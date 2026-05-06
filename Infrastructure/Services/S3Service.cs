@@ -80,7 +80,7 @@ namespace Infrastructure.Services
                 Prefix = route,
             };
             var result = await amazonS3.ListObjectsV2Async(request, cancellationToken);
-            return result.S3Objects.Select(o => o.Key).ToList();
+            return result.S3Objects?.Select(o => o.Key).ToList() ?? [];
         }
     }
 }

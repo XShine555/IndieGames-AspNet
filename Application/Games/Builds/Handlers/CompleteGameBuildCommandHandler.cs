@@ -1,6 +1,7 @@
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Messaging.Games.V1;
 using Application.Abstractions.Persistence;
+using Application.Abstractions.Storage;
 using Application.Configuration;
 using Application.Games.Builds.Commands;
 using Ardalis.Result;
@@ -14,6 +15,7 @@ namespace Application.Games.Builds.Handlers
     public class CompleteGameBuildCommandHandler(
         IDatabase database,
         IEventBus eventBus,
+        IS3Service s3Service,
         GameConfiguration gameConfiguration,
         ILogger<CompleteGameBuildCommandHandler> logger)
         : ICommandHandler<CompleteGameBuildCommand, Result>
@@ -37,6 +39,23 @@ namespace Application.Games.Builds.Handlers
                     command.BuildId,
                     gameBuild.GameId);
                 return Result.Unauthorized();
+            }
+
+            try
+            {
+                var files = await s3Service.GetFileListAsync(gameConfiguration.Routes.BuildGameBuildPath(gameBuild.GameId, gameBuild.Id), cancellationToken);
+                if (files.Count == 0)
+                {
+                    logger.LogWarning("No files found for game build {BuildId} in storage", command.BuildId);
+                    return Result.Invalid(new ValidationError("You need to upload at least one file before completing the build."));
+                }
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Error authorizing user {UserId} for completing build {BuildId}",
+                    command.UserId,
+                    command.BuildId);
+                return Result.Error();
             }
 
             if (gameBuild.Status == GameBuildStatus.Processing || gameBuild.Status == GameBuildStatus.PendingForProcessing)

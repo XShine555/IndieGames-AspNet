@@ -79,13 +79,13 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                     ContinuationToken = continuationToken,
                 }, cancellationToken);
 
-                if (listResponse.S3Objects.Count != 0)
+                if (listResponse.S3Objects is not null && listResponse.S3Objects.Count > 0)
                 {
                     var deleteRequest = new DeleteObjectsRequest
                     {
                         BucketName = s3Configuration.BucketName,
                         Objects = listResponse.S3Objects
-                            .Select(s3Object => new KeyVersion { Key = s3Object.Key })
+                            .Select(s3Object => new KeyVersion { Key = s3Object.Key } )
                             .ToList(),
                     };
 
