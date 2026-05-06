@@ -18,11 +18,11 @@ namespace Domain.Games.Entities
         [Required]
         public required string VersionName { get; set; }
 
-        public string manifestRelativePath { get; set; } = string.Empty;
+        public string ManifestRelativePath { get; set; } = string.Empty;
 
         public string ManifestFileName { get; set; } = string.Empty;
 
-        public string manifestContentType { get; set; } = string.Empty;
+        public string ManifestContentType { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

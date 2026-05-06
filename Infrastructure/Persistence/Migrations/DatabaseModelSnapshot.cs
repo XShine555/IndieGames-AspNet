@@ -660,11 +660,11 @@ namespace Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("manifestContentType")
+                    b.Property<string>("ManifestContentType")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("manifestRelativePath")
+                    b.Property<string>("ManifestRelativePath")
                         .IsRequired()
                         .HasColumnType("text");
 
