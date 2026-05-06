@@ -58,16 +58,10 @@ namespace Application.Games.Builds.Handlers
                 return Result.Error();
             }
 
-            if (gameBuild.Status == GameBuildStatus.Processing || gameBuild.Status == GameBuildStatus.PendingForProcessing)
+            if (gameBuild.Status != GameBuildStatus.UploadingFiles)
             {
-                logger.LogWarning("Game build {BuildId} is already scheduled for processing", command.BuildId);
-                return Result.Conflict("Build is already being processed.");
-            }
-
-            if (gameBuild.Status == GameBuildStatus.Removing)
-            {
-                logger.LogWarning("Game build {BuildId} is being removed and cannot be completed", command.BuildId);
-                return Result.Conflict("Build is being removed.");
+                logger.LogWarning("Game build {BuildId} is in status {Status} and cannot be completed", command.BuildId, gameBuild.Status);
+                return Result.Conflict("Build is not in a state that can be completed.");
             }
 
             gameBuild.Status = GameBuildStatus.PendingForProcessing;

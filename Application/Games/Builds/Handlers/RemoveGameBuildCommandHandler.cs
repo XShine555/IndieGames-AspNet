@@ -42,12 +42,10 @@ namespace Application.Games.Builds.Handlers
                 return Result.Conflict("Cannot delete the current release build. Change the release build first.");
             }
 
-            if (gameBuild.Status == GameBuildStatus.PendingForProcessing
-                || gameBuild.Status == GameBuildStatus.Processing
-                || gameBuild.Status == GameBuildStatus.Removing)
+            if (gameBuild.Status != GameBuildStatus.Completed || gameBuild.Status != GameBuildStatus.Failed)
             {
                 logger.LogWarning("Game build {BuildId} cannot be deleted because it is in status {Status}", gameBuild.Id, gameBuild.Status);
-                return Result.Conflict("Build cannot be deleted while it is being processed.");
+                return Result.Conflict("Only completed or failed builds can be deleted");
             }
 
             gameBuild.Status = GameBuildStatus.Removing;

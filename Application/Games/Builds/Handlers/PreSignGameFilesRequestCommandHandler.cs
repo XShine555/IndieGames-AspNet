@@ -35,10 +35,10 @@ namespace Application.Games.Builds.Handlers
                 return Result.Unauthorized();
             }
 
-            if (gameBuild.Status == GameBuildStatus.Removing)
+            if (gameBuild.Status != GameBuildStatus.UploadingFiles)
             {
-                logger.LogWarning("Game build with id {BuildId} is being removed and cannot receive upload urls", command.BuildId);
-                return Result.Conflict("Build is being removed.");
+                logger.LogWarning("Game build {BuildId} is in status {Status} and cannot be pre-signed for file uploads", command.BuildId, gameBuild.Status);
+                return Result.Conflict("Only builds that are uploading files can be pre-signed for file uploads");
             }
 
             var mutations = new List<ApplicationPreSignGameFileRequestMutation>();
