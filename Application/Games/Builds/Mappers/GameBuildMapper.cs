@@ -10,7 +10,15 @@ namespace Application.Games.Builds.Mappers
         {
             string executablePath = null;
             if (!string.IsNullOrEmpty(gameBuild.ExecutableRelativePath) && !string.IsNullOrEmpty(gameBuild.ExecutableFileName))
-                executablePath = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
+            {
+                string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
+                var buildIdString = gameBuild.Id.ToString();
+                var index = executableS3Path.IndexOf(buildIdString);
+                if (index != -1)
+                {
+                    executablePath = executableS3Path.Substring(index + buildIdString.Length + 1);
+                }
+            }
 
             return new ApplicationGameBuildMutation(
                 gameBuild.Id,
