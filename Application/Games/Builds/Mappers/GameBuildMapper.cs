@@ -16,7 +16,7 @@ namespace Application.Games.Builds.Mappers
             return new ApplicationGameBuild(
                 gameBuild.Id,
                 gameBuild.VersionName,
-                gameBuild.manifestRelativePath + gameBuild.ManifestFileName,
+                BuildStoragePath(gameBuild.manifestRelativePath, gameBuild.ManifestFileName),
                 isReleaseBuild,
                 gameBuild.Status,
                 gameBuild.CreatedAt);
@@ -29,6 +29,11 @@ namespace Application.Games.Builds.Mappers
                 gameBuild.VersionName,
                 gameBuild.Status,
                 isReleaseBuild);
+        }
+
+        string BuildStoragePath(params string[] values)
+        {
+            return string.Join("/", values);
         }
     }
 }
