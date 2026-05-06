@@ -47,7 +47,7 @@ namespace Application.Games.Builds.Handlers
                 if (files.Count == 0)
                 {
                     logger.LogWarning("No files found for game build {BuildId} in storage", command.BuildId);
-                    return Result.Forbidden("No files found for the build. Please upload files before completing the build.");
+                    return Result.Invalid(new ValidationError("You need to upload at least one file before completing the build."));
                 }
             }
             catch (Exception exception)
