@@ -34,16 +34,10 @@ namespace Application.Games.Builds.Handlers
                 return Result.Unauthorized();
             }
 
-            if (gameBuild.Status == GameBuildStatus.Completed)
+            if (gameBuild.Status != GameBuildStatus.UploadingFiles)
             {
-                logger.LogWarning("Game build {BuildId} cannot be updated because it is already completed", command.BuildId);
+                logger.LogWarning("Game build {BuildId} cannot be updated because it is already in another stage", command.BuildId);
                 return Result.Conflict("Completed builds cannot be updated.");
-            }
-
-            if (gameBuild.Status == GameBuildStatus.Removing)
-            {
-                logger.LogWarning("Game build {BuildId} cannot be updated because it is being removed", command.BuildId);
-                return Result.Conflict("Build is being removed.");
             }
 
             gameBuild.VersionName = command.VersionName.Trim();
