@@ -6,6 +6,7 @@ namespace Application.Games.Builds.Responses
         Guid BuildId,
         string VersionName,
         string? ManifestPath,
+        string ExecutableFilePath,
         bool IsReleaseBuild,
         GameBuildStatus Status,
         DateTime CreatedAt);

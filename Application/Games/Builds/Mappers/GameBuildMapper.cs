@@ -21,10 +21,16 @@ namespace Application.Games.Builds.Mappers
 
         public ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild)
         {
+            string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath!, gameBuild.ExecutableFileName!);
+            var buildIdString = gameBuild.Id.ToString();
+            var index = executableS3Path.IndexOf(buildIdString);
+            var pathAfterBuild = executableS3Path.Substring(index + buildIdString.Length + 1);
+
             return new ApplicationGameBuild(
                 gameBuild.Id,
                 gameBuild.VersionName,
-                BuildStoragePath(gameBuild.ManifestRelativePath, gameBuild.ManifestFileName),
+                BuildStoragePath(gameBuild.ManifestRelativePath!, gameBuild.ManifestFileName!),
+                pathAfterBuild,
                 isReleaseBuild,
                 gameBuild.Status,
                 gameBuild.CreatedAt);
