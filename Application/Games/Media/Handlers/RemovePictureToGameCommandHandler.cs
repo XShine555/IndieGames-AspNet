@@ -30,11 +30,11 @@ namespace Application.Games.Media.Handlers
                 return Result.Unauthorized();
             }
 
-            if (picture.ProcessingStatus == GamePictureProcessingStatus.Processing
-                || picture.ProcessingStatus == GamePictureProcessingStatus.Pending)
+            if (picture.ProcessingStatus != GamePictureProcessingStatus.Completed
+                && picture.ProcessingStatus != GamePictureProcessingStatus.Failed)
             {
-                logger.LogWarning("Cannot remove picture with id {PictureId} because it's still being processed", command.PictureId);
-                return Result.Error("Cannot remove a picture that is still being processed");
+                logger.LogWarning("Cannot remove picture with id {PictureId} because it's not processed yet", command.PictureId);
+                return Result.Error("Cannot remove a picture that is still being processed or pending processing");
             }
 
             var picturesCount = await database.GamePictures.CountAsync(g => g.GameId == picture.GameId, cancellationToken);
