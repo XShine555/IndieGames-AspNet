@@ -8,7 +8,15 @@ namespace Application.Games.Builds.Mappers
     {
         public ApplicationGameBuildMutation ToApplicationGameBuildMutation(GameBuild gameBuild)
         {
-            return new ApplicationGameBuildMutation(gameBuild.Id, gameBuild.VersionName, gameBuild.CreatedAt);
+            string executablePath = null;
+            if (!string.IsNullOrEmpty(gameBuild.ExecutableRelativePath) && !string.IsNullOrEmpty(gameBuild.ExecutableFileName))
+                executablePath = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
+
+            return new ApplicationGameBuildMutation(
+                gameBuild.Id,
+                gameBuild.VersionName,
+                executablePath,
+                gameBuild.CreatedAt);
         }
 
         public ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild)
