@@ -45,6 +45,22 @@ namespace Application.Games.Media.Handlers
                 return Result.Forbidden();
             }
 
+            var anyArtwork = await database.GameArtworks.AnyAsync(a => a.GameId == command.GameId && a.Type == artwork.Type
+            && (
+                a.ProcessingStatus == GameArtworkProcessingStatus.Processing
+                || a.ProcessingStatus == GameArtworkProcessingStatus.Pending
+            ), cancellationToken);
+
+            if (!anyArtwork)
+            {
+                logger.LogWarning(
+                    "Cannot update artwork with id {ArtworkId} for game with id {GameId} because there is already an artwork of type {ArtworkType} being processed or pending",
+                    command.ArtworkId,
+                    command.GameId,
+                    artwork.Type);
+                return Result.Error("Cannot update artwork while another artwork of the same type is being processed or pending");
+            }
+
             var sourceKey = BuildBucketKey(artwork.OriginalRelativePath, artwork.OriginalFileName);
 
             try
