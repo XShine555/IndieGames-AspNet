@@ -16,6 +16,7 @@ namespace Application.Games.Media.Handlers
         {
             var picture = await database.GamePictures
                 .AsNoTracking()
+                .Include(g => g.Game)
                 .SingleOrDefaultAsync(g => g.Id == command.PictureId, cancellationToken);
             if (picture is null)
             {
