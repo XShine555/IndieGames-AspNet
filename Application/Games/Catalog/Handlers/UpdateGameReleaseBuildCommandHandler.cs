@@ -3,6 +3,7 @@ using Application.Abstractions.Persistence;
 using Application.Games.Catalog.Commands;
 using Application.Games.Catalog.Responses;
 using Ardalis.Result;
+using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -29,11 +30,17 @@ namespace Application.Games.Catalog.Handlers
                 return Result.Unauthorized();
             }
 
-            var buildExists = game.Builds.Any(b => b.Id == command.BuildId);
-            if (!buildExists)
+            var build = game.Builds.SingleOrDefault(b => b.Id == command.BuildId);
+            if (build is null)
             {
                 logger.LogWarning("Build with id {BuildId} not found for game with id {GameId}", command.BuildId, command.GameId);
                 return Result.NotFound("Build not found for the game");
+            }
+
+            if (build.Status != GameBuildStatus.Completed)
+            {
+                logger.LogWarning("Build with id {BuildId} for game with id {GameId} is not completed. Current status: {Status}", command.BuildId, command.GameId, build.Status);
+                return Result.Invalid(new ValidationError("The specified build is not completed and cannot be set as the release build"));
             }
 
             game.ReleaseGameBuildId = command.BuildId;
