@@ -5,9 +5,9 @@ using Application.Abstractions.Persistence;
 using Application.Abstractions.Storage;
 using Application.Achievements.Commands;
 using Application.Achievements.Responses;
+using Application.Configuration;
 using Ardalis.Result;
 using Domain.Entities;
-using AchievementEntity = Domain.Entities.Achievement;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -18,20 +18,13 @@ namespace Application.Achievements.Handler
         IDatabase database,
         IS3Service s3Service,
         IEventBus bus,
+        AchievementsConfiguration achievementsConfiguration,
         IAchievementMapper achievementMapper,
         ILogger<CreateAchievementCommandHandler> logger)
         : ICommandHandler<CreateAchievementCommand, Result<ApplicationAchievement>>
     {
-        private const string AchievementsFolderName = "achievements";
-        private const string PicturesFolderName = "Pictures";
-        private const string SmallPicturesFolderName = "SmallPictures";
-        private const string MediumPicturesFolderName = "MediumPictures";
-        private const string LargePicturesFolderName = "LargePictures";
-
         public async ValueTask<Result<ApplicationAchievement>> Handle(CreateAchievementCommand command, CancellationToken cancellationToken)
         {
-            ArgumentNullException.ThrowIfNull(command);
-
             var user = await database.Users
                 .AsNoTracking()
                 .SingleOrDefaultAsync(u => u.IdentityId == command.UserId, cancellationToken);
@@ -72,7 +65,21 @@ namespace Application.Achievements.Handler
                 return Result.Conflict("An achievement with the same name already exists.");
             }
 
-            var achievement = new AchievementEntity
+            var achievementsCount = await database.Achievements
+                .AsNoTracking()
+                .CountAsync(a => a.GameId == command.GameId, cancellationToken);
+
+            if (achievementsCount >= achievementsConfiguration.MaxAchievementsPerGame)
+            {
+                logger.LogWarning(
+                    "Max achievements limit reached ({MaxAchievementsPerGame}) for game {GameId}. User {UserId} attempted to create another achievement.",
+                    achievementsConfiguration.MaxAchievementsPerGame,
+                    command.GameId,
+                    command.UserId);
+                return Result.Conflict($"Maximum achievements limit reached ({achievementsConfiguration.MaxAchievementsPerGame}).");
+            }
+
+            var achievement = new Achievement
             {
                 Id = Guid.NewGuid(),
                 GameId = command.GameId,
@@ -84,13 +91,26 @@ namespace Application.Achievements.Handler
             };
 
             var pictureName = Guid.NewGuid() + command.Picture.FileExtension;
-            var sourceKey = BuildBucketKey(BuildAchievementPictureFolderPath(command.GameId, achievement.Id, PicturesFolderName), pictureName);
+            var sourceKey = achievementsConfiguration.Routes.BuildBucketKey(
+                achievementsConfiguration.Routes.GetPicturesFolderPath(command.GameId, achievement.Id),
+                pictureName);
+
+            var achievementPicture = new AchievementPicture
+            {
+                AchievementId = achievement.Id,
+                OriginalName = pictureName,
+                OriginalRelativePath = achievementsConfiguration.Routes.GetPicturesFolderPath(command.GameId, achievement.Id),
+                OriginalContentType = command.Picture.ContentType,
+            };
+
+            achievement.AchievementPicture = achievementPicture;
 
             var uploadResult = await UploadOriginalPictureAsync(command.Picture, sourceKey, cancellationToken);
             if (!uploadResult.IsSuccess)
                 return Result.Error("Error uploading achievement picture");
 
             await database.Achievements.AddAsync(achievement, cancellationToken);
+            await database.AchievementPictures.AddAsync(achievementPicture, cancellationToken);
             try
             {
                 await database.SaveChangesAsync(cancellationToken);
@@ -129,7 +149,7 @@ namespace Application.Achievements.Handler
 
         private async Task<Result> PublishAchievementPicturesEventAsync(
             CreateAchievementCommand command,
-            AchievementEntity achievement,
+            Achievement achievement,
             string pictureName,
             string sourceKey,
             CancellationToken cancellationToken)
@@ -137,12 +157,18 @@ namespace Application.Achievements.Handler
             var @event = new GenerateAchievementsPicturesEvent(
                 achievement.Id,
                 sourceKey,
-                BuildBucketKey(BuildAchievementPictureFolderPath(command.GameId, achievement.Id, SmallPicturesFolderName), pictureName),
-                BuildBucketKey(BuildAchievementPictureFolderPath(command.GameId, achievement.Id, MediumPicturesFolderName), pictureName),
-                BuildBucketKey(BuildAchievementPictureFolderPath(command.GameId, achievement.Id, LargePicturesFolderName), pictureName),
-                new PictureResizeSize(64, 64),
-                new PictureResizeSize(128, 128),
-                new PictureResizeSize(256, 256));
+                achievementsConfiguration.Routes.BuildBucketKey(
+                    achievementsConfiguration.Routes.GetSmallPicturesFolderPath(command.GameId, achievement.Id),
+                    pictureName),
+                achievementsConfiguration.Routes.BuildBucketKey(
+                    achievementsConfiguration.Routes.GetMediumPicturesFolderPath(command.GameId, achievement.Id),
+                    pictureName),
+                achievementsConfiguration.Routes.BuildBucketKey(
+                    achievementsConfiguration.Routes.GetLargePicturesFolderPath(command.GameId, achievement.Id),
+                    pictureName),
+                new PictureResizeSize(achievementsConfiguration.Sizes.Small.Width, achievementsConfiguration.Sizes.Small.Height),
+                new PictureResizeSize(achievementsConfiguration.Sizes.Medium.Width, achievementsConfiguration.Sizes.Medium.Height),
+                new PictureResizeSize(achievementsConfiguration.Sizes.Large.Width, achievementsConfiguration.Sizes.Large.Height));
 
             try
             {
@@ -168,7 +194,7 @@ namespace Application.Achievements.Handler
             }
         }
 
-        private async Task RemovePersistedAchievementAsync(AchievementEntity achievement, CancellationToken cancellationToken)
+        private async Task RemovePersistedAchievementAsync(Achievement achievement, CancellationToken cancellationToken)
         {
             try
             {
@@ -184,16 +210,6 @@ namespace Application.Achievements.Handler
         private static string NormalizeName(string name)
         {
             return name.Trim().ToUpperInvariant();
-        }
-
-        private static string BuildAchievementPictureFolderPath(Guid gameId, Guid achievementId, string folderName)
-        {
-            return $"games/{gameId}/{AchievementsFolderName}/{achievementId}/{folderName}";
-        }
-
-        private static string BuildBucketKey(string route, string fileName)
-        {
-            return $"{route}/{fileName}";
         }
     }
 }

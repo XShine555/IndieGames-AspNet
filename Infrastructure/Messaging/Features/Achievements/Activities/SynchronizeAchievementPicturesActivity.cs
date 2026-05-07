@@ -1,4 +1,5 @@
 using Application.Abstractions.Persistence;
+using Domain.Games.Enums;
 using Domain.JobTracking;
 using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Arguments;
@@ -59,6 +60,8 @@ namespace Infrastructure.Messaging.Features.Achievements.Activities
                 picture.LargeName = Path.GetFileName(largeResizedVariable);
                 picture.LargeContentType = MimeUtility.GetMimeMapping(largeResizedVariable);
                 picture.LargeRelativePath = executeContext.Arguments.LargeRelativePath;
+
+                picture.ProcessingStatus = AchievementPictureProcessingStatus.Completed;
 
                 await database.SaveChangesAsync(executeContext.CancellationToken);
 

@@ -1,3 +1,4 @@
+using Domain.Games.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,55 +9,52 @@ namespace Domain.Entities
     public class AchievementPicture
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public Guid AchievementId { get; set; }
 
+        [Required]
         [MaxLength(128)]
         public string? OriginalName { get; set; }
 
+        [Required]
         [MaxLength(128)]
         public string? OriginalRelativePath { get; set; }
 
+        [Required]
         [MaxLength(32)]
         public string? OriginalContentType { get; set; }
 
-        [Required]
         [MaxLength(128)]
-        public required string SmallRelativePath { get; set; }
+        public string? SmallRelativePath { get; set; }
 
-        [Required]
         [MaxLength(48)]
-        public required string SmallName { get; set; }
+        public string? SmallName { get; set; }
 
-        [Required]
         [MaxLength(32)]
-        public required string SmallFileContentType { get; set; }
+        public string? SmallFileContentType { get; set; }
 
-        [Required]
         [MaxLength(128)]
-        public required string MediumRelativePath { get; set; }
+        public string? MediumRelativePath { get; set; }
 
-        [Required]
         [MaxLength(48)]
-        public required string MediumName { get; set; }
+        public string? MediumName { get; set; }
 
-        [Required]
         [MaxLength(32)]
-        public required string MediumFileContentType { get; set; }
+        public string? MediumFileContentType { get; set; }
 
-        [Required]
         [MaxLength(128)]
-        public required string LargeRelativePath { get; set; }
+        public string? LargeRelativePath { get; set; }
 
-        [Required]
         [MaxLength(48)]
-        public required string LargeName { get; set; }
+        public string? LargeName { get; set; }
+
+        [MaxLength(32)]
+        public string? LargeContentType { get; set; }
 
         [Required]
-        [MaxLength(32)]
-        public required string LargeContentType { get; set; }
+        public AchievementPictureProcessingStatus ProcessingStatus { get; set; } = AchievementPictureProcessingStatus.Pending;
 
         [Required]
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;

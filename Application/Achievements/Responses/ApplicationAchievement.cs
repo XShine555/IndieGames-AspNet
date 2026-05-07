@@ -1,3 +1,5 @@
+using Domain.Games.Enums;
+
 namespace Application.Achievements.Responses
 {
     public record ApplicationAchievement(
@@ -5,6 +7,10 @@ namespace Application.Achievements.Responses
         Guid GameId,
         string Name,
         string Description,
+        string? SmallPicturePath,
+        string? MediumPicturePath,
+        string? LargePicturePath,
+        AchievementPictureProcessingStatus Status,
         DateTime CreatedAt,
         DateTime UpdatedAt);
 }

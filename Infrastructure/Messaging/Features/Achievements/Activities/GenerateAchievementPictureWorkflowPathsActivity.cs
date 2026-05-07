@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Infrastructure.Messaging.Features.Achievements.Activities
 {
     public class GenerateAchievementPictureWorkflowPathsActivity(
-        global::Application.Abstractions.Persistence.IJobTrackingStore processTrackingStore,
+        IJobTrackingStore processTrackingStore,
         ILogger<GenerateAchievementPictureWorkflowPathsActivity> logger)
         : IExecuteActivity<GenerateAchievementPictureWorkflowPathsArguments>
     {
@@ -61,7 +61,7 @@ namespace Infrastructure.Messaging.Features.Achievements.Activities
                     [AchievementPictureRoutingSlipVariableNames.Picture.SmallResizedFilePath] = smallPictureFilePath,
                     [AchievementPictureRoutingSlipVariableNames.Picture.MediumResizedFilePath] = mediumPictureFilePath,
                     [AchievementPictureRoutingSlipVariableNames.Picture.LargeResizedFilePath] = largePictureFilePath,
-                });
+                } );
 
                 await processTrackingStore.CompleteStepAsync(processExecutionId, stepExecutionId, executeContext.CancellationToken);
                 return result;

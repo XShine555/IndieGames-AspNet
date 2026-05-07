@@ -2,6 +2,7 @@ using Application.Abstractions.Common;
 using Application.Abstractions.Persistence;
 using Application.Achievements.Queries;
 using Application.Achievements.Responses;
+using Domain.Games.Enums;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList.EF;
@@ -19,8 +20,19 @@ namespace Application.Achievements.Handler
             var baseQuery = database.Achievements
                 .AsNoTracking()
                 .Where(a => a.GameId == query.GameId)
+                .Where(a => a.AchievementPicture.ProcessingStatus == AchievementPictureProcessingStatus.Completed)
                 .OrderBy(a => a.Name)
-                .Select(achievementMapper.ToApplicationAchievement)
+                .Select(a => new ApplicationAchievement(
+                    a.Id,
+                    a.GameId,
+                    a.Name,
+                    a.Description,
+                    a.AchievementPicture.SmallRelativePath,
+                    a.AchievementPicture.MediumRelativePath,
+                    a.AchievementPicture.LargeRelativePath,
+                    a.AchievementPicture.ProcessingStatus,
+                    a.CreatedAt,
+                    a.UpdatedAt))
                 .AsQueryable();
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
