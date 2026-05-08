@@ -10,10 +10,10 @@ namespace Domain.Entities
     public class Achievement
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid GameId { get; set; }
+        public required Guid GameId { get; set; }
 
         [Required]
         [MaxLength(64)]

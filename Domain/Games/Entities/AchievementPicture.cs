@@ -12,19 +12,19 @@ namespace Domain.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid AchievementId { get; set; }
+        public required Guid AchievementId { get; set; }
 
         [Required]
         [MaxLength(128)]
-        public string? OriginalName { get; set; }
+        public required string OriginalName { get; set; }
 
         [Required]
         [MaxLength(128)]
-        public string? OriginalRelativePath { get; set; }
+        public required string? OriginalRelativePath { get; set; }
 
         [Required]
         [MaxLength(32)]
-        public string? OriginalContentType { get; set; }
+        public required string? OriginalContentType { get; set; }
 
         [MaxLength(128)]
         public string? SmallRelativePath { get; set; }
