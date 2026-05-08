@@ -29,6 +29,13 @@ namespace Application.Configuration
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<UserConfiguration>>().Value);
 
+            serviceDescriptors
+                .AddOptionsWithValidateOnStart<AchievementsConfiguration>()
+                .Bind(configuration.GetRequiredSection(AchievementsConfiguration.SectionName))
+                .ValidateDataAnnotations();
+            serviceDescriptors.AddSingleton(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<AchievementsConfiguration>>().Value);
+
             serviceDescriptors.AddScoped<IGameCatalogMapper, GameCatalogMapper>();
             serviceDescriptors.AddScoped<IGameMediaMapper, GameMediaMapper>();
             serviceDescriptors.AddScoped<IGameBuildMapper, GameBuildMapper>();
