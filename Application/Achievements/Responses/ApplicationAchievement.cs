@@ -10,6 +10,7 @@ namespace Application.Achievements.Responses
         string? SmallPicturePath,
         string? MediumPicturePath,
         string? LargePicturePath,
+        bool IsPublished,
         AchievementPictureProcessingStatus Status,
         DateTime CreatedAt,
         DateTime UpdatedAt);

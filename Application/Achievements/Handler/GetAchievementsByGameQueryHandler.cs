@@ -27,9 +27,10 @@ namespace Application.Achievements.Handler
                     a.GameId,
                     a.Name,
                     a.Description,
-                    a.AchievementPicture.SmallRelativePath,
-                    a.AchievementPicture.MediumRelativePath,
-                    a.AchievementPicture.LargeRelativePath,
+                    a.AchievementPicture.SmallRelativePath + a.AchievementPicture.SmallName,
+                    a.AchievementPicture.MediumRelativePath + a.AchievementPicture.MediumName,
+                    a.AchievementPicture.LargeRelativePath + a.AchievementPicture.LargeName,
+                    a.IsPublished,
                     a.AchievementPicture.ProcessingStatus,
                     a.CreatedAt,
                     a.UpdatedAt))

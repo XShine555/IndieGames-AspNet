@@ -81,13 +81,10 @@ namespace Application.Achievements.Handler
 
             var achievement = new Achievement
             {
-                Id = Guid.NewGuid(),
                 GameId = command.GameId,
                 Name = command.Name.Trim(),
                 NormalizedName = normalizedName,
-                Description = command.Description.Trim(),
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                Description = command.Description.Trim()
             };
 
             var pictureName = Guid.NewGuid() + command.Picture.FileExtension;

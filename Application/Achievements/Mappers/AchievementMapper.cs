@@ -17,6 +17,7 @@ namespace Application.Achievements.Mappers
                 achievement.AchievementPicture.SmallRelativePath,
                 achievement.AchievementPicture.MediumRelativePath,
                 achievement.AchievementPicture.LargeRelativePath,
+                achievement.IsPublished,
                 achievement.AchievementPicture.ProcessingStatus,
                 achievement.CreatedAt,
                 achievement.UpdatedAt);
@@ -44,6 +45,7 @@ namespace Application.Achievements.Mappers
             achievement.AchievementPicture.SmallRelativePath,
             achievement.AchievementPicture.MediumRelativePath,
             achievement.AchievementPicture.LargeRelativePath,
+            achievement.IsPublished,
             achievement.AchievementPicture.ProcessingStatus,
             achievement.CreatedAt,
             achievement.UpdatedAt);
