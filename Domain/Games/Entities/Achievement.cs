@@ -28,6 +28,9 @@ namespace Domain.Entities
         public required string Description { get; set; }
 
         [Required]
+        public bool IsPublished { get; set; }
+
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Required]
