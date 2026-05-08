@@ -15,7 +15,7 @@ namespace Application.Achievements.Handler
         {
             var items = await database.Achievements
                 .AsNoTracking()
-                .Where(a => a.GameId == query.GameId)
+                .Where(a => a.GameId == query.GameId && a.IsPublished)
                 .Include(a => a.AchievementPicture)
                 .GroupJoin(
                     database.UserAchievements.Where(ua => ua.UserId == query.UserId),

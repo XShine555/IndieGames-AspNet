@@ -19,7 +19,7 @@ namespace Application.Achievements.Handler
                 .AsNoTracking()
                 .SingleOrDefaultAsync(a => a.Id == query.AchievementId, cancellationToken);
 
-            if (achievement is null)
+            if (achievement is null || !achievement.IsPublished)
                 return Result.NotFound();
 
             return Result.Success(achievementMapper.ToApplicationAchievement(achievement));
