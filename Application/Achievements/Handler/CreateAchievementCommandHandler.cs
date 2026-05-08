@@ -156,13 +156,13 @@ namespace Application.Achievements.Handler
                 sourceKey,
                 achievementsConfiguration.Routes.BuildBucketKey(
                     achievementsConfiguration.Routes.GetSmallPicturesFolderPath(command.GameId, achievement.Id),
-                    pictureName),
+                    Guid.NewGuid() + ".webp"),
                 achievementsConfiguration.Routes.BuildBucketKey(
                     achievementsConfiguration.Routes.GetMediumPicturesFolderPath(command.GameId, achievement.Id),
-                    pictureName),
+                    Guid.NewGuid() + ".webp"),
                 achievementsConfiguration.Routes.BuildBucketKey(
                     achievementsConfiguration.Routes.GetLargePicturesFolderPath(command.GameId, achievement.Id),
-                    pictureName),
+                    Guid.NewGuid() + ".webp"),
                 new PictureResizeSize(achievementsConfiguration.Sizes.Small.Width, achievementsConfiguration.Sizes.Small.Height),
                 new PictureResizeSize(achievementsConfiguration.Sizes.Medium.Width, achievementsConfiguration.Sizes.Medium.Height),
                 new PictureResizeSize(achievementsConfiguration.Sizes.Large.Width, achievementsConfiguration.Sizes.Large.Height));

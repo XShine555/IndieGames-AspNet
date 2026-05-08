@@ -62,7 +62,7 @@ namespace Infrastructure.Messaging.Features.Achievements.Activities
 
         public async Task<ExecutionResult> Execute(ExecuteContext<ProcessAchievementPictureArguments> executeContext)
         {
-            var processExecutionIdValue = executeContext.GetVariable<string>(Infrastructure.Messaging.Features.Common.Workflows.ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
+            var processExecutionIdValue = executeContext.GetVariable<string>(ProcessTrackingRoutingSlipVariableNames.Workflow.ProcessExecutionId)
                 ?? throw new InvalidOperationException("Process execution id is required.");
             var processExecutionId = Guid.Parse(processExecutionIdValue);
 
