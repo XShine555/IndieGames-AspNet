@@ -15,42 +15,42 @@ namespace Domain.Entities
         public required Guid AchievementId { get; set; }
 
         [Required]
-        [MaxLength(128)]
+        [MaxLength(256)]
         public required string OriginalName { get; set; }
 
         [Required]
-        [MaxLength(128)]
+        [MaxLength(256)]
         public required string? OriginalRelativePath { get; set; }
 
         [Required]
-        [MaxLength(32)]
+        [MaxLength(64)]
         public required string? OriginalContentType { get; set; }
 
-        [MaxLength(128)]
+        [MaxLength(256)]
         public string? SmallRelativePath { get; set; }
 
-        [MaxLength(48)]
+        [MaxLength(128)]
         public string? SmallName { get; set; }
 
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string? SmallFileContentType { get; set; }
 
-        [MaxLength(128)]
+        [MaxLength(256)]
         public string? MediumRelativePath { get; set; }
 
-        [MaxLength(48)]
+        [MaxLength(128)]
         public string? MediumName { get; set; }
 
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string? MediumFileContentType { get; set; }
 
-        [MaxLength(128)]
+        [MaxLength(256)]
         public string? LargeRelativePath { get; set; }
 
-        [MaxLength(48)]
+        [MaxLength(128)]
         public string? LargeName { get; set; }
 
-        [MaxLength(32)]
+        [MaxLength(64)]
         public string? LargeContentType { get; set; }
 
         [Required]
