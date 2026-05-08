@@ -51,15 +51,15 @@ namespace Infrastructure.Messaging.Features.Achievements.Activities
 
                 picture.SmallName = Path.GetFileName(smallResizedVariable);
                 picture.SmallFileContentType = MimeUtility.GetMimeMapping(smallResizedVariable);
-                picture.SmallRelativePath = Path.GetDirectoryName(executeContext.Arguments.SmallRelativePath);
+                picture.SmallRelativePath = executeContext.Arguments.SmallRelativePath[..executeContext.Arguments.SmallRelativePath.LastIndexOf('/')];
 
                 picture.MediumName = Path.GetFileName(mediumResizedVariable);
                 picture.MediumFileContentType = MimeUtility.GetMimeMapping(mediumResizedVariable);
-                picture.MediumRelativePath = Path.GetDirectoryName(executeContext.Arguments.MediumRelativePath);
+                picture.MediumRelativePath = executeContext.Arguments.MediumRelativePath[..executeContext.Arguments.MediumRelativePath.LastIndexOf('/')];
 
                 picture.LargeName = Path.GetFileName(largeResizedVariable);
                 picture.LargeContentType = MimeUtility.GetMimeMapping(largeResizedVariable);
-                picture.LargeRelativePath = Path.GetDirectoryName(executeContext.Arguments.LargeRelativePath);
+                picture.LargeRelativePath = executeContext.Arguments.LargeRelativePath[..executeContext.Arguments.LargeRelativePath.LastIndexOf('/')];
 
                 picture.ProcessingStatus = AchievementPictureProcessingStatus.Completed;
 
