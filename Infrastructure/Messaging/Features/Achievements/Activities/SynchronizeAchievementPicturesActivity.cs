@@ -40,7 +40,7 @@ namespace Infrastructure.Messaging.Features.Achievements.Activities
             try
             {
                 var picture = await database.AchievementPictures
-                    .SingleOrDefaultAsync(p => p.Id == executeContext.Arguments.PictureId, executeContext.CancellationToken);
+                    .SingleOrDefaultAsync(p => p.AchievementId == executeContext.Arguments.PictureId, executeContext.CancellationToken);
 
                 if (picture is null)
                 {
