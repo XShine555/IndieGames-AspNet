@@ -119,7 +119,7 @@ namespace Application.Achievements.Handler
                 return Result.Error("Error saving achievement");
             }
 
-            var publishResult = await PublishAchievementPicturesEventAsync(command, achievement, pictureName, sourceKey, cancellationToken);
+            var publishResult = await PublishAchievementPicturesEventAsync(command, achievement, sourceKey, cancellationToken);
             if (!publishResult.IsSuccess)
             {
                 await RemoveUploadedPictureAsync(sourceKey, cancellationToken);
@@ -147,22 +147,15 @@ namespace Application.Achievements.Handler
         private async Task<Result> PublishAchievementPicturesEventAsync(
             CreateAchievementCommand command,
             Achievement achievement,
-            string pictureName,
             string sourceKey,
             CancellationToken cancellationToken)
         {
             var @event = new GenerateAchievementsPicturesEvent(
                 achievement.Id,
                 sourceKey,
-                achievementsConfiguration.Routes.BuildBucketKey(
-                    achievementsConfiguration.Routes.GetSmallPicturesFolderPath(command.GameId, achievement.Id),
-                    Guid.NewGuid() + ".webp"),
-                achievementsConfiguration.Routes.BuildBucketKey(
-                    achievementsConfiguration.Routes.GetMediumPicturesFolderPath(command.GameId, achievement.Id),
-                    Guid.NewGuid() + ".webp"),
-                achievementsConfiguration.Routes.BuildBucketKey(
-                    achievementsConfiguration.Routes.GetLargePicturesFolderPath(command.GameId, achievement.Id),
-                    Guid.NewGuid() + ".webp"),
+                achievementsConfiguration.Routes.GetSmallPicturesFolderPath(command.GameId, achievement.Id),
+                achievementsConfiguration.Routes.GetMediumPicturesFolderPath(command.GameId, achievement.Id),
+                achievementsConfiguration.Routes.GetLargePicturesFolderPath(command.GameId, achievement.Id),
                 new PictureResizeSize(achievementsConfiguration.Sizes.Small.Width, achievementsConfiguration.Sizes.Small.Height),
                 new PictureResizeSize(achievementsConfiguration.Sizes.Medium.Width, achievementsConfiguration.Sizes.Medium.Height),
                 new PictureResizeSize(achievementsConfiguration.Sizes.Large.Width, achievementsConfiguration.Sizes.Large.Height));
