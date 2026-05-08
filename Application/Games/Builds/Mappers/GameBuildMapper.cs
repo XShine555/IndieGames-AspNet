@@ -29,10 +29,23 @@ namespace Application.Games.Builds.Mappers
 
         public ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild)
         {
-            string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath!, gameBuild.ExecutableFileName!);
-            var buildIdString = gameBuild.Id.ToString();
-            var index = executableS3Path.IndexOf(buildIdString);
-            var pathAfterBuild = executableS3Path.Substring(index + buildIdString.Length + 1);
+            string? pathAfterBuild = null;
+
+            if (gameBuild.ExecutableRelativePath != null && gameBuild.ExecutableFileName != null)
+            {
+                string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
+                var buildIdString = gameBuild.Id.ToString();
+                var index = executableS3Path.IndexOf(buildIdString);
+
+                if (index == -1)
+                    throw new InvalidOperationException(
+                        $"Build ID '{buildIdString}' not found in S3 path '{executableS3Path}'.");
+
+                var startIndex = index + buildIdString.Length;
+                pathAfterBuild = startIndex < executableS3Path.Length
+                    ? executableS3Path.Substring(startIndex + 1)
+                    : string.Empty;
+            }
 
             return new ApplicationGameBuild(
                 gameBuild.Id,
