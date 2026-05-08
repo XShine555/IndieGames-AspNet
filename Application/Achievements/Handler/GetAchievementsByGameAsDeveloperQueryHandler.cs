@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Persistence;
+﻿using Application.Abstractions.Common;
+using Application.Abstractions.Persistence;
 using Application.Achievements.Queries;
 using Application.Achievements.Responses;
 using Ardalis.Result;
@@ -10,7 +11,8 @@ namespace Application.Achievements.Handler
 {
     public class GetAchievementsByGameAsDeveloperQueryHandler(
         IDatabase database,
-        ILogger<GetAchievementsByGameAsDeveloperQueryHandler> logger)
+        ILogger<GetAchievementsByGameAsDeveloperQueryHandler> logger,
+        IAchievementMapper achievementMapper)
         : IQueryHandler<GetAchievementsByGameAsDeveloperQuery, Result<IReadOnlyList<ApplicationAchievement>>>
     {
         public async ValueTask<Result<IReadOnlyList<ApplicationAchievement> >> Handle(GetAchievementsByGameAsDeveloperQuery query, CancellationToken cancellationToken)
@@ -35,21 +37,16 @@ namespace Application.Achievements.Handler
                 .AsNoTracking()
                 .Where(a => a.GameId == query.GameId)
                 .OrderBy(a => a.Name)
-                .Select(a => new ApplicationAchievement(
-                    a.Id,
-                    a.GameId,
-                    a.Name,
-                    a.Description,
-                    a.AchievementPicture.SmallRelativePath + a.AchievementPicture.SmallName,
-                    a.AchievementPicture.MediumRelativePath + a.AchievementPicture.MediumName,
-                    a.AchievementPicture.LargeRelativePath + a.AchievementPicture.LargeName,
-                    a.IsPublished,
-                    a.AchievementPicture.ProcessingStatus,
-                    a.CreatedAt,
-                    a.UpdatedAt))
+                .Include(a => a.AchievementPicture)
                 .ToListAsync(cancellationToken);
 
-            return Result.Success<IReadOnlyList<ApplicationAchievement>>(achievements);
+            var result = new List<ApplicationAchievement>();
+            foreach (var a in achievements)
+            {
+                result.Add(achievementMapper.ToApplicationAchievement(a));
+            }
+
+            return Result.Success<IReadOnlyList<ApplicationAchievement>>(result);
         }
     }
 }
