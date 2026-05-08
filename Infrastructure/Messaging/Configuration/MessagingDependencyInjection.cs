@@ -229,6 +229,16 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 RemoveGameBuildFromDatabaseActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<GenerateAchievementPictureWorkflowPathsActivity, GenerateAchievementPictureWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateAchievementPictureWorkflowPathsActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<SynchronizeAchievementPicturesActivity, SynchronizeAchievementPicturesArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                SynchronizeAchievementPicturesActivity.ExecuteEndpointName);
         }
 
         private static void ConfigureAmazonSqsHost(
