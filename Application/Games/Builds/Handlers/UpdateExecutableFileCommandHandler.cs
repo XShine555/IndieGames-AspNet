@@ -44,6 +44,7 @@ namespace Application.Games.Builds.Handlers
             S3FileData fileData;
             try
             {
+                logger.LogInformation("Attempting to retrieve file data from storage for file with key {FileKey} for game build with id {BuildId}", key, command.BuildId);
                 fileData = await s3Service.GetFileDataAsync(key, cancellationToken);
             }
             catch (Exception exception)
