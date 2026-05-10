@@ -68,7 +68,7 @@ namespace Application.Games.Builds.Mappers
 
         string BuildStoragePath(params string[] values)
         {
-            return string.Join("/", values);
+            return string.Join("/", values.Select(v => v.Replace('\\', '/')));
         }
     }
 }

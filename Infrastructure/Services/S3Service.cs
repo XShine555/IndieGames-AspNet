@@ -112,7 +112,7 @@ namespace Infrastructure.Services
             };
             var result = await amazonS3.GetObjectAsync(request, cancellationToken);
             return new S3FileData(
-                Path.GetDirectoryName(result.Key),
+                Path.GetDirectoryName(result.Key)?.Replace("\\", "/"),
                 Path.GetFileName(result.Key),
                 result.Headers.ContentType,
                 result.ContentLength
