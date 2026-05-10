@@ -29,8 +29,11 @@ namespace Application.Games.Builds.Mappers
 
         public ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild)
         {
-            string? pathAfterBuild = null;
+            string? manifestStoragePath = null;
+            if (!string.IsNullOrEmpty(gameBuild.ManifestRelativePath) && !string.IsNullOrEmpty(gameBuild.ManifestFileName))
+                manifestStoragePath = BuildStoragePath(gameBuild.ManifestRelativePath, gameBuild.ManifestFileName);
 
+            string? pathAfterBuild = null;
             if (!string.IsNullOrEmpty(gameBuild.ExecutableRelativePath) && !string.IsNullOrEmpty(gameBuild.ExecutableFileName))
             {
                 string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
@@ -50,7 +53,7 @@ namespace Application.Games.Builds.Mappers
             return new ApplicationGameBuild(
                 gameBuild.Id,
                 gameBuild.VersionName,
-                BuildStoragePath(gameBuild.ManifestRelativePath!, gameBuild.ManifestFileName!),
+                manifestStoragePath,
                 pathAfterBuild,
                 isReleaseBuild,
                 gameBuild.Status,
