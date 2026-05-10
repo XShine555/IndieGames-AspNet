@@ -31,7 +31,7 @@ namespace Application.Games.Builds.Mappers
         {
             string? pathAfterBuild = null;
 
-            if (gameBuild.ExecutableRelativePath != null && gameBuild.ExecutableFileName != null)
+            if (!string.IsNullOrEmpty(gameBuild.ExecutableRelativePath) && !string.IsNullOrEmpty(gameBuild.ExecutableFileName))
             {
                 string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
                 var buildIdString = gameBuild.Id.ToString();
