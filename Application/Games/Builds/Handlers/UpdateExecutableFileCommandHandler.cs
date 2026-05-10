@@ -53,8 +53,8 @@ namespace Application.Games.Builds.Handlers
                 return Result.NotFound("File not found in storage");
             }
 
-            gameBuild.ExecutableFileName = command.FileKey;
-            gameBuild.ExecutableRelativePath = Path.GetDirectoryName(command.FileKey);
+            gameBuild.ExecutableFileName = Path.GetFileName(fileData.FileName);
+            gameBuild.ExecutableRelativePath = Path.GetDirectoryName(fileData.FileName);
             gameBuild.ExecutableContentType = fileData.ContentType;
             await database.SaveChangesAsync(cancellationToken);
             return Result.Success(gameBuildMapper.ToApplicationGameBuildMutation(gameBuild));
