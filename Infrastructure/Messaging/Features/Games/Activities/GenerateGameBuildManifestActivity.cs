@@ -54,7 +54,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 var manifest = new GameBuildManifest(
                     discoveredFiles.Select(file => new GameBuildManifestFile(
-                        file.FileName,
+                        file.FileRelativePath + "/" + file.FileName,
                         file.FileContentType,
                         file.FileSize,
                         file.Hash,
