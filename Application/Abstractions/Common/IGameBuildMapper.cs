@@ -10,5 +10,7 @@ namespace Application.Abstractions.Common
         ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild);
 
         ApplicationGameBuildListItem ToApplicationGameBuildListItem(GameBuild gameBuild, bool isReleaseBuild);
+
+        public ApplicationFileInfo ToApplicationFileInfo(GameBuildFile gameBuildFile);
     }
 }

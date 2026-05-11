@@ -69,6 +69,17 @@ namespace Application.Games.Builds.Mappers
                 isReleaseBuild);
         }
 
+        public ApplicationFileInfo ToApplicationFileInfo(GameBuildFile gameBuildFile)
+        {
+            return new ApplicationFileInfo(
+                gameBuildFile.Id,
+                gameBuildFile.GameBuildId,
+                BuildStoragePath(gameBuildFile.FileRelativePath, gameBuildFile.FileName),
+                gameBuildFile.FileSize,
+                gameBuildFile.Hash,
+                gameBuildFile.HashAlgorithm);
+        }
+
         string BuildStoragePath(params string[] values)
         {
             return string.Join("/", values.Select(v => v.Replace('\\', '/')));
