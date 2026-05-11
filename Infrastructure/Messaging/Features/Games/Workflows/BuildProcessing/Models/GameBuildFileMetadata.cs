@@ -1,6 +1,7 @@
 namespace Infrastructure.Messaging.Features.Games.Workflows.BuildProcessing.Models
 {
     public record GameBuildFileMetadata(
+        Guid FileId,
         string FileRelativePath,
         string FileName,
         string FileContentType,

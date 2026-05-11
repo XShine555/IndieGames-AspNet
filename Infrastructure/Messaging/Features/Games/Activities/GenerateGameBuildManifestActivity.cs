@@ -54,6 +54,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 var manifest = new GameBuildManifest(
                     discoveredFiles.Select(file => new GameBuildManifestFile(
+                        file.FileId,
                         file.FileRelativePath + "/" + file.FileName,
                         file.FileContentType,
                         file.FileSize,
@@ -134,6 +135,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                     var fileRelativePath = Path.GetDirectoryName(s3Object.Key)?.Replace('\\', '/') ?? string.Empty;
 
                     files.Add(new GameBuildFileMetadata(
+                        Guid.NewGuid(),
                         fileRelativePath,
                         fileName,
                         contentType,
@@ -167,6 +169,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
         private sealed record GameBuildManifest(List<GameBuildManifestFile> Files);
 
         private sealed record GameBuildManifestFile(
+            Guid Id,
             string Name,
             string ContentType,
             long Size,
