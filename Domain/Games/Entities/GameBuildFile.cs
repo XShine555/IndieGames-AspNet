@@ -8,7 +8,7 @@ namespace Domain.Games.Entities
     public class GameBuildFile
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public Guid GameBuildId { get; set; }
 
