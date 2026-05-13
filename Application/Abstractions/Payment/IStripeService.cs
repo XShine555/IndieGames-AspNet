@@ -4,6 +4,15 @@ namespace Application.Abstractions.Payment
 
     public record StripeWebhookResult(Guid UserId, IReadOnlyCollection<Guid> GameIds);
 
+    public enum ParseWebhookStatus
+    {
+        Success,
+        InvalidSignature,
+        UnhandledEventType,
+    }
+
+    public record ParseWebhookOutcome(ParseWebhookStatus Status, StripeWebhookResult? Result = null);
+
     public interface IStripeService
     {
         Task<string> CreateCheckoutSessionAsync(
@@ -13,6 +22,6 @@ namespace Application.Abstractions.Payment
             string cancelUrl,
             CancellationToken cancellationToken = default);
 
-        StripeWebhookResult? ParseCheckoutCompletedEvent(string payload, string signature);
+        ParseWebhookOutcome ParseCheckoutCompletedEvent(string payload, string signature);
     }
 }

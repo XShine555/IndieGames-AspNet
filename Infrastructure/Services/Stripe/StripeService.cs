@@ -61,35 +61,39 @@ namespace Infrastructure.Services.Stripe
             return session.Url;
         }
 
-        public StripeWebhookResult? ParseCheckoutCompletedEvent(string payload, string signature)
+        public ParseWebhookOutcome ParseCheckoutCompletedEvent(string payload, string signature)
         {
+            Event stripeEvent;
             try
             {
-                var stripeEvent = EventUtility.ConstructEvent(payload, signature, stripeConfig.WebhookSecret);
-
-                if (stripeEvent.Type != "checkout.session.completed")
-                    return null;
-
-                if (stripeEvent.Data.Object is not Session session)
-                    return null;
-
-                if (!Guid.TryParse(session.ClientReferenceId, out var userId))
-                    return null;
-
-                var gameIds = session.Metadata
-                    .Where(kv => kv.Key.StartsWith("game_"))
-                    .Select(kv => Guid.TryParse(kv.Value, out var id) ? id : (Guid?)null)
-                    .Where(id => id.HasValue)
-                    .Select(id => id!.Value)
-                    .ToArray();
-
-                return new StripeWebhookResult(userId, gameIds);
+                stripeEvent = EventUtility.ConstructEvent(payload, signature, stripeConfig.WebhookSecret, throwOnApiVersionMismatch: false);
             }
             catch (StripeException ex)
             {
-                logger.LogWarning(ex, "Failed to parse Stripe webhook event - invalid signature or payload");
-                return null;
+                logger.LogWarning(ex, "Stripe webhook signature validation failed");
+                return new ParseWebhookOutcome(ParseWebhookStatus.InvalidSignature);
             }
+
+            if (stripeEvent.Type != "checkout.session.completed")
+                return new ParseWebhookOutcome(ParseWebhookStatus.UnhandledEventType);
+
+            if (stripeEvent.Data.Object is not Session session)
+                return new ParseWebhookOutcome(ParseWebhookStatus.UnhandledEventType);
+
+            if (!Guid.TryParse(session.ClientReferenceId, out var userId))
+            {
+                logger.LogWarning("Stripe checkout.session.completed missing valid ClientReferenceId");
+                return new ParseWebhookOutcome(ParseWebhookStatus.UnhandledEventType);
+            }
+
+            var gameIds = session.Metadata?
+                .Where(kv => kv.Key.StartsWith("game_"))
+                .Select(kv => Guid.TryParse(kv.Value, out var id) ? id : (Guid?)null)
+                .Where(id => id.HasValue)
+                .Select(id => id!.Value)
+                .ToArray() ?? [];
+
+            return new ParseWebhookOutcome(ParseWebhookStatus.Success, new StripeWebhookResult(userId, gameIds));
         }
     }
 }
