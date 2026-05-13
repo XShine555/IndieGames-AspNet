@@ -22,7 +22,7 @@ namespace Application.Games.Builds.Handlers
                 .Include(gb => gb.Game)
                 .SingleOrDefaultAsync(gb => gb.Id == command.BuildId, cancellationToken);
 
-            if (gameBuild is null) 
+            if (gameBuild is null)
             { 
                 logger.LogWarning("Game build with id {BuildId} not found", command.BuildId);
                 return Result.NotFound("Game build not found");
@@ -53,9 +53,10 @@ namespace Application.Games.Builds.Handlers
                 return Result.NotFound("File not found in storage");
             }
 
-            gameBuild.ExecutableFileName = command.FileKey;
-            gameBuild.ExecutableRelativePath = Path.GetDirectoryName(command.FileKey);
+            gameBuild.ExecutableFileName = fileData.FileName;
+            gameBuild.ExecutableRelativePath = fileData.FilePath;
             gameBuild.ExecutableContentType = fileData.ContentType;
+            await database.SaveChangesAsync(cancellationToken);
             return Result.Success(gameBuildMapper.ToApplicationGameBuildMutation(gameBuild));
         }
     }

@@ -29,9 +29,12 @@ namespace Application.Games.Builds.Mappers
 
         public ApplicationGameBuild ToApplicationGameBuild(GameBuild gameBuild, bool isReleaseBuild)
         {
-            string? pathAfterBuild = null;
+            string? manifestStoragePath = null;
+            if (!string.IsNullOrEmpty(gameBuild.ManifestRelativePath) && !string.IsNullOrEmpty(gameBuild.ManifestFileName))
+                manifestStoragePath = BuildStoragePath(gameBuild.ManifestRelativePath, gameBuild.ManifestFileName);
 
-            if (gameBuild.ExecutableRelativePath != null && gameBuild.ExecutableFileName != null)
+            string? pathAfterBuild = null;
+            if (!string.IsNullOrEmpty(gameBuild.ExecutableRelativePath) && !string.IsNullOrEmpty(gameBuild.ExecutableFileName))
             {
                 string executableS3Path = BuildStoragePath(gameBuild.ExecutableRelativePath, gameBuild.ExecutableFileName);
                 var buildIdString = gameBuild.Id.ToString();
@@ -50,7 +53,7 @@ namespace Application.Games.Builds.Mappers
             return new ApplicationGameBuild(
                 gameBuild.Id,
                 gameBuild.VersionName,
-                BuildStoragePath(gameBuild.ManifestRelativePath!, gameBuild.ManifestFileName!),
+                manifestStoragePath,
                 pathAfterBuild,
                 isReleaseBuild,
                 gameBuild.Status,
@@ -66,9 +69,20 @@ namespace Application.Games.Builds.Mappers
                 isReleaseBuild);
         }
 
+        public ApplicationFileInfo ToApplicationFileInfo(GameBuildFile gameBuildFile)
+        {
+            return new ApplicationFileInfo(
+                gameBuildFile.Id,
+                gameBuildFile.GameBuildId,
+                BuildStoragePath(gameBuildFile.FileRelativePath, gameBuildFile.FileName),
+                gameBuildFile.FileSize,
+                gameBuildFile.Hash,
+                gameBuildFile.HashAlgorithm);
+        }
+
         string BuildStoragePath(params string[] values)
         {
-            return string.Join("/", values);
+            return string.Join("/", values.Select(v => v.Replace('\\', '/')));
         }
     }
 }

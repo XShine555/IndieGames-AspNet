@@ -67,7 +67,7 @@ namespace Infrastructure.Messaging.Features.Games.Activities
 
                 var gameBuildFiles = buildFiles.Select(file => new GameBuildFile
                 {
-                    Id = Guid.NewGuid(),
+                    Id = file.FileId,
                     GameBuildId = gameBuild.Id,
                     FileRelativePath = file.FileRelativePath,
                     FileName = file.FileName,
