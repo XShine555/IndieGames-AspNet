@@ -7,6 +7,8 @@ namespace Application.Users.Responses
         Guid Id,
         string Title,
         string Description,
+        decimal Price,
+        decimal Discount,
         IReadOnlyCollection<ApplicationGenre> Genres,
         IReadOnlyCollection<ApplicationGamePicture> Pictures,
         IReadOnlyCollection<ApplicationGameArtwork> Artworks);
