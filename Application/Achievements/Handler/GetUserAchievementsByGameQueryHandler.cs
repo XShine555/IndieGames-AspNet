@@ -13,23 +13,25 @@ namespace Application.Achievements.Handler
     {
         public async ValueTask<IReadOnlyList<ApplicationUserAchievement>> Handle(GetUserAchievementsByGameQuery query, CancellationToken cancellationToken)
         {
-            var items = await database.Achievements
+            var achievements = await database.Achievements
                 .AsNoTracking()
                 .Where(a => a.GameId == query.GameId && a.IsPublished)
                 .Include(a => a.AchievementPicture)
-                .GroupJoin(
-                    database.UserAchievements.Where(ua => ua.UserId == query.UserId),
-                    a => a.Id,
-                    ua => ua.AchievementId,
-                    (achievement, userAchievements) => new
-                    {
-                        Achievement = achievement,
-                        UserAchievement = userAchievements.FirstOrDefault()
-                    })
                 .ToListAsync(cancellationToken);
 
-            return items
-                .Select(x => achievementMapper.ToApplicationUserAchievement(x.Achievement, x.UserAchievement))
+            var userAchievements = await database.UserAchievements
+                .AsNoTracking()
+                .Where(ua => ua.UserId == query.UserId && achievements.Select(a => a.Id).Contains(ua.AchievementId))
+                .ToListAsync(cancellationToken);
+
+            var userAchievementsMap = userAchievements.ToDictionary(ua => ua.AchievementId);
+
+            return achievements
+                .Select(a =>
+                {
+                    userAchievementsMap.TryGetValue(a.Id, out var userAchievement);
+                    return achievementMapper.ToApplicationUserAchievement(a, userAchievement);
+                })
                 .ToList();
         }
     }
