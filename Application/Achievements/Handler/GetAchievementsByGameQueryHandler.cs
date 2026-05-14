@@ -19,8 +19,7 @@ namespace Application.Achievements.Handler
         {
             var baseQuery = database.Achievements
                 .AsNoTracking()
-                .Where(a => a.GameId == query.GameId)
-                .Where(a => a.IsPublished)
+                .Where(a => a.GameId == query.GameId && a.IsPublished)
                 .OrderBy(a => a.Name)
                 .Select(a => new ApplicationAchievement(
                     a.Id,

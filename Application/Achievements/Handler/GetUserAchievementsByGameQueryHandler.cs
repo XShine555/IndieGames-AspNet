@@ -21,11 +21,16 @@ namespace Application.Achievements.Handler
                     database.UserAchievements.Where(ua => ua.UserId == query.UserId),
                     a => a.Id,
                     ua => ua.AchievementId,
-                    (achievement, userAchievements) => new { Achievement = achievement, UserAchievement = userAchievements.SingleOrDefault() } )
-                .Select(x => achievementMapper.ToApplicationUserAchievement(x.Achievement, x.UserAchievement))
+                    (achievement, userAchievements) => new
+                    {
+                        Achievement = achievement,
+                        UserAchievement = userAchievements.FirstOrDefault()
+                    })
                 .ToListAsync(cancellationToken);
 
-            return items;
+            return items
+                .Select(x => achievementMapper.ToApplicationUserAchievement(x.Achievement, x.UserAchievement))
+                .ToList();
         }
     }
 }
