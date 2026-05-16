@@ -51,22 +51,16 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 artwork.SmallFileName = Path.GetFileName(smallResizedVariable);
                 artwork.SmallContentType = MimeUtility.GetMimeMapping(smallResizedVariable);
                 artwork.SmallRelativePath = executeContext.Arguments.SmallRelativePath;
-                artwork.SmallWidth = executeContext.Arguments.SmallWidth;
-                artwork.SmallHeight = executeContext.Arguments.SmallHeight;
                 artwork.SmallFileSizeInBytes = new FileInfo(smallResizedVariable).Length;
 
                 artwork.MediumFileName = Path.GetFileName(mediumResizedVariable);
                 artwork.MediumContentType = MimeUtility.GetMimeMapping(mediumResizedVariable);
                 artwork.MediumRelativePath = executeContext.Arguments.MediumRelativePath;
-                artwork.MediumWidth = executeContext.Arguments.MediumWidth;
-                artwork.MediumHeight = executeContext.Arguments.MediumHeight;
                 artwork.MediumFileSizeInBytes = new FileInfo(mediumResizedVariable).Length;
 
                 artwork.LargeFileName = Path.GetFileName(largeResizedVariable);
                 artwork.LargeContentType = MimeUtility.GetMimeMapping(largeResizedVariable);
                 artwork.LargeRelativePath = executeContext.Arguments.LargeRelativePath;
-                artwork.LargeWidth = executeContext.Arguments.LargeWidth;
-                artwork.LargeHeight = executeContext.Arguments.LargeHeight;
                 artwork.LargeFileSizeInBytes = new FileInfo(largeResizedVariable).Length;
 
                 artwork.ProcessingStatus = Domain.Entities.GameArtworkProcessingStatus.Completed;
@@ -74,24 +68,6 @@ namespace Infrastructure.Messaging.Features.Games.Activities
                 artwork.UpdatedAt = DateTime.UtcNow;
 
                 await database.SaveChangesAsync(executeContext.CancellationToken);
-
-                var hasPendingArtwork = await database.GameArtworks
-                    .AsNoTracking()
-                    .AnyAsync(
-                        x => x.GameId == artwork.GameId && x.ProcessingStatus != Domain.Entities.GameArtworkProcessingStatus.Completed,
-                        executeContext.CancellationToken);
-
-                if (!hasPendingArtwork)
-                {
-                    var game = await database.Games
-                        .SingleOrDefaultAsync(x => x.Id == artwork.GameId, executeContext.CancellationToken);
-
-                    if (game is not null && game.StoreReadinessStatus != Domain.Entities.GameStoreReadinessStatus.ReadyForStore)
-                    {
-                        game.StoreReadinessStatus = Domain.Entities.GameStoreReadinessStatus.ReadyForStore;
-                        await database.SaveChangesAsync(executeContext.CancellationToken);
-                    }
-                }
 
                 logger.LogDebug("Synchronized generated variants for artwork {ArtworkId}", artwork.Id);
                 logger.LogInformation("Synchronize game artwork activity completed for artwork {ArtworkId}", artwork.Id);

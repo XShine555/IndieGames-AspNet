@@ -3,7 +3,6 @@ using Infrastructure.Messaging.Configuration;
 using Infrastructure.Messaging.Consumers;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
-using Infrastructure.Messaging.Features.Games.Activities;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Users.Activities;
 using Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProcessing.Arguments;
@@ -28,7 +27,7 @@ namespace Infrastructure.Messaging.Features.Users.Workflows.ProfilePictureProces
 
             builder.AddActivity(
                 UserProfilePictureActivityNames.GeneratePictureWorkflowPaths,
-                EndpointHelper.BuildExecuteActivityUri(GeneratePictureWorkflowPathsActivity.ExecuteEndpointName),
+                EndpointHelper.BuildExecuteActivityUri(GenerateUserProfilePictureWorkflowPathsActivity.ExecuteEndpointName),
                 new GeneratePictureWorkflowPathsArguments(
                     workerConfiguration.Routes.TemporaryFilesDirectory,
                     @event.SourceKey));

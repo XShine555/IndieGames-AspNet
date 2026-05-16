@@ -1,10 +1,11 @@
 using Application.Abstractions.Persistence;
 using Domain.Entities;
+using Domain.Games.Entities;
+using Domain.Games.Enums;
 using Domain.JobTracking;
 using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 namespace Infrastructure.Persistence
 {
@@ -29,13 +30,23 @@ namespace Infrastructure.Persistence
 
         public DbSet<GameStorePictures> GamePictures => Set<GameStorePictures>();
 
-        public DbSet<UserProfilePictures> UserProfilePictures => Set<UserProfilePictures>();
+        public DbSet<UserProfilePicture> UserProfilePictures => Set<UserProfilePicture>();
 
         public DbSet<GameArtwork> GameArtworks => Set<GameArtwork>();
 
         public DbSet<JobTracking> JobTrackings => Set<JobTracking>();
 
         public DbSet<JobTrackingStep> JobTrackingSteps => Set<JobTrackingStep>();
+
+        public DbSet<GameBuild> GameBuilds => Set<GameBuild>();
+
+        public DbSet<GameBuildFile> GameBuildFiles => Set<GameBuildFile>();
+
+        public DbSet<Achievement> Achievements => Set<Achievement>();
+
+        public DbSet<AchievementPicture> AchievementPictures => Set<AchievementPicture>();
+
+        public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,7 +55,7 @@ namespace Infrastructure.Persistence
                 npgsqlOptions.MapEnum<GameArtworkType>();
                 npgsqlOptions.MapEnum<GameArtworkProcessingStatus>();
                 npgsqlOptions.MapEnum<GamePictureProcessingStatus>();
-                npgsqlOptions.MapEnum<GameStoreReadinessStatus>();
+                npgsqlOptions.MapEnum<GameBuildStatus>();
                 npgsqlOptions.MapEnum<JobTrackingStatus>();
                 npgsqlOptions.MapEnum<JobTrackingType>();
             } );
@@ -56,7 +67,7 @@ namespace Infrastructure.Persistence
             modelBuilder.HasPostgresEnum<GameArtworkType>();
             modelBuilder.HasPostgresEnum<GameArtworkProcessingStatus>();
             modelBuilder.HasPostgresEnum<GamePictureProcessingStatus>();
-            modelBuilder.HasPostgresEnum<GameStoreReadinessStatus>();
+            modelBuilder.HasPostgresEnum<GameBuildStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingStatus>();
             modelBuilder.HasPostgresEnum<JobTrackingType>();
 
@@ -65,12 +76,12 @@ namespace Infrastructure.Persistence
                 u.HasIndex(x => x.IdentityId).IsUnique();
             } );
 
-            modelBuilder.Entity<UserProfilePictures>(p =>
+            modelBuilder.Entity<UserProfilePicture>(p =>
             {
                 p.HasIndex(x => x.UserId).IsUnique();
                 p.HasOne(x => x.User)
                     .WithOne(x => x.ProfilePicture)
-                    .HasForeignKey<UserProfilePictures>(x => x.UserId)
+                    .HasForeignKey<UserProfilePicture>(x => x.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             } );
 
@@ -149,6 +160,54 @@ namespace Infrastructure.Persistence
 
                 a.Property(x => x.ProcessingError)
                     .HasMaxLength(512);
+            } );
+
+            modelBuilder.Entity<GameBuild>(build =>
+            {
+                build.HasOne(x => x.Game)
+                    .WithMany(x => x.Builds)
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<GameBuildFile>(buildFile =>
+            {
+                buildFile.HasOne(x => x.GameBuild)
+                    .WithMany(x => x.Files)
+                    .HasForeignKey(x => x.GameBuildId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                buildFile.HasIndex(x => x.GameBuildId);
+            } );
+
+            modelBuilder.Entity<Achievement>(achievement =>
+            {
+                achievement.HasOne(x => x.Game)
+                    .WithMany(x => x.Achievements)
+                    .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<AchievementPicture>(picture =>
+            {
+                picture.HasIndex(x => x.AchievementId).IsUnique();
+                picture.HasOne(x => x.Achievement)
+                    .WithOne(x => x.AchievementPicture)
+                    .HasForeignKey<AchievementPicture>(x => x.AchievementId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            } );
+
+            modelBuilder.Entity<UserAchievement>(userAchievement =>
+            {
+                userAchievement.HasOne(x => x.User)
+                    .WithMany(x => x.UserAchievements)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                userAchievement.HasOne(x => x.Achievement)
+                    .WithMany(x => x.UserAchievements)
+                    .HasForeignKey(x => x.AchievementId)
+                    .OnDelete(DeleteBehavior.Cascade);
             } );
         }
     }

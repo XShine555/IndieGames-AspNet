@@ -34,75 +34,44 @@ namespace Domain.Entities
         [MaxLength(16)]
         public required string OriginalExtension { get; set; }
 
-        [Required]
         [MaxLength(256)]
-        public string SmallRelativePath { get; set; } = string.Empty;
+        public string? SmallRelativePath { get; set; }
 
-        [Required]
         [MaxLength(128)]
-        public string SmallFileName { get; set; } = string.Empty;
+        public string? SmallFileName { get; set; }
 
-        [Required]
         [MaxLength(32)]
-        public string SmallContentType { get; set; } = string.Empty;
+        public string? SmallContentType { get; set; }
 
-        [Required]
-        public int SmallWidth { get; set; }
+        public long SmallFileSizeInBytes { get; set; } = 0;
 
-        [Required]
-        public int SmallHeight { get; set; }
-
-        [Required]
-        public long SmallFileSizeInBytes { get; set; }
-
-        [Required]
         [MaxLength(256)]
-        public string MediumRelativePath { get; set; } = string.Empty;
+        public string? MediumRelativePath { get; set; }
 
-        [Required]
         [MaxLength(128)]
-        public string MediumFileName { get; set; } = string.Empty;
+        public string? MediumFileName { get; set; }
 
-        [Required]
         [MaxLength(32)]
-        public string MediumContentType { get; set; } = string.Empty;
+        public string? MediumContentType { get; set; }
 
-        [Required]
-        public int MediumWidth { get; set; }
+        public long MediumFileSizeInBytes { get; set; } = 0;
 
-        [Required]
-        public int MediumHeight { get; set; }
-
-        [Required]
-        public long MediumFileSizeInBytes { get; set; }
-
-        [Required]
         [MaxLength(256)]
-        public string LargeRelativePath { get; set; } = string.Empty;
+        public string? LargeRelativePath { get; set; }
 
-        [Required]
         [MaxLength(128)]
-        public string LargeFileName { get; set; } = string.Empty;
+        public string? LargeFileName { get; set; }
 
-        [Required]
         [MaxLength(32)]
-        public string LargeContentType { get; set; } = string.Empty;
+        public string? LargeContentType { get; set; }
 
-        [Required]
-        public int LargeWidth { get; set; }
-
-        [Required]
-        public int LargeHeight { get; set; }
-
-        [Required]
-        public long LargeFileSizeInBytes { get; set; }
+        public long LargeFileSizeInBytes { get; set; } = 0;
 
         [Required]
         public GameArtworkProcessingStatus ProcessingStatus { get; set; } = GameArtworkProcessingStatus.Pending;
 
-        [Required]
         [MaxLength(512)]
-        public string ProcessingError { get; set; } = string.Empty;
+        public string ProcessingError { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

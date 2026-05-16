@@ -5,7 +5,7 @@ using Application.Users.Responses;
 using Domain.Entities;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace Application.Users.Handlers
 {
@@ -19,24 +19,9 @@ namespace Application.Users.Handlers
                 .Where(c => c.UserId == query.UserId);
 
             var totalCount = await baseQuery.CountAsync(cancellationToken);
-            var pageInfo = new StaticPagedList<Guid>(Array.Empty<Guid>(), query.PageNumber, query.PageSize, totalCount);
-
-            if (totalCount == 0)
-            {
-                return new PaginatedApplicationResponse<ApplicationUserCollectionListItem>(
-                    Array.Empty<ApplicationUserCollectionListItem>(),
-                    pageInfo.PageNumber,
-                    pageInfo.PageSize,
-                    pageInfo.PageCount,
-                    pageInfo.TotalItemCount,
-                    pageInfo.HasNextPage,
-                    pageInfo.HasPreviousPage);
-            }
 
             var collectionRows = await baseQuery
                 .OrderBy(c => c.Name)
-                .Skip((query.PageNumber - 1) * query.PageSize)
-                .Take(query.PageSize)
                 .Select(c => new CollectionRow(
                     c,
                     c.Items.Count,
@@ -46,7 +31,7 @@ namespace Application.Users.Handlers
                         .Take(4)
                         .Select(i => i.Game.Artworks
                             .Where(a => a.Type == GameArtworkType.Main)
-                            .Select(p => p.SmallRelativePath)
+                            .Select(p => p.SmallRelativePath!)
                             .First())
                         .ToArray()))
                 .ToArrayAsync(cancellationToken);
@@ -63,14 +48,8 @@ namespace Application.Users.Handlers
                     row.PreviewSmallKeys);
             }
 
-            return new PaginatedApplicationResponse<ApplicationUserCollectionListItem>(
-                collections,
-                pageInfo.PageNumber,
-                pageInfo.PageSize,
-                pageInfo.PageCount,
-                pageInfo.TotalItemCount,
-                pageInfo.HasNextPage,
-                pageInfo.HasPreviousPage);
+            var pagedList = collections.ToPagedList(query.PageNumber, query.PageSize, totalCount);
+            return PaginatedApplicationResponse<ApplicationUserCollectionListItem>.FromPagedList(pagedList);
         }
 
         private record CollectionRow(

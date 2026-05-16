@@ -1,0 +1,46 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Domain.Entities
+{
+#pragma warning disable CS8618
+    [Table("Achievements")]
+    [Index(nameof(GameId), nameof(NormalizedName), IsUnique = true)]
+    public class Achievement
+    {
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        public required Guid GameId { get; set; }
+
+        [Required]
+        [MaxLength(64)]
+        public required string Name { get; set; }
+
+        [Required]
+        [MaxLength(64)]
+        public required string NormalizedName { get; set; }
+
+        [Required]
+        [MaxLength(256)]
+        public required string Description { get; set; }
+
+        [Required]
+        public bool IsPublished { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Required]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [ForeignKey(nameof(GameId)) ]
+        public Game Game { get; set; }
+
+        public ICollection<UserAchievement> UserAchievements { get; set; } = new List<UserAchievement>();
+
+        public AchievementPicture AchievementPicture { get; set; }
+    }
+}

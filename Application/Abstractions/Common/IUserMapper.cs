@@ -1,5 +1,7 @@
+using Application.Games.Catalog.Responses;
 using Application.Users.Responses;
 using Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Application.Abstractions.Common
 {
@@ -7,7 +9,13 @@ namespace Application.Abstractions.Common
     {
         ApplicationUser ToApplicationUser(User user);
 
-        ApplicationUserPicture ToApplicationUserPicture(UserProfilePictures profilePicture);
+        ApplicationBasicUser ToApplicationBasicUser(User user);
+
+        ApplicationUserPicture ToApplicationUserPicture(UserProfilePicture profilePicture);
+
+        Expression<Func<UserProfilePicture, ApplicationUserPicture>> ToApplicationUserPictureExpression();
+
+        Expression<Func<User, ApplicationUserListItem>> ToApplicationUserListItemExpression();
 
         ApplicationUserMutation ToApplicationUserMutation(User user);
 
@@ -19,5 +27,9 @@ namespace Application.Abstractions.Common
             UserGameCollection collection,
             int gamesCount,
             string[]? previewSmallPictureKeys);
+
+        ApplicationUserCollectionDetails ToApplicationUserCollectionDetails(
+            UserGameCollection collection,
+            IReadOnlyCollection<ApplicationGame> games);
     }
 }

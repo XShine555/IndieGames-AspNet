@@ -1,4 +1,4 @@
-﻿using Application.Games.Responses;
+﻿using Domain.Users.Enums;
 
 namespace Application.Users.Responses
 {
@@ -6,6 +6,7 @@ namespace Application.Users.Responses
         Guid IdentityId,
         string Username,
         string DisplayUsername,
+        UserRole Role,
         ApplicationUserPicture ProfilePicture,
         ICollection<ApplicationUserGame> CreatedGames,
         ICollection<ApplicationUserGame> OwnedGames,

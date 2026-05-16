@@ -1,6 +1,9 @@
 ﻿using Application.Abstractions.Common;
+using Application.Achievements.Mappers;
 using Application.Genres.Mappers;
-using Application.Games.Mappers;
+using Application.Games.Builds.Mappers;
+using Application.Games.Catalog.Mappers;
+using Application.Games.Media.Mappers;
 using Application.Users.Mappers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,9 +29,19 @@ namespace Application.Configuration
             serviceDescriptors.AddSingleton(serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<UserConfiguration>>().Value);
 
-            serviceDescriptors.AddScoped<IGameMapper, GameMapper>();
+            serviceDescriptors
+                .AddOptionsWithValidateOnStart<AchievementsConfiguration>()
+                .Bind(configuration.GetRequiredSection(AchievementsConfiguration.SectionName))
+                .ValidateDataAnnotations();
+            serviceDescriptors.AddSingleton(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<AchievementsConfiguration>>().Value);
+
+            serviceDescriptors.AddScoped<IGameCatalogMapper, GameCatalogMapper>();
+            serviceDescriptors.AddScoped<IGameMediaMapper, GameMediaMapper>();
+            serviceDescriptors.AddScoped<IGameBuildMapper, GameBuildMapper>();
             serviceDescriptors.AddScoped<IGenreMapper, GenreMapper>();
             serviceDescriptors.AddScoped<IUserMapper, UserMapper>();
+            serviceDescriptors.AddScoped<IAchievementMapper, AchievementMapper>();
             serviceDescriptors.AddMediator();
             return serviceDescriptors;
         }

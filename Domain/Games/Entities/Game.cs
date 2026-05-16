@@ -1,4 +1,5 @@
 using Domain.Contracts;
+using Domain.Games.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -40,6 +41,8 @@ namespace Domain.Entities
         [Required]
         public bool IsPublished { get; set; }
 
+        public Guid? ReleaseGameBuildId { get; set; }
+
         public ICollection<GameStorePictures> StorePictures { get; set; } = new List<GameStorePictures>();
 
         public ICollection<GameArtwork> Artworks { get; set; } = new List<GameArtwork>();
@@ -54,8 +57,9 @@ namespace Domain.Entities
 
         public ICollection<UserCartItem> CartItems { get; set; } = new List<UserCartItem>();
 
-        [Required]
-        public GameStoreReadinessStatus StoreReadinessStatus { get; set; } = GameStoreReadinessStatus.NotReadyForStore;
+        public ICollection<GameBuild> Builds { get; set; } = new List<GameBuild>();
+
+        public ICollection<Achievement> Achievements { get; set; } = new List<Achievement>();
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -65,5 +69,8 @@ namespace Domain.Entities
 
         [ForeignKey(nameof(OwnerId)) ]
         public User Owner { get; set; }
+
+        [ForeignKey(nameof(ReleaseGameBuildId)) ]
+        public GameBuild? ReleaseGameBuild { get; set; }
     }
 }

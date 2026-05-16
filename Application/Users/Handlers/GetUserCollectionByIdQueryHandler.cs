@@ -10,7 +10,8 @@ namespace Application.Users.Handlers
 {
     public class GetUserCollectionByIdQueryHandler(
         IDatabase database,
-        IGameMapper gameMapper)
+        IUserMapper userMapper,
+        IGameCatalogMapper gameCatalogMapper)
         : IQueryHandler<GetUserCollectionByIdQuery, Result<ApplicationUserCollectionDetails>>
     {
         public async ValueTask<Result<ApplicationUserCollectionDetails>> Handle(GetUserCollectionByIdQuery query, CancellationToken cancellationToken)
@@ -37,15 +38,10 @@ namespace Application.Users.Handlers
 
             var games = collection.Items
                 .OrderBy(item => item.AddedAt)
-                .Select(item => gameMapper.ToApplicationGame(item.Game))
+                .Select(item => gameCatalogMapper.ToApplicationGame(item.Game))
                 .ToArray();
 
-            return Result.Success(new ApplicationUserCollectionDetails(
-                collection.Id,
-                collection.Name,
-                games,
-                collection.CreatedAt,
-                collection.UpdatedAt));
+            return Result.Success(userMapper.ToApplicationUserCollectionDetails(collection, games));
         }
     }
 }

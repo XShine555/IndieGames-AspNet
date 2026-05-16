@@ -1,10 +1,13 @@
 ﻿using Amazon;
 using Amazon.S3;
+using Application.Abstractions.Payment;
 using Application.Abstractions.Storage;
 using Infrastructure.Configurations;
+using Infrastructure.Services.Stripe;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Stripe;
 
 namespace Infrastructure.Services
 {
@@ -37,6 +40,23 @@ namespace Infrastructure.Services
         public static IServiceCollection AddPictureService(this IServiceCollection services)
         {
             services.AddScoped<IPictureService, PictureService>();
+            return services;
+        }
+
+        public static IServiceCollection AddStripeService(this IServiceCollection services, IConfiguration configuration)
+        {
+            services
+                .AddOptionsWithValidateOnStart<StripeSettings>()
+                .Bind(configuration.GetRequiredSection(StripeSettings.SectionName))
+                .ValidateDataAnnotations();
+
+            services.AddSingleton(sp =>
+                sp.GetRequiredService<IOptions<StripeSettings>>().Value);
+
+            services.AddSingleton<IStripeClient>(sp =>
+                new StripeClient(sp.GetRequiredService<StripeSettings>().SecretKey));
+
+            services.AddScoped<IStripeService, StripeService>();
             return services;
         }
     }

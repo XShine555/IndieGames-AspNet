@@ -2,6 +2,12 @@ using Amazon.Runtime;
 using Application.Abstractions.Messaging;
 using Infrastructure.Messaging.Consumers;
 using Infrastructure.Messaging.EventBus;
+using Infrastructure.Messaging.Features.Achievements.Activities;
+using Infrastructure.Messaging.Features.Achievements.Consumers;
+using Infrastructure.Messaging.Features.Achievements.Registrations;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Builders;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Arguments;
+using Infrastructure.Messaging.Features.Achievements.Workflows.AchievementPictureProcessing.Logs;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Common.Registrations;
@@ -10,6 +16,10 @@ using Infrastructure.Messaging.Features.Games.Consumers;
 using Infrastructure.Messaging.Features.Games.Registrations;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.ArtworkProcessing.Builders;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildProcessing.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildProcessing.Builders;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildRemoval.Arguments;
+using Infrastructure.Messaging.Features.Games.Workflows.BuildRemoval.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
@@ -69,12 +79,16 @@ namespace Infrastructure.Messaging.Configuration
 
             serviceDescriptors.AddScoped<GameStorePictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<GameArtworkWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<GameBuildWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<GameBuildRemovalWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddScoped<UserProfilePictureWorkflowRoutingSlipBuilder>();
+            serviceDescriptors.AddScoped<AchievementPictureWorkflowRoutingSlipBuilder>();
             serviceDescriptors.AddMassTransit(options =>
             {
                 options.AddCommonMessaging();
                 options.AddGamesMessaging();
                 options.AddUsersMessaging();
+                options.AddAchievementsMessaging();
 
                 options.UsingAmazonSqs((busRegistrationContext, busFactoryConfigurator) =>
                 {
@@ -114,11 +128,32 @@ namespace Infrastructure.Messaging.Configuration
                 } );
 
             busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(GenerateAchievementsPicturesConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<GenerateAchievementsPicturesConsumer>(busRegistrationContext);
+                } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
                 EndpointHelper.BuildConsumerEndpointName(ProcessNewGameArtworkConsumer.EndpointName),
                 endpointConfigurator =>
                 {
                     endpointConfigurator.ConfigureConsumer<ProcessNewGameArtworkConsumer>(busRegistrationContext);
                 } );
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(ProcessGameBuildFilesConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<ProcessGameBuildFilesConsumer>(busRegistrationContext);
+                });
+
+            busFactoryConfigurator.ReceiveEndpoint(
+                EndpointHelper.BuildConsumerEndpointName(RemoveGameBuildConsumer.EndpointName),
+                endpointConfigurator =>
+                {
+                    endpointConfigurator.ConfigureConsumer<RemoveGameBuildConsumer>(busRegistrationContext);
+                });
 
             ConfigureExecuteActivityEndpoint<GeneratePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
                 busFactoryConfigurator,
@@ -134,6 +169,21 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 GenerateGameArtworkWorkflowPathsActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<GenerateGameBuildManifestActivity, GenerateGameBuildManifestArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateGameBuildManifestActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<GenerateUserProfilePictureWorkflowPathsActivity, GeneratePictureWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateUserProfilePictureWorkflowPathsActivity.ExecuteEndpointName);
+
+            ConfigureActivityEndpoint<ProcessAchievementPictureActivity, ProcessAchievementPictureArguments, ProcessAchievementPictureLog>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                ProcessAchievementPictureActivity.ExecuteEndpointName);
 
             ConfigureActivityEndpoint<DownloadFileFromBucketActivity, DownloadFileFromBucketArguments, DownloadFileFromBucketLog>(
                 busFactoryConfigurator,
@@ -164,6 +214,31 @@ namespace Infrastructure.Messaging.Configuration
                 busFactoryConfigurator,
                 busRegistrationContext,
                 SynchronizeUserProfilePicturesActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<SynchronizeGameBuildFilesActivity, SynchronizeGameBuildFilesArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                SynchronizeGameBuildFilesActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<RemoveGameBuildFilesFromStorageActivity, RemoveGameBuildFilesFromStorageArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                RemoveGameBuildFilesFromStorageActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<RemoveGameBuildFromDatabaseActivity, RemoveGameBuildFromDatabaseArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                RemoveGameBuildFromDatabaseActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<GenerateAchievementPictureWorkflowPathsActivity, GenerateAchievementPictureWorkflowPathsArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                GenerateAchievementPictureWorkflowPathsActivity.ExecuteEndpointName);
+
+            ConfigureExecuteActivityEndpoint<SynchronizeAchievementPicturesActivity, SynchronizeAchievementPicturesArguments>(
+                busFactoryConfigurator,
+                busRegistrationContext,
+                SynchronizeAchievementPicturesActivity.ExecuteEndpointName);
         }
 
         private static void ConfigureAmazonSqsHost(

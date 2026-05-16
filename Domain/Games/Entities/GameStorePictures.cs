@@ -28,34 +28,34 @@ namespace Domain.Entities
         [MaxLength(128)]
         public string? SmallRelativePath { get; set; }
 
-        [MaxLength(36)]
+        [MaxLength(48)]
         public string? SmallName { get; set; }
 
-        [MaxLength(16)]
+        [MaxLength(32)]
         public string? SmallFileContentType { get; set; }
 
         [MaxLength(128)]
         public string? MediumRelativePath { get; set; }
 
-        [MaxLength(36)]
+        [MaxLength(48)]
         public string? MediumName { get; set; }
 
-        [MaxLength(16)]
+        [MaxLength(32)]
         public string? MediumFileContentType { get; set; }
 
         [MaxLength(128)]
         public string? LargeRelativePath { get; set; }
 
-        [MaxLength(36)]
+        [MaxLength(48)]
         public string? LargeName { get; set; }
 
-        [MaxLength(16)]
+        [MaxLength(32)]
         public string? LargeContentType { get; set; }
 
         [Required]
         public GamePictureProcessingStatus ProcessingStatus { get; set; } = GamePictureProcessingStatus.Pending;
 
-        [ForeignKey(nameof(GameId))]
+        [ForeignKey(nameof(GameId)) ]
         public Game Game { get; set; }
 
         [Required]

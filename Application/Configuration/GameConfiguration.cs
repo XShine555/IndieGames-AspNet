@@ -35,6 +35,8 @@ namespace Application.Configuration
 
         public string LargeArtworkFolderName { get; set; } = "Large";
 
+        public string GameBuildsFolderName { get; set; } = "Builds";
+
         public string GetStorePictureFolderPath(Guid gameId)
         {
             return $"{ParentFolder}/{gameId}/{StorePicturesFolderName}";
@@ -58,6 +60,16 @@ namespace Application.Configuration
         public string BuildStorePicturePath(Guid gameId, string pictureKey)
         {
             return $"{GetStorePictureFolderPath(gameId) }/{pictureKey}";
+        }
+
+        public string BuildGameBuildPath(Guid gameId, Guid buildId)
+        {
+            return $"{ParentFolder}/{gameId}/{GameBuildsFolderName}/{buildId}";
+        }
+
+        public string BuildGameBuildFilePath(Guid gameId, Guid buildId, string fileName)
+        {
+            return $"{BuildGameBuildPath(gameId, buildId) }/{fileName}";
         }
 
         public string GetOriginalArtworkFolderPath(Guid gameId, GameArtworkType artworkType)

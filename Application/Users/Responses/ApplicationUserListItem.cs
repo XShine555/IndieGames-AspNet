@@ -4,7 +4,7 @@ namespace Application.Users.Responses
         Guid IdentityId,
         string Username,
         string DisplayUsername,
-        ApplicationUserPicture? ProfilePicture,
+        ApplicationUserPicture ProfilePicture,
         int CreatedGamesCount,
         int OwnedGamesCount,
         DateTime CreatedAt,

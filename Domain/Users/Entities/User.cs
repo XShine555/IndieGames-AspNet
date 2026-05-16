@@ -33,7 +33,7 @@ namespace Domain.Entities
         [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        public UserProfilePictures ProfilePicture { get; set; }
+        public UserProfilePicture ProfilePicture { get; set; }
 
         public ICollection<Game> CreatedGames { get; set; } = new List<Game>();
 
@@ -42,5 +42,7 @@ namespace Domain.Entities
         public ICollection<UserGameCollection> GamesCollections { get; set; } = new List<UserGameCollection>();
 
         public ICollection<UserCartItem> CartItems { get; set; } = new List<UserCartItem>();
+
+        public ICollection<UserAchievement> UserAchievements { get; set; } = new List<UserAchievement>();
     }
 }

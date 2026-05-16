@@ -1,4 +1,4 @@
-using Application.Games.Responses;
+using Application.Games.Media.Responses;
 using Application.Genres.Responses;
 
 namespace Application.Users.Responses

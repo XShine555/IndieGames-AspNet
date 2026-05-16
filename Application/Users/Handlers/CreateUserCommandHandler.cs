@@ -33,7 +33,7 @@ namespace Application.Users.Handlers
                 Username = command.Username,
                 DisplayUsername = command.Username,
                 NormalizedDisplayUsername = command.Username.Trim().ToUpperInvariant(),
-                ProfilePicture = new UserProfilePictures
+                ProfilePicture = new UserProfilePicture
                 {
                     UserId = command.IdentityId,
                     SmallRelativePath = userConfiguration.Routes.GetSmallProfilePicturesFolderPath(command.IdentityId),

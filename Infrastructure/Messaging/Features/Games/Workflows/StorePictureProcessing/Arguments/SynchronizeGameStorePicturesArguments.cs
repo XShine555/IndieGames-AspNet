@@ -4,5 +4,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
         Guid PictureId,
         string SmallPictureVariable,
         string MediumPictureVariable,
-        string LargePictureVariable);
+        string LargePictureVariable,
+        string SmallRelativePath,
+        string MediumRelativePath,
+        string LargeRelativePath);
 }

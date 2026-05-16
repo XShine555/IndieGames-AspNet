@@ -93,7 +93,10 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                     @event.PictureId,
                     GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath,
                     GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath,
-                    GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath));
+                    GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath,
+                    @event.SmallDestinationRoute,
+                    @event.MediumDestinationRoute,
+                    @event.LargeDestinationRoute));
 
             return builder;
         }
