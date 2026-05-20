@@ -19,6 +19,7 @@ namespace Application.Games.Media.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameMediaMapper gameMediaMapper,
+        IPictureService pictureService,
         ILogger<AddStorePictureToGameCommandHandler> logger,
         GameConfiguration gameConfiguration)
         : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGamePicture>>
@@ -37,6 +38,7 @@ namespace Application.Games.Media.Handlers
             }
 
             var game = gameResult.Value;
+
             var pictureName = Guid.NewGuid() + command.fileData.FileExtension;
             var pictureKey = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureName);
 

@@ -20,6 +20,7 @@ namespace Application.Games.Catalog.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameCatalogMapper gameCatalogMapper,
+        IPictureService pictureService,
         GameConfiguration gameConfiguration,
         ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGameMutation>>
@@ -61,6 +62,8 @@ namespace Application.Games.Catalog.Handlers
                 return Result.Invalid(new ValidationError("One or more genres not found."));
             }
 
+            var inputArtworks = GetRequiredArtworks(command);
+
             var game = CreateGameCommand.ToEntity(command, genres);
             game.Owner = owner;
 
@@ -69,7 +72,6 @@ namespace Application.Games.Catalog.Handlers
 
             var uploadedArtworkKeys = new List<string>();
             var artworkRecords = new List<GameArtwork>();
-            var inputArtworks = GetRequiredArtworks(command);
 
             try
             {

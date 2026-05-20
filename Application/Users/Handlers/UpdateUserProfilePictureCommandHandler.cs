@@ -17,6 +17,7 @@ namespace Application.Users.Handlers
         IDatabase database,
         IS3Service s3Service,
         IEventBus eventBus,
+        IPictureService pictureService,
         UserConfiguration userConfiguration,
         ILogger<UpdateUserProfilePictureCommandHandler> logger)
         : ICommandHandler<UpdateUserProfilePictureCommand, Result>

@@ -11,6 +11,13 @@ namespace Infrastructure.Services
             if (pictureStream.CanSeek && pictureStream.Position > 0)
                 pictureStream.Position = 0;
 
+            var format = await Image.DetectFormatAsync(pictureStream, cancellationToken);
+            if (format is null)
+                throw new NotSupportedException("The image format is not supported. Accepted formats: JPEG, PNG, WebP, GIF, BMP, TIFF.");
+
+            if (pictureStream.CanSeek)
+                pictureStream.Position = 0;
+
             using var picture = await Image.LoadAsync(pictureStream, cancellationToken);
             picture.Mutate(options => options.Resize(new ResizeOptions
             {
