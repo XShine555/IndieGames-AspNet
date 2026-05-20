@@ -12,11 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260508160905_ChangesAchievementsCharVars")]
-    partial class ChangesAchievementsCharVars
+    [Migration("20260519234617_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -431,13 +431,13 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("DisplayUsername")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("NormalizedDisplayUsername")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
@@ -447,8 +447,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("IdentityId");
 

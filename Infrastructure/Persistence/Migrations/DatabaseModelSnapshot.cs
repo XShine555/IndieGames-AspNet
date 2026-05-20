@@ -428,13 +428,13 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("DisplayUsername")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("NormalizedDisplayUsername")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
@@ -444,8 +444,8 @@ namespace Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("IdentityId");
 
