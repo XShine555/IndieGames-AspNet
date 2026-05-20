@@ -6,19 +6,6 @@ namespace Infrastructure.Services
 {
     public class PictureService : IPictureService
     {
-        public async Task<bool> IsValidImageFormatAsync(Stream pictureStream, CancellationToken cancellationToken)
-        {
-            if (pictureStream.CanSeek && pictureStream.Position > 0)
-                pictureStream.Position = 0;
-
-            var format = await Image.DetectFormatAsync(pictureStream, cancellationToken);
-
-            if (pictureStream.CanSeek)
-                pictureStream.Position = 0;
-
-            return format is not null;
-        }
-
         public async Task<Stream> ResizePictureAsWebpAsync(Stream pictureStream, Size size, CancellationToken cancellationToken)
         {
             if (pictureStream.CanSeek && pictureStream.Position > 0)

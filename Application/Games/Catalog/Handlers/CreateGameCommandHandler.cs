@@ -20,7 +20,6 @@ namespace Application.Games.Catalog.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameCatalogMapper gameCatalogMapper,
-        IPictureService pictureService,
         GameConfiguration gameConfiguration,
         ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGameMutation>>
@@ -63,11 +62,6 @@ namespace Application.Games.Catalog.Handlers
             }
 
             var inputArtworks = GetRequiredArtworks(command);
-            foreach (var artwork in inputArtworks)
-            {
-                if (!await pictureService.IsValidImageFormatAsync(artwork.FileData.FileStream, cancellationToken))
-                    return Result.Invalid(new ValidationError($"The uploaded file for '{artwork.Type}' is not a supported image format. Accepted formats: JPEG, PNG, WebP, GIF, BMP, TIFF."));
-            }
 
             var game = CreateGameCommand.ToEntity(command, genres);
             game.Owner = owner;

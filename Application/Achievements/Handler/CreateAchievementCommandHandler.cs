@@ -18,7 +18,6 @@ namespace Application.Achievements.Handler
         IDatabase database,
         IS3Service s3Service,
         IEventBus bus,
-        IPictureService pictureService,
         AchievementsConfiguration achievementsConfiguration,
         IAchievementMapper achievementMapper,
         ILogger<CreateAchievementCommandHandler> logger)
@@ -87,9 +86,6 @@ namespace Application.Achievements.Handler
                 NormalizedName = normalizedName,
                 Description = command.Description.Trim()
             };
-
-            if (!await pictureService.IsValidImageFormatAsync(command.Picture.FileStream, cancellationToken))
-                return Result.Invalid(new ValidationError("The uploaded file is not a supported image format. Accepted formats: JPEG, PNG, WebP, GIF, BMP, TIFF."));
 
             var pictureName = Guid.NewGuid() + command.Picture.FileExtension;
             var sourceKey = achievementsConfiguration.Routes.BuildBucketKey(

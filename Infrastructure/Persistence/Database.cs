@@ -3,13 +3,13 @@ using Domain.Entities;
 using Domain.Games.Entities;
 using Domain.Games.Enums;
 using Domain.JobTracking;
-using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Npgsql;
 
 namespace Infrastructure.Persistence
 {
-    public class Database(DatabaseConfiguration databaseConfiguration, SaveChangesInterceptor saveChangesInterceptor)
+    public class Database(SaveChangesInterceptor saveChangesInterceptor, NpgsqlDataSource npgsqlDataSource)
         : DbContext, IDatabase
     {
         public DbSet<User> Users => Set<User>();
@@ -50,7 +50,7 @@ namespace Infrastructure.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString, npgsqlOptions =>
+            optionsBuilder.UseNpgsql(npgsqlDataSource, npgsqlOptions =>
             {
                 npgsqlOptions.MapEnum<GameArtworkType>();
                 npgsqlOptions.MapEnum<GameArtworkProcessingStatus>();
@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence
                 npgsqlOptions.MapEnum<GameBuildStatus>();
                 npgsqlOptions.MapEnum<JobTrackingStatus>();
                 npgsqlOptions.MapEnum<JobTrackingType>();
-            } );
+            });
             optionsBuilder.AddInterceptors(saveChangesInterceptor);
         }
 

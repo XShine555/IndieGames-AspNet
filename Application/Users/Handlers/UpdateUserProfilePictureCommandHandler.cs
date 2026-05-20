@@ -17,7 +17,6 @@ namespace Application.Users.Handlers
         IDatabase database,
         IS3Service s3Service,
         IEventBus eventBus,
-        IPictureService pictureService,
         UserConfiguration userConfiguration,
         ILogger<UpdateUserProfilePictureCommandHandler> logger)
         : ICommandHandler<UpdateUserProfilePictureCommand, Result>
@@ -38,9 +37,6 @@ namespace Application.Users.Handlers
                 logger.LogError("User with ID {UserId} has no profile picture record", command.UserId);
                 return Result.Error("User profile picture record was not found");
             }
-
-            if (!await pictureService.IsValidImageFormatAsync(command.NewPicture.FileStream, cancellationToken))
-                return Result.Invalid(new ValidationError("The uploaded file is not a supported image format. Accepted formats: JPEG, PNG, WebP, GIF, BMP, TIFF."));
 
             var pictureName = Guid.NewGuid() + command.NewPicture.FileExtension;
             var sourceRoute = userConfiguration.Routes.GetProfilePicturesFolderPath(command.UserId);
