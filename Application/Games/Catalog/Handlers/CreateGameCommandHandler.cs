@@ -20,7 +20,6 @@ namespace Application.Games.Catalog.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameCatalogMapper gameCatalogMapper,
-        IPictureService pictureService,
         GameConfiguration gameConfiguration,
         ILogger<CreateGameCommandHandler> logger)
         : ICommandHandler<CreateGameCommand, Result<ApplicationGameMutation>>

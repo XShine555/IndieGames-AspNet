@@ -18,7 +18,6 @@ namespace Application.Achievements.Handler
         IDatabase database,
         IS3Service s3Service,
         IEventBus bus,
-        IPictureService pictureService,
         AchievementsConfiguration achievementsConfiguration,
         IAchievementMapper achievementMapper,
         ILogger<CreateAchievementCommandHandler> logger)

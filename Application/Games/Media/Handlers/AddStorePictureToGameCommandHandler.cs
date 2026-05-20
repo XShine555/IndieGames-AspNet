@@ -19,7 +19,6 @@ namespace Application.Games.Media.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameMediaMapper gameMediaMapper,
-        IPictureService pictureService,
         ILogger<AddStorePictureToGameCommandHandler> logger,
         GameConfiguration gameConfiguration)
         : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGamePicture>>
