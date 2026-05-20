@@ -19,6 +19,7 @@ namespace Application.Games.Media.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameMediaMapper gameMediaMapper,
+        IPictureService pictureService,
         ILogger<AddStorePictureToGameCommandHandler> logger,
         GameConfiguration gameConfiguration)
         : ICommandHandler<AddStorePictureToGameCommand, Result<ApplicationGamePicture>>
@@ -37,6 +38,10 @@ namespace Application.Games.Media.Handlers
             }
 
             var game = gameResult.Value;
+
+            if (!await pictureService.IsValidImageFormatAsync(command.fileData.FileStream, cancellationToken))
+                return Result.Invalid(new ValidationError("The uploaded file is not a supported image format. Accepted formats: JPEG, PNG, WebP, GIF, BMP, TIFF."));
+
             var pictureName = Guid.NewGuid() + command.fileData.FileExtension;
             var pictureKey = gameConfiguration.Routes.BuildStorePicturePath(game.Id, pictureName);
 

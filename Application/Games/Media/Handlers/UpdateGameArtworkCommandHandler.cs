@@ -19,6 +19,7 @@ namespace Application.Games.Media.Handlers
         IS3Service s3Service,
         IEventBus eventBus,
         IGameMediaMapper gameMediaMapper,
+        IPictureService pictureService,
         GameConfiguration gameConfiguration,
         ILogger<UpdateGameArtworkCommandHandler> logger)
         : ICommandHandler<UpdateGameArtworkCommand, Result<ApplicationGameArtwork>>
@@ -60,6 +61,9 @@ namespace Application.Games.Media.Handlers
                     artwork.Type);
                 return Result.Error("Cannot update artwork while another artwork of the same type is being processed or pending");
             }
+
+            if (!await pictureService.IsValidImageFormatAsync(command.FileData.FileStream, cancellationToken))
+                return Result.Invalid(new ValidationError("The uploaded file is not a supported image format. Accepted formats: JPEG, PNG, WebP, GIF, BMP, TIFF."));
 
             var sourceKey = BuildBucketKey(artwork.OriginalRelativePath, artwork.OriginalFileName);
 
