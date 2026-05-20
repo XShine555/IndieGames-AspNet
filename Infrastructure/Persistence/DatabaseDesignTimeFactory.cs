@@ -1,7 +1,10 @@
-﻿using Infrastructure.Configurations;
-using Microsoft.EntityFrameworkCore;
+﻿using Domain.Entities;
+using Domain.Games.Enums;
+using Domain.JobTracking;
+using Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace Infrastructure.Persistence
 {
@@ -20,10 +23,15 @@ namespace Infrastructure.Persistence
                 .Get<DatabaseConfiguration>()
                 ?? throw new InvalidOperationException($"{DatabaseConfiguration.SectionName} configuration section not found.");
 
-            var optionsBuilder = new DbContextOptionsBuilder<Database>();
-            optionsBuilder.UseNpgsql(databaseConfiguration.ConnectionString);
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(databaseConfiguration.ConnectionString);
+            dataSourceBuilder.MapEnum<GameArtworkType>();
+            dataSourceBuilder.MapEnum<GameArtworkProcessingStatus>();
+            dataSourceBuilder.MapEnum<GamePictureProcessingStatus>();
+            dataSourceBuilder.MapEnum<GameBuildStatus>();
+            dataSourceBuilder.MapEnum<JobTrackingStatus>();
+            dataSourceBuilder.MapEnum<JobTrackingType>();
 
-            return new Database(databaseConfiguration, new UpdateTimeStampInterceptor());
+            return new Database(new UpdateTimeStampInterceptor(), dataSourceBuilder.Build());
         }
     }
 }
