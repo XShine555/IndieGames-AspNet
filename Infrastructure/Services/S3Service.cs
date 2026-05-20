@@ -10,22 +10,16 @@ namespace Infrastructure.Services
     public class S3Service(IAmazonS3 amazonS3, S3Configuration s3Configuration)
         : IS3Service
     {
-        public async Task UploadFileAsync(Stream fileStream, string keyName, string contentType, CancellationToken cancellationToken)
+        public Task UploadFileAsync(Stream fileStream, string keyName, string contentType, CancellationToken cancellationToken)
         {
-            // ReferenceReadStream (IFormFile) reports CanSeek=true but throws when the AWS SDK
-            // seeks back to position 0 to compute content-length. Copy to MemoryStream first.
-            MemoryStream buffer = new();
-            await fileStream.CopyToAsync(buffer, cancellationToken);
-            buffer.Position = 0;
-
             var request = new PutObjectRequest
             {
                 BucketName = s3Configuration.BucketName,
                 Key = keyName,
-                InputStream = buffer,
+                InputStream = fileStream,
                 ContentType = contentType,
             };
-            await amazonS3.PutObjectAsync(request, cancellationToken);
+            return amazonS3.PutObjectAsync(request, cancellationToken);
         }
 
         public Task RemoveFileAsync(string keyName, CancellationToken cancellationToken)
