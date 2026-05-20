@@ -13,15 +13,15 @@ namespace Domain.Entities
         public Guid IdentityId { get; set; }
 
         [Required]
-        [MaxLength(24)]
+        [MaxLength(64)]
         public required string Username { get; set; }
 
         [Required]
-        [MaxLength(24)]
+        [MaxLength(64)]
         public required string DisplayUsername { get; set; }
 
         [Required]
-        [MaxLength(24)]
+        [MaxLength(64)]
         public required string NormalizedDisplayUsername { get; set; }
 
         [Required]

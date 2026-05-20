@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Persistence.Migrations
+namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,9 +61,9 @@ namespace Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     IdentityId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Username = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
-                    DisplayUsername = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
-                    NormalizedDisplayUsername = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
+                    Username = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    DisplayUsername = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    NormalizedDisplayUsername = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -157,18 +157,19 @@ namespace Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     AchievementId = table.Column<Guid>(type: "uuid", nullable: false),
-                    OriginalName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    OriginalRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    OriginalContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
-                    SmallRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    SmallName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
-                    SmallFileContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    MediumRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    MediumName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
-                    MediumFileContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    LargeRelativePath = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    LargeName = table.Column<string>(type: "character varying(48)", maxLength: 48, nullable: false),
-                    LargeContentType = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    OriginalName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    OriginalRelativePath = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    OriginalContentType = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    SmallRelativePath = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    SmallName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    SmallFileContentType = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    MediumRelativePath = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    MediumName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    MediumFileContentType = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    LargeRelativePath = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    LargeName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    LargeContentType = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    ProcessingStatus = table.Column<int>(type: "integer", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -185,6 +186,7 @@ namespace Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     NormalizedName = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     Description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    IsPublished = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -276,9 +278,12 @@ namespace Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GameId = table.Column<Guid>(type: "uuid", nullable: false),
                     VersionName = table.Column<string>(type: "text", nullable: false),
-                    manifestRelativePath = table.Column<string>(type: "text", nullable: false),
-                    ManifestFileName = table.Column<string>(type: "text", nullable: false),
-                    manifestContentType = table.Column<string>(type: "text", nullable: false),
+                    ManifestRelativePath = table.Column<string>(type: "text", nullable: true),
+                    ManifestFileName = table.Column<string>(type: "text", nullable: true),
+                    ManifestContentType = table.Column<string>(type: "text", nullable: true),
+                    ExecutableRelativePath = table.Column<string>(type: "text", nullable: true),
+                    ExecutableFileName = table.Column<string>(type: "text", nullable: true),
+                    ExecutableContentType = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<GameBuildStatus>(type: "game_build_status", nullable: false)
                 },
