@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments
 {
     public record ResizePictureLocalArguments(
@@ -5,5 +7,6 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
         string DestinationFilePathVariable,
         int Width,
         int Height,
+        [property: JsonIgnore]
         Func<CancellationToken, Task>? OnError = null);
 }
