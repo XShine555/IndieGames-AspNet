@@ -86,6 +86,8 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
             {
                 await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "Failed to download file from bucket");
+                if (executeContext.Arguments.OnError is not null)
+                    await executeContext.Arguments.OnError(executeContext.CancellationToken);
                 throw;
             }
         }

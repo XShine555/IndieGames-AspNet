@@ -93,6 +93,8 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Pictures
                 await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "An error occurred while resizing the picture from {SourceFilePath} to {DestinationFilePath} with width {Width} and height {Height}.",
                     sourceFilePath, destinationFilePath, executeContext.Arguments.Width, executeContext.Arguments.Height);
+                if (executeContext.Arguments.OnError is not null)
+                    await executeContext.Arguments.OnError(executeContext.CancellationToken);
                 throw;
             }
         }

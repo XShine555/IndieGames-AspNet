@@ -2,5 +2,6 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
 {
     public record DownloadFileFromBucketArguments(
         string Key,
-        string DestinationFilePathVariable);
+        string DestinationFilePathVariable,
+        Func<CancellationToken, Task>? OnError = null);
 }

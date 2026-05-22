@@ -2,5 +2,6 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
 {
     public record UploadFileToBucketArguments(
         string FilePathVariable,
-        string DestinationRoute);
+        string DestinationRoute,
+        Func<CancellationToken, Task>? OnError = null);
 }

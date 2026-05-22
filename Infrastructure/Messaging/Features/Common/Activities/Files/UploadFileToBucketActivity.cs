@@ -58,6 +58,10 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
                 await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "Error uploading file {FilePath} to {Key}",
                     sourceFilePath, executeContext.Arguments.DestinationRoute);
+                if (executeContext.Arguments.OnError is not null)
+                {
+                    await executeContext.Arguments.OnError.Invoke(executeContext.CancellationToken);
+                }
                 throw;
             }
         }

@@ -4,5 +4,6 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
         string SourceFilePathVariable,
         string DestinationFilePathVariable,
         int Width,
-        int Height);
+        int Height,
+        Func<CancellationToken, Task>? OnError = null);
 }
