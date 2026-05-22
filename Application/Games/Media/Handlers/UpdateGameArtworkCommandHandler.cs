@@ -45,7 +45,7 @@ namespace Application.Games.Media.Handlers
                 return Result.Forbidden();
             }
 
-            var anyArtwork = await database.GameArtworks.AnyAsync(a => a.GameId == command.GameId && a.Type == artwork.Type
+            var anyArtwork = await database.GameArtworks.AnyAsync(a => a.GameId == command.GameId && a.Id == command.ArtworkId && a.Type == artwork.Type
             && (
                 a.ProcessingStatus == GameArtworkProcessingStatus.Processing
                 || a.ProcessingStatus == GameArtworkProcessingStatus.Pending
