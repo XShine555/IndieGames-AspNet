@@ -51,7 +51,7 @@ namespace Application.Games.Media.Handlers
                 || a.ProcessingStatus == GameArtworkProcessingStatus.Pending
             ), cancellationToken);
 
-            if (!anyArtwork)
+            if (anyArtwork)
             {
                 logger.LogWarning(
                     "Cannot update artwork with id {ArtworkId} for game with id {GameId} because there is already an artwork of type {ArtworkType} being processed or pending",
