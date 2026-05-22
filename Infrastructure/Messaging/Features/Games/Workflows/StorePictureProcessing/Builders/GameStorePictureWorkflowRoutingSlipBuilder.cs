@@ -1,39 +1,25 @@
 using Application.Abstractions.Messaging.Games.V1;
-using Application.Abstractions.Persistence;
-using Domain.Entities;
 using Infrastructure.Messaging.Configuration;
 using Infrastructure.Messaging.Consumers;
 using Infrastructure.Messaging.Features.Common.Activities.Files;
 using Infrastructure.Messaging.Features.Common.Activities.Pictures;
 using Infrastructure.Messaging.Features.Games.Activities;
+using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Variables;
 using Infrastructure.Messaging.Helpers;
 using MassTransit;
 using MassTransit.Courier.Contracts;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Builders
 {
-    public class GameStorePictureWorkflowRoutingSlipBuilder(
-        WorkerConfiguration workerConfiguration,
-        IDatabase database)
+    public class GameStorePictureWorkflowRoutingSlipBuilder(WorkerConfiguration workerConfiguration)
     {
         public const string ProcessName = "GenerateGamesPictures";
 
         public RoutingSlipBuilder Build(GenerateGamesPicturesEvent @event)
         {
             ArgumentNullException.ThrowIfNull(@event);
-
-            async Task MarkAsFailedAsync(CancellationToken cancellationToken)
-            {
-                var picture = await database.GamePictures
-                    .SingleAsync(p => p.Id == @event.PictureId, cancellationToken);
-
-                picture.ProcessingStatus = GamePictureProcessingStatus.Failed;
-                database.GamePictures.Update(picture);
-                await database.SaveChangesAsync(cancellationToken);
-            }
 
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
             builder.AddSubscription(
@@ -53,7 +39,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                 new DownloadFileFromBucketArguments(
                     @event.SourceKey,
                     GameStorePictureRoutingSlipVariableNames.Picture.OriginalFilePath,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.ResizeSmall,
@@ -63,7 +50,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                     GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath,
                     @event.SmallSize.Width,
                     @event.SmallSize.Height,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.ResizeMedium,
@@ -73,7 +61,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                     GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath,
                     @event.MediumSize.Width,
                     @event.MediumSize.Height,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.ResizeLarge,
@@ -83,7 +72,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                     GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath,
                     @event.LargeSize.Width,
                     @event.LargeSize.Height,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.UploadSmall,
@@ -91,7 +81,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                 new UploadFileToBucketArguments(
                     GameStorePictureRoutingSlipVariableNames.Picture.SmallResizedFilePath,
                     @event.SmallDestinationRoute,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.UploadMedium,
@@ -99,7 +90,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                 new UploadFileToBucketArguments(
                     GameStorePictureRoutingSlipVariableNames.Picture.MediumResizedFilePath,
                     @event.MediumDestinationRoute,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.UploadLarge,
@@ -107,7 +99,8 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
                 new UploadFileToBucketArguments(
                     GameStorePictureRoutingSlipVariableNames.Picture.LargeResizedFilePath,
                     @event.LargeDestinationRoute,
-                    MarkAsFailedAsync));
+                    PictureProcessingWorkflowContextType.StorePictureProcessing,
+                    @event.PictureId));
 
             builder.AddActivity(
                 GameStorePictureActivityNames.SynchronizeGameStorePictures,

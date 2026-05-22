@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Infrastructure.Messaging.Features.Common.Workflows;
 
 namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments
 {
@@ -7,6 +7,6 @@ namespace Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessi
         string DestinationFilePathVariable,
         int Width,
         int Height,
-        [property: JsonIgnore]
-        Func<CancellationToken, Task>? OnError = null);
+        PictureProcessingWorkflowContextType WorkflowContextType = PictureProcessingWorkflowContextType.None,
+        Guid? EntityId = null);
 }

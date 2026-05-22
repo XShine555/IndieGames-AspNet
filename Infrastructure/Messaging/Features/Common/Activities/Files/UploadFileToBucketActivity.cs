@@ -5,6 +5,7 @@ using Infrastructure.Messaging.Features.Common.Workflows;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Arguments;
 using Infrastructure.Messaging.Features.Games.Workflows.StorePictureProcessing.Logs;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MimeMapping;
 
@@ -13,6 +14,7 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
     public class UploadFileToBucketActivity(
         IJobTrackingStore processTrackingStore,
         IS3Service s3Service,
+        IDatabase database,
         ILogger<UploadFileToBucketActivity> logger)
         : IActivity<UploadFileToBucketArguments, UploadFileToBucketLog>
     {
@@ -58,11 +60,54 @@ namespace Infrastructure.Messaging.Features.Common.Activities.Files
                 await processTrackingStore.FailStepAsync(processExecutionId, stepExecutionId, exception.Message, executeContext.CancellationToken);
                 logger.LogError(exception, "Error uploading file {FilePath} to {Key}",
                     sourceFilePath, executeContext.Arguments.DestinationRoute);
-                if (executeContext.Arguments.OnError is not null)
-                {
-                    await executeContext.Arguments.OnError.Invoke(executeContext.CancellationToken);
-                }
+
+                await TryMarkEntityAsFailedAsync(executeContext.Arguments.WorkflowContextType, executeContext.Arguments.EntityId, executeContext.CancellationToken);
                 throw;
+            }
+        }
+
+        private async Task TryMarkEntityAsFailedAsync(
+            PictureProcessingWorkflowContextType contextType,
+            Guid? entityId,
+            CancellationToken cancellationToken)
+        {
+            if (contextType == PictureProcessingWorkflowContextType.None || entityId is null)
+                return;
+
+            try
+            {
+                switch (contextType)
+                {
+                    case PictureProcessingWorkflowContextType.ArtworkProcessing:
+                    {
+                        var artwork = await database.GameArtworks
+                            .SingleOrDefaultAsync(a => a.Id == entityId.Value, cancellationToken);
+                        if (artwork is null)
+                            return;
+                        artwork.ProcessingStatus = Domain.Entities.GameArtworkProcessingStatus.Failed;
+                        if (string.IsNullOrWhiteSpace(artwork.ProcessingError))
+                            artwork.ProcessingError = "An error occurred during the processing of the game artwork.";
+                        artwork.UpdatedAt = DateTime.UtcNow;
+                        await database.SaveChangesAsync(cancellationToken);
+                        return;
+                    }
+                    case PictureProcessingWorkflowContextType.StorePictureProcessing:
+                    {
+                        var picture = await database.GamePictures
+                            .SingleOrDefaultAsync(p => p.Id == entityId.Value, cancellationToken);
+                        if (picture is null)
+                            return;
+                        picture.ProcessingStatus = Domain.Entities.GamePictureProcessingStatus.Failed;
+                        await database.SaveChangesAsync(cancellationToken);
+                        return;
+                    }
+                    default:
+                        return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to mark entity as failed for context {ContextType} and id {EntityId}", contextType, entityId);
             }
         }
 
