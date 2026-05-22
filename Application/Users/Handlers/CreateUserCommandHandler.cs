@@ -36,13 +36,13 @@ namespace Application.Users.Handlers
                 ProfilePicture = new UserProfilePicture
                 {
                     UserId = command.IdentityId,
-                    SmallRelativePath = userConfiguration.Routes.GetSmallProfilePicturesFolderPath(command.IdentityId),
+                    SmallRelativePath = userConfiguration.Routes.ParentFolder,
                     SmallName = userConfiguration.Routes.PresetSmallProfilePicture,
                     SmallFileExtension = Path.GetExtension(userConfiguration.Routes.PresetSmallProfilePicture),
-                    MediumRelativePath = userConfiguration.Routes.GetMediumProfilePicturesFolderPath(command.IdentityId),
+                    MediumRelativePath = userConfiguration.Routes.ParentFolder,
                     MediumName = userConfiguration.Routes.PresetMediumProfilePicture,
                     MediumFileExtension = Path.GetExtension(userConfiguration.Routes.PresetMediumProfilePicture),
-                    LargeRelativePath = userConfiguration.Routes.GetLargeProfilePicturesFolderPath(command.IdentityId),
+                    LargeRelativePath = userConfiguration.Routes.ParentFolder,
                     LargeName = userConfiguration.Routes.PresetLargeProfilePicture,
                     LargeFileExtension = Path.GetExtension(userConfiguration.Routes.PresetLargeProfilePicture)
                 }
